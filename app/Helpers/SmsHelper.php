@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Helpers;
-
-
 class SmsHelper
 {
     public static function getRemainingCredits($tenantId)

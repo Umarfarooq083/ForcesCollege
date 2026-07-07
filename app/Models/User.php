@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
@@ -73,35 +71,5 @@ class User extends Authenticatable
                 ->toArray();
         });
     }
-
-
-
-
-
-    //    protected static function booted()
-    //     {
-    //         static::addGlobalScope('tenant', function (Builder $builder) {
-    //             if (tenant()) {
-    //                 $builder->where('tenant_id', tenant()->id);
-    //             }
-    //         });
-    //     }
-
-    // protected static function booted()
-    // {
-    //     static::addGlobalScope('tenant', function ($builder) {
-
-    //         if (tenant()) {
-    //             $builder->where('tenant_id', tenant()->id);
-    //         }
-    //     });
-
-    //     static::creating(function ($model) {
-    //         if (tenant()) {
-    //             $model->tenant_id = tenant()->id;
-    //         }
-    //     });
-    // }
-
 
 }

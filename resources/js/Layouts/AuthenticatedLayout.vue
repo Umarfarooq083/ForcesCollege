@@ -184,7 +184,7 @@ const filteredExamItems = computed(() => filterMenu(examItems))
 const settingsItems = [
     { label: 'Roles', base: 'role.index', route: ['role.index', 'role.create', 'role.edit', 'role.permission.assign'], icon: '' },
     { label: 'Campus', base: 'campus.index', route: ['campus.index', 'campus.create', 'campus.edit'], icon: '' },
-    // { label: 'Users', base: 'user.index', route: ['user.index', 'user.create', 'user.edit'], icon: '' },
+    { label: 'Users', base: 'user.index', route: ['user.index', 'user.create', 'user.edit'], icon: '' },
     // { label: 'Sessions', base: 'lmssessions.index', route: ['lmssessions.index', 'lmssessions.create', 'lmssessions.edit'], icon: '' },
     // { label: 'Zones', base: 'zone.index', route: ['zone.index', 'zone.create'], icon: '' },
 ]

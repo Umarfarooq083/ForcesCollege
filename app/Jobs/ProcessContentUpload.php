@@ -9,7 +9,6 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
-use Stancl\Tenancy\Facades\Tenancy;
 
 class ProcessContentUpload implements ShouldQueue
 {

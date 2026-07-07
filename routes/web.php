@@ -19,8 +19,6 @@ use App\Http\Controllers\Fees\GenerateFeeChallanController;
 use App\Http\Controllers\Fees\OptionalFeeMasterController;
 use App\Http\Controllers\Fees\StudentFeeDiscountController;
 use App\Http\Controllers\LmsSessions\LmsSessionsController;
-use App\Http\Controllers\PhonebookController;
-use App\Http\Controllers\PhonebookGroupController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Reports\MasterReportController;
 use App\Http\Controllers\Reports\ResultCardController;

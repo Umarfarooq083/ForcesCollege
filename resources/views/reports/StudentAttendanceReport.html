@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Attendance Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: center;
+        }
+        td, th {
+            border: 1px solid black;
+            padding: 4px;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div id="reportContainer"></div>
+<h2>Attendance Report - {{MonthYear}}</h2>
+
+<h3>Class: {{ClassName}} | Section: {{SectionName}}</h3>
+<h4>Campus: {{Campus}}</h4>
+
+<table>
+    <thead>
+        <tr style='Color:#fff !important; background-color:#385623;'>
+            {{thHeader}}
+        </tr>
+    </thead>
+
+    <tbody>
+        {{trBody}}
+    </tbody>
+</table>
+
+{{noRecordFound}}
+
+</body>
+</html>

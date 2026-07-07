@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Attendance Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #385623;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #385623;
+            padding: 6px;
+            text-align: center;
+        }
+        th {
+            background-color: #385623;
+            color: #fff;
+            font-weight: bold;
+        }
+        h2, h3 {
+            color: #385623;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>{{Campus}}</h2>
+    <h3>Staff Monthly Attendance Report ({{MonthYear}})</h3>
+
+    <div style="margin-top: 20px;">
+
+        {{noRecordFound}}
+
+        <table>
+            <thead>
+                <tr tyle='Color:red !important; background-color:#385623 !important;'>
+                    {{thHeader}}
+                </tr>
+            </thead>
+
+            <tbody>
+                {{trBody}}
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use PhpParser\Node\Expr\FuncCall;
+
+class Classes extends Model
+{
+    use SoftDeletes;
+    protected $fillable = [
+        'SessionId', 'ClassName','IsActive','CreatedBy','ModifiedBy','deleted_at','tenant_id','class_type_id','ClassOrder'
+    ];
+
+    public function scopeTenant($query)
+    {
+        return $query->where('tenant_id',tenant('id'));
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class,'id','CreatedBy')->select('id','name');
+    }
+
+    public function classType()
+    {
+        return $this->hasOne(ClassType::class,'id','class_type_id')->select('id','name');
+    }
+    
+    public function subject()
+    {
+        return $this->hasOne(Subject::class,'ClassId','id')->select('id','SubjectName','ClassId');
+    }
+
+    // public function Session()
+    // {
+    //     return $this->hasOne(User::class,'id','CreatedBy')->select('id','name');
+    // }
+
+    public function sections()
+    {
+        return $this->hasMany(Section::class, 'ClassId', 'id')->select('id','SectionName', 'ClassId', 'SectionType')->where('tenant_id',tenant('id'));
+    }
+
+    public function assignedTeacher()
+    {
+        return $this->hasOne(AssignClassTeacher::class,'ClassId', 'id');
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class, 'ClassId', 'id');
+    }
+    
+}

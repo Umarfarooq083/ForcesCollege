@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\APIImportData\ImportController;
 use App\Http\Controllers\Campus\CampusController;
 use App\Http\Controllers\CampusUser\UserController;
 use App\Http\Controllers\Class\ClassController;
@@ -28,8 +27,6 @@ use App\Http\Controllers\Reports\ResultCardController;
 use App\Http\Controllers\Roles\RolesController;
 use App\Http\Controllers\Section\SectionController;
 use App\Http\Controllers\Setting\SiteSettingController;
-use App\Http\Controllers\SMS\SendSMSController;
-use App\Http\Controllers\SmsCreditController;
 use App\Http\Controllers\Staff\AssignClassTeacherController;
 use App\Http\Controllers\Staff\AttendanceController as StaffAttendanceController;
 use App\Http\Controllers\Staff\ClassTimeTableController;
@@ -50,16 +47,6 @@ use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
-// Route::middleware([
-//     'web',
-//     InitializeTenancyByDomain::class,
-//     PreventAccessFromCentralDomains::class,
-// ])->group(function () {
-//     Route::get('/umar', function () {
-//         return 'This is your multi-tenant application. The id of the current tenant is ' . tenant('id');
-//     });
-// });
-
 Route::middleware([
     'web',
     InitializeTenancyByDomain::class,
@@ -69,26 +56,11 @@ Route::middleware([
     Route::get('/auto-login', [DeviceController::class, 'autoLogin']);
 
     Route::get('/', function () {
-        // return Inertia::render('Welcome', [
-        //     'canLogin' => Route::has('login'),
-        //     'canRegister' => Route::has('register'),
-        //     'laravelVersion' => Application::VERSION,
-        //     'phpVersion' => PHP_VERSION,
-        // ]);
         return redirect()->route('login');
     });
 
-    // Route::get('/dashboard', function () {
-    //     return Inertia::render('Dashboard');
-    // })->middleware(['auth', 'verified'])->name('dashboard');
-
     Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::get('dashboard', [DashboardController::class, 'getDashboardData'])->name('dashboard');
-        Route::get('dashboard/fees-data', [DashboardController::class, 'getFeesData'])->name('dashboard.feesData');
-        Route::get('dashboard/staff-attendance-filter', [DashboardController::class, 'getStaffAttendanceFilterData'])->name('dashboard.staff.attendance');
-        Route::get('dashboard/staff-attendance-table-filter', [DashboardController::class, 'getStaffAttendanceTableFilter'])->name('dashboard.staff.table.filter');
-        Route::get('dashboard/student-attendance-filter', [DashboardController::class, 'getStudentAttendanceFilterData'])->name('dashboard.student.attendance');
-        Route::get('dashboard/student-inquiry-filter', [DashboardController::class, 'getStudentInquiryFilterData'])->name('dashboard.students.inquiry');
     });
 
     Route::middleware(['auth', 'check_permission'])->group(function () {
@@ -207,7 +179,6 @@ Route::middleware([
         Route::get('fetch-promote-student', [PromoteStudentController::class, 'fetch'])->name('promotestudent.fetch');
         Route::get('fetch-promote-list', [PromoteStudentController::class, 'promotionlist'])->name('promotestudent.list');
         Route::post('promote-submit', [PromoteStudentController::class, 'promotionSubmit'])->name('promotestudent.store');
-
     });
 
     Route::group(['prefix' => 'disablestudent', 'middleware' => ['auth', 'check_permission']], function () {
@@ -254,16 +225,16 @@ Route::middleware([
         Route::post('submit', [AttendanceController::class, 'submitAttendance'])->name('attendance.submit');
     });
 
-Route::group(['prefix' => 'staff', 'middleware' => ['auth', 'check_permission']], function () {
-         Route::get('leave-request/list', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'index'])->name('leave-request.index');
-         Route::get('leave-request/create', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'create'])->name('leave-request.create');
-         Route::post('leave-request/submit', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'submit'])->name('leave-request.submit');
-         Route::get('leave-request/edit', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'edit'])->name('leave-request.edit');
-         Route::put('leave-request/update', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'update'])->name('leave-request.update');
-         Route::put('leave-request/{id}/approve', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'approve'])->name('leave-request.approve');
-         Route::delete('leave-request/delete', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'delete'])->name('leave-request.delete');
+    Route::group(['prefix' => 'staff', 'middleware' => ['auth', 'check_permission']], function () {
+        Route::get('leave-request/list', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'index'])->name('leave-request.index');
+        Route::get('leave-request/create', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'create'])->name('leave-request.create');
+        Route::post('leave-request/submit', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'submit'])->name('leave-request.submit');
+        Route::get('leave-request/edit', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'edit'])->name('leave-request.edit');
+        Route::put('leave-request/update', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'update'])->name('leave-request.update');
+        Route::put('leave-request/{id}/approve', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'approve'])->name('leave-request.approve');
+        Route::delete('leave-request/delete', [\App\Http\Controllers\Staff\LeaveRequestController::class, 'delete'])->name('leave-request.delete');
 
-         Route::get('list', [StaffController::class, 'index'])->name('staff.list');
+        Route::get('list', [StaffController::class, 'index'])->name('staff.list');
         Route::get('create', [StaffController::class, 'create'])->name('staff.create');
         Route::post('submit', [StaffController::class, 'submit'])->name('staff.submit');
         Route::get('edit', [StaffController::class, 'edit'])->name('staff.edit');
@@ -298,11 +269,9 @@ Route::group(['prefix' => 'staff', 'middleware' => ['auth', 'check_permission']]
         Route::put('designation/update', [DesignationController::class, 'update'])->name('designation.update');
         Route::delete('{id}/designation/delete', [DesignationController::class, 'destroy'])->name('designation.destroy');
         Route::put('designation/toggle-status/{id}', [DesignationController::class, 'toggleStatus'])->name('designation.toggleStatus');
-
-      
     });
 
-     Route::group(['prefix' => 'hr', 'middleware' => ['auth', 'check_permission']], function () {
+    Route::group(['prefix' => 'hr', 'middleware' => ['auth', 'check_permission']], function () {
 
         Route::get('campus-weekly-holiday/list', [\App\Http\Controllers\Staff\CampusWeeklyHolidayController::class, 'index'])->name('campus-weekly-holiday.index');
         Route::get('campus-weekly-holiday/create', [\App\Http\Controllers\Staff\CampusWeeklyHolidayController::class, 'create'])->name('campus-weekly-holiday.create');
@@ -482,150 +451,12 @@ Route::group(['prefix' => 'staff', 'middleware' => ['auth', 'check_permission']]
 
     });
 
-    Route::group(['prefix' => 'reports', 'middleware' => ['auth', 'check_permission']], function () {
-        Route::get('result-sheet', [ResultCardController::class, 'resultSheet'])->name('result.sheet');
-        Route::get('result-card', [ResultCardController::class, 'resultCard'])->name('result.card');
-        // Route::get('result-card', [ResultCardController::class, 'resultCard'])->name('result.card');
-
-        // Route::get('/result-card/print', [ResultCardController::class, 'resultCard'])
-        // ->name('result.card.print')->withoutMiddleware('check_permission');
-
-        Route::get('get-exam-types', [ResultCardController::class, 'getExamTypes'])->name('getexam.types');
-        Route::get('get-exam-students', [ResultCardController::class, 'getExamStudents'])->name('get.exam.students');
-    });
-
-    Route::group(['prefix' => 'master', 'middleware' => ['auth', 'check_permission']], function () {
-        Route::get('report-list', [MasterReportController::class, 'reportList'])->name('masterreport.list');
-        Route::get('student-detail', [MasterReportController::class, 'studentDetailReport'])->name('studentdetail.reports');
-        Route::get('student-admission', [MasterReportController::class, 'studentAdmissionReport'])->name('studentadmission.report');
-        Route::get('student-admission-inquiry', [MasterReportController::class, 'studentAdmissionInquiryReport'])->name('studentadmissioninquiry.report');
-        Route::get('student-unpaid-fee', [MasterReportController::class, 'studentUnPaidFee'])->name('studentunpaid.fee');
-        Route::get('student-summary-report', [MasterReportController::class, 'studentSummaryReport'])->name('studentsummary.report');
-        Route::get('student-content-feedback', [MasterReportController::class, 'contentFeedbackReport'])->name('contentfeedback.report');
-        Route::get('student-employee-report', [MasterReportController::class, 'employeeReport'])->name('employee.report');
-        Route::get('student-ledger-report', [MasterReportController::class, 'studentLedger'])->name('studentledger.report');
-        Route::get('assesment-report-exam', [MasterReportController::class, 'assesmentReportExam'])->name('assesmentexam.report')->withoutMiddleware('check_permission');
-        Route::get('assesment-exam-class', [MasterReportController::class, 'assesmentExamClass'])->name('assesmentexam.class')->withoutMiddleware('check_permission');
-        Route::get('assesment-report-fetch', [MasterReportController::class, 'assesmentReportFetch'])->name('assesmentreport.fetch');
-        Route::get('term-wise-fetch', [MasterReportController::class, 'termWiseFetch'])->name('termwise.fetch');
-        Route::get('student-attendance-fetch', [MasterReportController::class, 'studentAttendanceFetch'])->name('studentattendance.report');
-        Route::get('staff-attendance-fetch', [MasterReportController::class, 'staffAttendanceReport'])->name('staffattendance.report');
-        Route::get('fee-summary-head-wise-fetch', [MasterReportController::class, 'feeSummaryHeadWiseReport'])->name('feesummaryheadwise.report');
-        Route::get('paren-profession-report', [MasterReportController::class, 'parentProfessionReport'])->name('parentprofession.report');
-
-    });
-
-    Route::group(['prefix' => 'report', 'middleware' => ['auth', 'check_permission']], function () {
-        Route::get('student-information', [MasterReportController::class, 'studentInformation'])->name('student.information');
-        Route::get('student-information-fetch', [MasterReportController::class, 'studentInformationFetch'])->name('studentinformation.fetch');
-        Route::get('fee-collection-report', [MasterReportController::class, 'feeCollectionReport'])->name('fee.collectionreport');
-        Route::get('fee-collection-summary', [MasterReportController::class, 'feeCollectionReportSummary'])->name('fee.collectionsummary');
-        Route::get('fee-collection-report-fetch', [MasterReportController::class, 'feeCollectionReportFetch'])->name('fee.collectionreport.fetch');
-        Route::get('fee-collection-summary-fetch', [MasterReportController::class, 'feeCollectionSummaryFetch'])->name('fee.collectionsummary.fetch');
-        Route::get('daily-fee-collection', [MasterReportController::class, 'dailyFeeCollection'])->name('fee.dailycollection');
-        Route::get('daily-fee-collection-fetch', [MasterReportController::class, 'dailyFeeCollectionFetch'])->name('fee.dailycollection.fetch');
-        Route::get('student-fee-balance', [MasterReportController::class, 'studentFeebalanceFetch'])->name('student.feebalance');
-        Route::get('student-fee-balance-fetch', [MasterReportController::class, 'studentFeebalance'])->name('student.feebalance.fetch');
-
-        Route::get('student-sibling-report', [MasterReportController::class, 'studentSiblingReport'])->name('sibling.report');
-        Route::get('fetch-all-sibling-students', [MasterReportController::class, 'FetchAllSiblingStudents'])->name('inquiry.fetch.all.siblings');
-        Route::get('student-sibling-report-all-pdf', [MasterReportController::class, 'FetchAllSiblingStudentsPdf'])->name('sibling.report.all.pdf')->withoutMiddleware('check_permission');
-
-        Route::get('school-fee-ledger-report', [MasterReportController::class, 'schoolFeeLedgerReport'])->name('schoolfeeledger.report');
-
-        Route::get('student-withdraw-report', [MasterReportController::class, 'studentWithdrawReport'])->name('student.withdraw.report');
-        Route::get('student-withdraw-report-fetch', [MasterReportController::class, 'studentWithdrawReportFetch'])->name('student.withdraw.report.fetch');
-    });
-
-    Route::group(['prefix' => 'sms', 'middleware' => ['auth', 'check_permission']], function () {
-        Route::get('credit-list', [SmsCreditController::class, 'index'])->name('smscredit.index');
-        Route::get('credit-create', [SmsCreditController::class, 'create'])->name('smscredit.create');
-        Route::post('submit', [SmsCreditController::class, 'submit'])->name('smscredit.submit');
-
-        Route::get('log-list', [SmsCreditController::class, 'logList'])->name('smslog.index');
-        Route::get('log-detail', [SmsCreditController::class, 'logDetail'])->name('smslog.detail');
-
-        Route::get('create-sms', [SendSMSController::class, 'createSMS'])->name('SendSMS.create');
-
-        Route::get('/sections/{class_id}', [SendSMSController::class, 'getByClass'])->withoutMiddleware('check_permission');
-
-        //    Route::get('send-sms', [SendSMSController::class, 'sendSms'])->name('SendSMS.submit');
-
-        Route::get('/get-contacts', [SendSMSController::class, 'getContacts'])->name('get.contacts');
-        Route::post('send-sms', [SendSMSController::class, 'sendSms'])->name('SendSMS.submit');
-        Route::get('remaining-credit', function () {
-            $tenantId = tenant('id');
-            $remainingCredit = \App\Helpers\SmsHelper::getRemainingCredits($tenantId);
-
-            return response()->json([
-                'remainingCredit' => $remainingCredit,
-            ]);
-        })->name('sms.remaining-credit');
-    });
-
-    Route::group(['prefix' => 'phonebookgroup', 'middleware' => ['auth', 'check_permission']], function () {
-        Route::get('list', [PhonebookGroupController::class, 'index'])->name('phonebookgroup.index');
-        Route::post('submit', [PhonebookGroupController::class, 'submit'])->name('phonebookgroup.submit');
-        Route::put('update', [PhonebookGroupController::class, 'update'])->name('phonebookgroup.update');
-        Route::delete('delete', [PhonebookGroupController::class, 'delete'])->name('phonebookgroup.delete');
-    });
-
-    Route::group(['prefix' => 'phonebook', 'middleware' => ['auth', 'check_permission']], function () {
-        Route::get('list', [PhonebookController::class, 'index'])->name('phonebook.index');
-        Route::get('create', [PhonebookController::class, 'create'])->name('phonebook.create');
-        Route::post('submit', [PhonebookController::class, 'submit'])->name('phonebook.submit');
-        Route::get('show-details', [PhonebookController::class, 'show'])->name('phonebook.show');
-        Route::get('edit', [PhonebookController::class, 'edit'])->name('phonebook.edit');
-        Route::put('update', [PhonebookController::class, 'update'])->name('phonebook.update');
-        Route::delete('delete', [PhonebookController::class, 'delete'])->name('phonebook.delete');
-    });
-
-    // Route::group(['prefix' => 'apiimport', 'middleware' => ['auth']], function () {
-    //     Route::get('api-list', [ImportController::class, 'getApiList'])->name('get.all.api.list');
-    //     Route::get('get-session', [ImportController::class, 'getSessionsList'])->name('get.all.session');
-    //     Route::get('get-campus', [ImportController::class, 'getCampusList'])->name('get.all.campus');
-    //     Route::get('get-classes', [ImportController::class, 'getClassesList'])->name('get.all.classes');
-    //     Route::get('get-sections', [ImportController::class, 'getSectionList'])->name('get.all.sections');
-    //     Route::get('get-subjects', [ImportController::class, 'getSubjectList'])->name('get.all.subjects');
-    //     Route::get('get-student', [ImportController::class, 'getStudentList'])->name('get.all.student');
-    //     Route::get('get-student-inquiry-lost', [ImportController::class, 'getStudentInquiryLostList'])->name('get.all.student.inquiry.lost');
-    //     Route::get('get-student-attenance', [ImportController::class, 'getStudentAttendanceList'])->name('get.all.student.attendance');
-    //     Route::get('get-fee-stracture', [ImportController::class, 'getFeeStracture'])->name('get.all.fees.stracture');
-    //     Route::get('get-optional-fee-mapping', [ImportController::class, 'getOptionalFeeMapping'])->name('get.all.optional.fee.mapping');
-    //     Route::get('get-student-fee-discount', [ImportController::class, 'getStudentFeeDiscount'])->name('get.all.student.fee.discount');
-    //     Route::get('get-student-fee-challan', [ImportController::class, 'getStudentFeeChallan'])->name('get.all.student.fee.challan');
-    //     Route::get('get-student-fee-challan-transcation', [ImportController::class, 'getStudentFeeChallanTranscation'])->name('get.all.student.fee.challan.transcation');
-    //     Route::get('get-student-fee-challan-payment', [ImportController::class, 'getStudentChallanPartialPayment'])->name('get.all.challan.partial.payment');
-    //     Route::get('get-student-fee-challan-arrears', [ImportController::class, 'getStudentChallanArrears'])->name('student.fee.challan.arrears');
-    //     Route::get('get-exam-terms', [ImportController::class, 'getExamTerms'])->name('get.exam.terms');
-    //     Route::get('get-import-exam-types', [ImportController::class, 'getImportExamTypes'])->name('get.exam.types');
-    //     Route::get('get-import-exam-subject', [ImportController::class, 'getImportExamSubject'])->name('get.exam.subject');
-    //     Route::get('get-import-exam-student', [ImportController::class, 'getImportExamStudent'])->name('get.imported.exam.student');
-    //     Route::get('get-import-exam-marks', [ImportController::class, 'getImportExamMarks'])->name('get.exam.marks');
-    //     Route::get('get-import-exam-marks-detail', [ImportController::class, 'getImportExamMarksDetail'])->name('get.exam.marks.detail');
-    //     Route::get('get-import-exam-marks-grade', [ImportController::class, 'getImportExamMarksGrade'])->name('get.exam.marks.grade');
-    //     Route::get('get-department-list', [ImportController::class, 'getDepartmentList'])->name('get.department.list');
-    //     Route::get('get-designation-list', [ImportController::class, 'getDesignationList'])->name('get.designation.list');
-    //     Route::get('get-staff-list', [ImportController::class, 'getStaffList'])->name('get.staff.list');
-    //     Route::get('get-assign-class-teache', [ImportController::class, 'getAssignClassTeacherList'])->name('get.assign.class.teacher');
-    //     Route::get('get-class-time-table', [ImportController::class, 'getClassTimeTable'])->name('get.class.time.table');
-    //     Route::get('get-user-list', [ImportController::class, 'getUserList'])->name('get.user.list');
-    //     Route::get('get-roles-list', [ImportController::class, 'getRolesList'])->name('get.roles.list');
-    //     Route::get('get-upload-content-group-list', [ImportController::class, 'getUploadContentGroupList'])->name('get.upload.content.group.list');
-    //     Route::get('get-upload-content-list', [ImportController::class, 'getUploadContentList'])->name('get.upload.content.list');
-    //     Route::get('get-upload-content-log-list', [ImportController::class, 'getUploadContentLogList'])->name('get.upload.content.log.list');
-    //     Route::get('get-home-work-list', [ImportController::class, 'getHomeWorkList'])->name('get.home.work.list');
-    //     Route::get('get-sms-credit-list', [ImportController::class, 'getSMSCreditList'])->name('get.sms-credit.list');
-    //     Route::get('get-sms-log-list', [ImportController::class, 'getSMSLogList'])->name('get.sms.log.list');
-    // });
-
+ 
     Route::post('uploads/content/fetch-subject', [ContentUploadController::class, 'classSubjectFetch'])->name('class.subject.fetch');
 
     Route::get('/testing', function () {
         return 'This is your multi-tenant application for admin. The id of the current tenant is '.tenant('id');
     });
 });
-
-// dhkdhjdkahsjk
 
 require __DIR__.'/auth.php';

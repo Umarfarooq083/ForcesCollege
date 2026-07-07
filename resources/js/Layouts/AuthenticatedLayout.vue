@@ -126,24 +126,14 @@ const academicItems = [
 
 const filteredAcademicItems = computed(() => filterMenu(academicItems))
 
-const CommunicationItems = [
-    { label: 'SMS Credit', base: 'smscredit.index', route: ['smscredit.index','smscredit.create'], icon: '' },
-    { label: 'PhoneBook Group', base: 'phonebookgroup.index', route: ['phonebookgroup.index'], icon: '' },
-    { label: 'PhoneBook', base: 'phonebook.index', route: ['phonebook.index','phonebook.create', 'phonebook.edit'], icon: '' },
-    { label: 'SMS Log', base: 'smslog.index', route: ['smslog.index'], icon: '' },
-    { label: 'SMS', base: 'SendSMS.create', route: ['SendSMS.create'], icon: '' },
-]
-
-const filteredCommunicationItems = computed(() => filterMenu(CommunicationItems))
-
 const studentItems = [
-    { label: 'Student Inquiry', base: 'inquiry.index', route: ['inquiry.index', 'inquiry.create', 'inquiry.edit', 'student.create','inquiry.detail'], icon: '' },
+    // { label: 'Student Inquiry', base: 'inquiry.index', route: ['inquiry.index', 'inquiry.create', 'inquiry.edit', 'student.create','inquiry.detail'], icon: '' },
     { label: 'Students', base: 'student.index', route: ['student.index','student.detail'], icon: '' },
-    { label: 'Student Attendance', base: 'attendance.create', route: ['attendance.create'], icon: '' },
-    { label: 'Student HomeWork', base: 'homework.index', route: ['homework.index', 'homework.create', 'homework.edit', 'homework.show'], icon: '' },
-    { label: 'Promote Student', base: 'promotestudent.index', route: ['promotestudent.index'], icon: '' },
-    { label: 'Withdraw Student', base: 'student.withdrawlist', route: ['student.withdrawlist'], icon: '' },
-    { label: 'Re-Admission', base: 'student.readmissionlist', route: ['student.readmissionlist'], icon: '' },
+    // { label: 'Student Attendance', base: 'attendance.create', route: ['attendance.create'], icon: '' },
+    // { label: 'Student HomeWork', base: 'homework.index', route: ['homework.index', 'homework.create', 'homework.edit', 'homework.show'], icon: '' },
+    // { label: 'Promote Student', base: 'promotestudent.index', route: ['promotestudent.index'], icon: '' },
+    // { label: 'Withdraw Student', base: 'student.withdrawlist', route: ['student.withdrawlist'], icon: '' },
+    // { label: 'Re-Admission', base: 'student.readmissionlist', route: ['student.readmissionlist'], icon: '' },
 ]
 const filteredStudentItems = computed(() => filterMenu(studentItems))
 
@@ -194,9 +184,9 @@ const filteredExamItems = computed(() => filterMenu(examItems))
 const settingsItems = [
     { label: 'Roles', base: 'role.index', route: ['role.index', 'role.create', 'role.edit', 'role.permission.assign'], icon: '' },
     { label: 'Campus', base: 'campus.index', route: ['campus.index', 'campus.create', 'campus.edit'], icon: '' },
-    { label: 'Users', base: 'user.index', route: ['user.index', 'user.create', 'user.edit'], icon: '' },
-    { label: 'Sessions', base: 'lmssessions.index', route: ['lmssessions.index', 'lmssessions.create', 'lmssessions.edit'], icon: '' },
-    { label: 'Zones', base: 'zone.index', route: ['zone.index', 'zone.create'], icon: '' },
+    // { label: 'Users', base: 'user.index', route: ['user.index', 'user.create', 'user.edit'], icon: '' },
+    // { label: 'Sessions', base: 'lmssessions.index', route: ['lmssessions.index', 'lmssessions.create', 'lmssessions.edit'], icon: '' },
+    // { label: 'Zones', base: 'zone.index', route: ['zone.index', 'zone.create'], icon: '' },
 ]
 const filteredSettingsItems = computed(() => filterMenu(settingsItems))
 
@@ -306,8 +296,8 @@ watch(() => page.props.toast, (toastData) => {
                                     <span> Dashboard</span>
                                 </ResponsiveNavLink>
                             </li>
-                            <SidebarGroup v-if="filteredHrItems.length" label="Human Resources" icon="fa fa-sitemap"
-                                :items="filteredHrItems" />
+                            <!-- <SidebarGroup v-if="filteredHrItems.length" label="Human Resources" icon="fa fa-sitemap"
+                                :items="filteredHrItems" /> -->
 
                             <SidebarGroup v-if="filteredAcademicItems.length" label="Academic" icon="fa fa-university"
                                 :items="filteredAcademicItems" />
@@ -315,23 +305,22 @@ watch(() => page.props.toast, (toastData) => {
                             <SidebarGroup v-if="filteredStudentItems.length" label="Students" icon="fa fa-users"
                                 :items="filteredStudentItems" />
 
-                            <SidebarGroup v-if="filteredFeeItems.length" label="Fees" icon="fa fa-money"
-                                :items="filteredFeeItems" />
+                            <!-- <SidebarGroup v-if="filteredFeeItems.length" label="Fees" icon="fa fa-money"
+                                :items="filteredFeeItems" /> -->
 
-                            <SidebarGroup v-if="filteredExamItems.length" label="Exam" icon="fa fa-graduation-cap"
-                                :items="filteredExamItems" />
+                            <!-- <SidebarGroup v-if="filteredExamItems.length" label="Exam" icon="fa fa-graduation-cap"
+                                :items="filteredExamItems" /> -->
                             
-                            <SidebarGroup v-if="filteredCommunicationItems.length" label="Communication" icon="fa fa-book"
-                                :items="filteredCommunicationItems" />
+                 
 
-                            <SidebarGroup v-if="isHeadOfficeDomain === 'headoffice'" label="Downloads"
+                            <!-- <SidebarGroup v-if="isHeadOfficeDomain === 'headoffice'" label="Downloads"
                                 icon="fa fa-sitemap" :items="[
                                     { label: 'Content Group', route: ['content.index', 'content.create', 'content.edit'], icon: '' },
                                     { label: 'Content Approvals', route: ['uploads.approval'], icon: '' },
                                     { label: 'Content Upload Specialist', route: ['uploads.specialistlist'], icon: '' },
                                     { label: 'Upload Content', route: ['uploads.index', 'uploads.create'], icon: '' },
                                     { label: 'Downloaded Logs', route: ['downloaded.logs'], icon: '' },
-                                ]" />
+                                ]" /> -->
                                 
                             <SidebarGroup v-if="isHeadOfficeDomain !== 'headoffice'" label="Downloads"
                                 icon="fa fa-sitemap" :items="[
@@ -341,26 +330,6 @@ watch(() => page.props.toast, (toastData) => {
                             <SidebarGroup v-if="filteredSettingsItems.length" label="System Settings" icon="fa fa-cogs"
                                 :items="filteredSettingsItems" />
                            
-                            <SidebarGroup label="Reports" icon="fa fa-line-chart ftlayer"
-                                :items="[
-                                    { label: 'Result Sheet', route: ['result.sheet','result.card'], icon: '' },
-                                    { label: 'Master Report', route: ['masterreport.list'], icon: '' },
-                                    { label: 'Student Information', route: ['student.information'], icon: '' },
-                                    { label: 'Monthly Fee Report', route: ['fee.collectionreport'], icon: '' },
-                                    { label: 'Fee Collection Summary', route: ['fee.collectionsummary'], icon: '' },
-                                    { label: 'Daily Fee Collection', route: ['fee.dailycollection'], icon: '' },
-                                    { label: 'Student Balance', route: ['student.feebalance'], icon: '' },
-                                    { label: 'Sibling Report', route: ['sibling.report'], icon: '' },
-                                ]"
-                            />
-
-                            <!-- v-if="props.auth.user.email == 'r.umar083@gmail.com'" -->
-                            <!-- <SidebarGroup v-if="props.auth.user.email == 'r.umar083@gmail.com'"  label="Import Forces Data" icon="fa fa-download"
-                                :items="[
-                                    { label: 'Import Api Data', route: ['get.all.api.list'], icon: '' },
-                                ]"
-                            /> -->
-  
                         </ul>
                     </nav>
                 </div>

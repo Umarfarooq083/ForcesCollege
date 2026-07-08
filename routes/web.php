@@ -38,6 +38,7 @@ use App\Http\Controllers\Student\PromoteStudentController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\StudentInquiry\StudentInquiryController;
 use App\Http\Controllers\Program\ProgramController;
+use App\Http\Controllers\Program\ProgramLevelController;
 use App\Http\Controllers\Subject\SubjectController;
 use App\Http\Controllers\UploadContent\ContentUploadController;
 use App\Http\Controllers\UploadContent\UploadContentGroupController;
@@ -199,6 +200,15 @@ Route::middleware([
         Route::get('edit', [ProgramController::class, 'edit'])->name('program.edit');
         Route::put('update', [ProgramController::class, 'update'])->name('program.update');
         Route::delete('delete', [ProgramController::class, 'delete'])->name('program.delete');
+    });
+
+    Route::group(['prefix' => 'programlevel', 'middleware' => ['auth', 'check_permission']], function () {
+        Route::get('list', [ProgramLevelController::class, 'index'])->name('programlevel.index');
+        Route::get('create', [ProgramLevelController::class, 'create'])->name('programlevel.create');
+        Route::post('submit', [ProgramLevelController::class, 'submit'])->name('programlevel.submit');
+        Route::get('edit', [ProgramLevelController::class, 'edit'])->name('programlevel.edit');
+        Route::put('update', [ProgramLevelController::class, 'update'])->name('programlevel.update');
+        Route::delete('delete', [ProgramLevelController::class, 'delete'])->name('programlevel.delete');
     });
 
     Route::group(['prefix' => 'content', 'middleware' => ['auth', 'check_permission']], function () {

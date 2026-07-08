@@ -37,6 +37,7 @@ use App\Http\Controllers\Student\HomeWorkController;
 use App\Http\Controllers\Student\PromoteStudentController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\StudentInquiry\StudentInquiryController;
+use App\Http\Controllers\Program\ProgramController;
 use App\Http\Controllers\Subject\SubjectController;
 use App\Http\Controllers\UploadContent\ContentUploadController;
 use App\Http\Controllers\UploadContent\UploadContentGroupController;
@@ -189,6 +190,15 @@ Route::middleware([
         Route::post('submit', [SubjectController::class, 'submit'])->name('subject.submit');
         Route::get('edit', [SubjectController::class, 'edit'])->name('subject.edit');
         Route::put('update', [SubjectController::class, 'update'])->name('subject.update');
+    });
+
+    Route::group(['prefix' => 'program', 'middleware' => ['auth', 'check_permission']], function () {
+        Route::get('list', [ProgramController::class, 'index'])->name('program.index');
+        Route::get('create', [ProgramController::class, 'create'])->name('program.create');
+        Route::post('submit', [ProgramController::class, 'submit'])->name('program.submit');
+        Route::get('edit', [ProgramController::class, 'edit'])->name('program.edit');
+        Route::put('update', [ProgramController::class, 'update'])->name('program.update');
+        Route::delete('delete', [ProgramController::class, 'delete'])->name('program.delete');
     });
 
     Route::group(['prefix' => 'content', 'middleware' => ['auth', 'check_permission']], function () {

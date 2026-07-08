@@ -60,9 +60,7 @@ const rolescallApi = () => callApi('get-roles-list', route('get.roles.list'), 'R
 const GetUploadContentGroupcallApi = () => callApi('get-upload-content-group-list', route('get.upload.content.group.list'), 'Upload content group fetched successfully!', 'Something went wrong while calling Student API.');
 const GetUploadContentcallApi = () => callApi('get-upload-content-list', route('get.upload.content.list'), 'Upload content fetched successfully!', 'Something went wrong while calling Student API.');
 const GetUploadContentLogcallApi = () => callApi('get-upload-content-log-list', route('get.upload.content.log.list'), 'Upload content fetched successfully!', 'Something went wrong while calling Student API.');
-const GetHomeWorkcallApi = () => callApi('get-home-work-list', route('get.home.work.list'), 'Home work fetched successfully!', 'Something went wrong while calling Student API.');
-const GetSMSCreditcallApi = () => callApi('get-sms-credit-list', route('get.sms-credit.list'), 'SMS credit fetched successfully!', 'Something went wrong while calling Student API.');
-const GetSMSLogcallApi = () => callApi('get-sms-log-list', route('get.sms.log.list'), 'SMS log fetched successfully!', 'Something went wrong while calling Student API.');
+ const GetHomeWorkcallApi = () => callApi('get-home-work-list', route('get.home.work.list'), 'Home work fetched successfully!', 'Something went wrong while calling Student API.');
 </script>
 
 <template>
@@ -1067,70 +1065,9 @@ const GetSMSLogcallApi = () => callApi('get-sms-log-list', route('get.sms.log.li
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
         </svg>
         {{ buttonLoading['get-home-work-list'] ? 'Processing...' : 'Call API' }}
-      </button>
-    </div>
-  
-    <!-- Get SMS Credits API -->
-    <div class="card shadow rounded-lg p-4 bg-white">
-      <div class="header mb-3">
-        <div class="font-weight-bold text-lg">SMS Credit</div>
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">End Point</label>
-        <input
-          value="http://headoffice.fscscampus.com/api/Migration/GetSMSCredit"
-          type="text"
-          class="border rounded p-2 w-full focus:ring focus:ring-blue-200"
-          disabled
-        />
-      </div>
-
-      <button
-        @click="GetSMSCreditcallApi"
-        :disabled="loading"
-        class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
-      >
-        <span v-if="buttonLoading['get-sms-credit-list']" class="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
-        <svg v-if="buttonLoading['get-sms-credit-list']" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-        </svg>
-        {{ buttonLoading['get-sms-credit-list'] ? 'Processing...' : 'Call API' }}
-      </button>
-    </div>
-    
-    <!-- Get SMS Log API -->
-    <div class="card shadow rounded-lg p-4 bg-white">
-      <div class="header mb-3">
-        <div class="font-weight-bold text-lg">SMS Log</div>
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">End Point</label>
-        <input
-          value="http://headoffice.fscscampus.com/api/Migration/GetSMSLog"
-          type="text"
-          class="border rounded p-2 w-full focus:ring focus:ring-blue-200"
-          disabled
-        />
-      </div>
-
-      <button
-        @click="GetSMSLogcallApi"
-        :disabled="loading"
-        class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2"
-      >
-        <span v-if="buttonLoading['get-sms-log-list']" class="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
-        <svg v-if="buttonLoading['get-sms-log-list']" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-        </svg>
-        {{ buttonLoading['get-sms-log-list'] ? 'Processing...' : 'Call API' }}
-      </button>
-    </div>
-
-  </AuthenticatedLayout>
+</button>
+     </div>
+   </AuthenticatedLayout>
 </template>
 
 <style scoped>

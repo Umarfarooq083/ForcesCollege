@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ClassRequest;
 use App\Models\Classes;
 use Illuminate\Http\RedirectResponse;
-use App\Models\ClassType;
 use App\Services\ClassService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,23 +28,20 @@ class ClassController extends Controller
       ]);
    }
 
-   public function create(): Response
-   {
-      $classtype = ClassType::get();
-      return Inertia::render('Classes/Create',[
-         'classtype' => $classtype,
-      ]);
-   }
-   
-   public function edit(Request $request)
-   {
-      $classtype = ClassType::get();
-      $classesList = Classes::findOrFail($request->id);
-      return Inertia::render('Classes/Edit',[
-         'classtype' => $classtype,
-         'classesList' => $classesList,
-      ]);
-   }
+public function create(): Response
+    {
+       return Inertia::render('Classes/Create',[
+          
+       ]);
+    }
+    
+    public function edit(Request $request)
+    {
+       $classesList = Classes::findOrFail($request->id);
+       return Inertia::render('Classes/Edit',[
+          'classesList' => $classesList,
+       ]);
+    }
 
    public function submit(ClassRequest $request): RedirectResponse
    {

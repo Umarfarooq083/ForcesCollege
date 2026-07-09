@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Campus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Campus\CampusRequest;
 use App\Models\Campus;
-use App\Models\ClassType;
 use App\Models\Roles;
 use App\Services\CampusService;
 use App\Services\RegionService;
@@ -38,19 +37,17 @@ class CampusController extends Controller
     ]);
   }
 
-  public function create(): Response
-  {
-    $roleExist = Roles::where('name', 'Campus Admin')->exists();
-    $zones = $this->zoneService->getActiveZones();
-    $regions = $this->regionService->getActiveRegions();
-    $classType = ClassType::get();
-    return Inertia::render('Campus/Create', [
-      'zones' => $zones,
-      'regions' => $regions,
-      'classType' => $classType,
-      'role_exist' => $roleExist,
-    ]);
-  }
+public function create(): Response
+    {
+        $roleExist = Roles::where('name', 'Campus Admin')->exists();
+        $zones = $this->zoneService->getActiveZones();
+        $regions = $this->regionService->getActiveRegions();
+        return Inertia::render('Campus/Create', [
+          'zones' => $zones,
+          'regions' => $regions,
+          'role_exist' => $roleExist,
+        ]);
+    }
 
   public function submit(CampusRequest $request): RedirectResponse
   {

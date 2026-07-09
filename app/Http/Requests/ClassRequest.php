@@ -22,7 +22,6 @@ class ClassRequest extends FormRequest
     public function rules(): array
     {
         return [
-                'class_type_id' => 'required',
                 'ClassOrder' => 'required | numeric | min:0 | unique:classes,ClassOrder,' . $this->id,
                 'ClassName' => 'required',
         ];

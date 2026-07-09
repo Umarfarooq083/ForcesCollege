@@ -41,11 +41,6 @@ class Campus extends Model
         return $this->hasOne(LmsSession::class, 'zoneid','zoneid');
     }
 
-    public function campusClassType()
-    {
-        return $this->hasMany(CampusClassType::class, 'campus_id','id');
-    }
-
     public function region()
     {
         return $this->belongsTo(\App\Models\Region::class, 'regionid');

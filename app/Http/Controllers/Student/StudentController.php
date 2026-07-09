@@ -224,13 +224,9 @@ class StudentController extends Controller
 
     public function campusClasses(): Collection|Classes
     {
-        $campusData = Campus::select('id', 'tenant_id', 'SchoolName')->Tenant()->with('campusClassType')->first();
-        $campusClassType = data_get($campusData, 'campusClassType');
-        $classType_id = $campusClassType->pluck('class_type_id')->toArray();
-
         return Classes::select('id', 'tenant_id', 'ClassName')
             ->where('IsActive', 1)
-            ->whereIn('class_type_id', $classType_id)
+            ->where('tenant_id', tenant('id'))
             ->get();
     }
 }

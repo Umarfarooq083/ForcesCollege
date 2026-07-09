@@ -42,8 +42,7 @@ class ExamSubjectService
     public function create(): array
     {
         $data['examTypes'] = ExamType::where('tenant_id',tenant('id'))->where('SessionId', fetchCurrentSession()->id)->get();
-        $campusClassList = campusClassList();
-        $data['Classes'] = Classes::whereIn('class_type_id', $campusClassList)->get();
+        $data['Classes'] = Classes::where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
         $data['Subjects'] = Subject::where('tenant_id', tenant('id'))->get();
         return $data;
     }

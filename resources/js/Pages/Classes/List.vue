@@ -23,7 +23,6 @@ const toggleStatus = (classlist) => {
 const columns = [
     { label: 'ID' },
     { label: 'Class Name' },
-    { label: 'Class Type' },
     { label: 'Class Order' },
     { label: 'Created By' },
     { label: 'Status' },
@@ -87,15 +86,12 @@ watch(search, debounce((value) => {
                                 <td>
                                     {{ (classes.current_page - 1) * classes.per_page + index + 1 }}
                                 </td>
-                                <td>
-                                    {{ classlist.ClassName }}
-                                </td>
-                                 <td>
-                                    {{ classlist?.class_type?.name }}
-                                </td>
-                                 <td>
-                                    {{ classlist?.ClassOrder }}
-                                </td>
+<td>
+                                     {{ classlist.ClassName }}
+                                 </td>
+                                  <td>
+                                     {{ classlist?.ClassOrder }}
+                                 </td>
                                 <td>
                                     {{ classlist?.user?.name }}
                                 </td>

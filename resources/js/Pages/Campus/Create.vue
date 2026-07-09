@@ -3,25 +3,14 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import InputError from '@/Components/InputError.vue';
 import { useForm } from '@inertiajs/vue3';
-import Multiselect from 'vue-multiselect'
-import 'vue-multiselect/dist/vue-multiselect.min.css'
-import { computed } from 'vue';
 
 const props = defineProps({
     zones: Array,
     regions: Array,
-    classType: Object,
     role_exist: Object,
 })
 
-const ClassTypeOption = computed(() => {
-    return props.classType.map(type => ({
-        id: type.id,
-        name: type.Name
-    }));
-});
 const form = useForm({
     IsActive: true,
     IsDeleted: false,
@@ -53,7 +42,6 @@ const form = useForm({
     Logo: '',
     IsAvailableForMobApp: false,
     SortOrder: 0,
-    class_type_ids: [],
 });
 </script>
 
@@ -90,51 +78,37 @@ const form = useForm({
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <InputLabel for="Code" value="Campus Code" />
-                                        <TextInput id="Code" type="text" v-model="form.Code" class="form-control" />
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <InputLabel value="School Types " /> <span class="text-danger font-12 position-absolute"> ★</span>
-                                        <Multiselect
-                                            :options="ClassTypeOption"
-                                            v-model="form.class_type_ids"
-                                            :multiple="true"
-                                            :track-by="'id'"
-                                            :label="'name'"
-                                            placeholder="Select roles"
-                                            />
-                                        <InputError class="mt-2" :message="form.errors.class_type_ids" />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <InputLabel value="Zone" /> <span class="text-danger font-12 position-absolute">★</span>
-                                        <select v-model="form.zoneid" class="form-control">
-                                            <option value="">Select Zone</option>
-                                            <option v-for="zone in props.zones" :key="zone.id" :value="zone.id">
-                                                {{ zone.name }}
-                                            </option>
-                                        </select>
-                                        <InputError class="mt-2" :message="form.errors.zoneid" />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <InputLabel value="Region" />
-                                        <select v-model="form.regionid" class="form-control">
-                                            <option value="">Select Region</option>
-                                            <option v-for="region in props.regions" :key="region.id" :value="region.id">
-                                                {{ region.name }}
-                                            </option>
-                                        </select>
-                                        <InputError class="mt-2" :message="form.errors.regionid" />
-                                    </div>
-                                </div>
+<div class="col-md-6">
+                                     <div class="mb-3">
+                                         <InputLabel for="Code" value="Campus Code" />
+                                         <TextInput id="Code" type="text" v-model="form.Code" class="form-control" />
+                                     </div>
+                                 </div>
+                                 
+                                 <div class="col-md-6">
+                                     <div class="mb-3">
+                                         <InputLabel value="Zone" /> <span class="text-danger font-12 position-absolute">★</span>
+                                         <select v-model="form.zoneid" class="form-control">
+                                             <option value="">Select Zone</option>
+                                             <option v-for="zone in props.zones" :key="zone.id" :value="zone.id">
+                                                 {{ zone.name }}
+                                             </option>
+                                         </select>
+                                         <InputError class="mt-2" :message="form.errors.zoneid" />
+                                     </div>
+                                 </div>
+                                 <div class="col-md-6">
+                                     <div class="mb-3">
+                                         <InputLabel value="Region" />
+                                         <select v-model="form.regionid" class="form-control">
+                                             <option value="">Select Region</option>
+                                             <option v-for="region in props.regions" :key="region.id" :value="region.id">
+                                                 {{ region.name }}
+                                             </option>
+                                         </select>
+                                         <InputError class="mt-2" :message="form.errors.regionid" />
+                                     </div>
+                                 </div>
                             </div>
                         </div>
                     </div>

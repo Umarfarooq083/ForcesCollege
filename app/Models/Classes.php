@@ -10,7 +10,7 @@ class Classes extends Model
 {
     use SoftDeletes;
     protected $fillable = [
-        'SessionId', 'ClassName','IsActive','CreatedBy','ModifiedBy','deleted_at','tenant_id','class_type_id','ClassOrder'
+        'SessionId', 'ClassName','IsActive','CreatedBy','ModifiedBy','deleted_at','tenant_id','ClassOrder'
     ];
 
     public function scopeTenant($query)
@@ -23,11 +23,6 @@ class Classes extends Model
         return $this->hasOne(User::class,'id','CreatedBy')->select('id','name');
     }
 
-    public function classType()
-    {
-        return $this->hasOne(ClassType::class,'id','class_type_id')->select('id','name');
-    }
-    
     public function subject()
     {
         return $this->hasOne(Subject::class,'ClassId','id')->select('id','SubjectName','ClassId');

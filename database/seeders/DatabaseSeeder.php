@@ -6,7 +6,6 @@ use App\Models\User;
 use Database\Seeders\GuardianRelationSeeder;
 use Database\Seeders\StudentCategorySeeder;
 use Database\Seeders\DisableReasonSeeder;
-use Database\Seeders\ClassTypesSeeder;
 use Database\Seeders\SectionTypesSeeder;
 use Database\Seeders\SourceSeeder;
 use Database\Seeders\RegionSeeder;
@@ -33,7 +32,6 @@ class DatabaseSeeder extends Seeder
             DisableReasonSeeder::class,
             SourceSeeder::class,
             SectionTypesSeeder::class,
-            ClassTypesSeeder::class,
             RegionSeeder::class,
             PermissionSeeder::class,
         ]);

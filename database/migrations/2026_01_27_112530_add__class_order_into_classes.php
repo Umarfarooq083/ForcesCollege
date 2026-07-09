@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('classes', function (Blueprint $table) {
-            $table->integer('ClassOrder')->after('class_type_id')->default(0);
+            $table->integer('ClassOrder')->after('tenant_id')->default(0);
         });
     }
 

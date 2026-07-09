@@ -42,8 +42,7 @@ class ExamStudentService
     public function create(): array
     {
         $data['Exams'] = ExamType::where('IsActive', 1)->where('tenant_id', tenant('id'))->where('SessionId', fetchCurrentSession()->id)->get(['id', 'ExamName', 'IsActive']);
-        $campusClassList = campusClassList();
-        $data['Classes'] = Classes::whereIn('class_type_id', $campusClassList)->get();
+        $data['Classes'] = Classes::where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
         $data['Students'] = Student::where('tenant_id', tenant('id'))->where('IsDisable', 0)->get(['id', 'tenant_id', 'FirstName', 'LastName', 'ClassId', 'IsDisable']);
         return $data;
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Class;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClassRequest;
 use App\Models\Classes;
+use App\Models\Program;
 use Illuminate\Http\RedirectResponse;
 use App\Services\ClassService;
 use Illuminate\Http\Request;
@@ -30,17 +31,22 @@ class ClassController extends Controller
 
 public function create(): Response
     {
-       return Inertia::render('Classes/Create',[
-          
-       ]);
+        $programs = Program::select('id', 'name')->where('tenant_id', tenant('id'))->get();
+
+        return Inertia::render('Classes/Create',[
+            'programs' => $programs,
+        ]);
     }
     
     public function edit(Request $request)
     {
-       $classesList = Classes::findOrFail($request->id);
-       return Inertia::render('Classes/Edit',[
-          'classesList' => $classesList,
-       ]);
+        $classesList = Classes::with('program')->findOrFail($request->id);
+        $programs = Program::select('id', 'name')->where('tenant_id', tenant('id'))->get();
+
+        return Inertia::render('Classes/Edit',[
+            'classesList' => $classesList,
+            'programs' => $programs,
+        ]);
     }
 
    public function submit(ClassRequest $request): RedirectResponse

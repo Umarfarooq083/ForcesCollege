@@ -10,7 +10,7 @@ class ClassService
     public function index($request)
     {
         $domain = getTenantSubDomain();  
-        $query =  Classes::with('user')->orderBy('ClassOrder','asc');
+        $query =  Classes::where('tenant_id', tenant('id'))->with('user', 'program')->orderBy('ClassOrder','asc');
 
 
         if ($request->filled('search')) {
@@ -38,6 +38,7 @@ class ClassService
         $validated = $request->validated();
         $created = Classes::create([
             ...$validated,
+            'tenant_id' => tenant('id'),
             'CreatedBy' => auth()->user()->id,
         ]);
 
@@ -52,6 +53,7 @@ class ClassService
         $validated = $request->validated();
         $created = Classes::where('id',$request->id)->update([
             ...$validated,
+            'tenant_id' => tenant('id'),
             'ModifiedBy' => auth()->user()->id,
         ]);
 

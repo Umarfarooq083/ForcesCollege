@@ -119,11 +119,11 @@ const filterMenu = (items) => {
 }
 
 const academicItems = [
+    { label: 'Program', base: 'program.index', route: ['program.index', 'program.create', 'program.edit'], icon: '' },
+    { label: 'Program Levels', base: 'programlevel.index', route: ['programlevel.index','programlevel.create', 'programlevel.submit', 'programlevel.edit','programlevel.update','programlevel.delete'], icon: '' },
     { label: 'Class', base: 'class.index', route: ['class.index', 'class.create'], icon: '' },
     { label: 'Section', base: 'section.index', route: ['section.index', 'section.create'], icon: '' },
     { label: 'Subjects', base: 'subject.index', route: ['subject.index', 'subject.create', 'subject.edit'], icon: '' },
-    { label: 'Program', base: 'program.index', route: ['program.index', 'program.create', 'program.edit'], icon: '' },
-    { label: 'Program Levels', base: 'programlevel.index', route: ['programlevel.index','programlevel.create', 'programlevel.submit', 'programlevel.edit','programlevel.update','programlevel.delete'], icon: '' }
 ]
 
 const filteredAcademicItems = computed(() => filterMenu(academicItems))

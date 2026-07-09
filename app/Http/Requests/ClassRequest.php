@@ -24,6 +24,7 @@ class ClassRequest extends FormRequest
         return [
                 'ClassOrder' => 'required | numeric | min:0 | unique:classes,ClassOrder,' . $this->id,
                 'ClassName' => 'required',
+                'program_id' => 'nullable|exists:programs,id',
         ];
     }
 }

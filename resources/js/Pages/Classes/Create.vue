@@ -7,12 +7,14 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import { useForm } from '@inertiajs/vue3';
 
- 
+  
 const props = defineProps({
+    programs: Array,
 });
 const form = useForm({
     ClassName: '',
     ClassOrder: 0,
+    program_id: '',
 });
 
 </script>
@@ -45,6 +47,19 @@ const form = useForm({
                                         <InputLabel value="Order" /> <span class="text-danger font-12 position-absolute">★</span>
                                         <TextInput type="number" v-model="form.ClassOrder" class="form-control" />
                                         <InputError class="mt-2" :message="form.errors.ClassOrder" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <InputLabel value="Program" />
+                                        <select class="form-control" v-model="form.program_id">
+                                            <option selected disabled value="">Select Program</option>
+                                            <option v-for="program in programs" :key="program.id" :value="program.id">
+                                                {{ program.name }}
+                                            </option>
+                                        </select>
+                                        <InputError class="mt-2" :message="form.errors.program_id" />
                                     </div>
                                 </div>
 

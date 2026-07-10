@@ -23,7 +23,7 @@ const toggleStatus = (classlist) => {
 const columns = [
     { label: 'ID' },
     { label: 'Class Name' },
-    { label: 'Class Type' },
+    { label: 'Program' },
     { label: 'Class Order' },
     { label: 'Created By' },
     { label: 'Status' },
@@ -83,17 +83,17 @@ watch(search, debounce((value) => {
                         <TableHeader :columns="columns" />
                         <!-- {{ classes.data }} -->
                         <tbody>
-                            <tr v-for="classlist ,index in classes.data" >
+<tr v-for="classlist ,index in classes.data" >
                                 <td>
                                     {{ (classes.current_page - 1) * classes.per_page + index + 1 }}
                                 </td>
-                                <td>
+ <td>
                                     {{ classlist.ClassName }}
                                 </td>
-                                 <td>
-                                    {{ classlist?.class_type?.name }}
+                                <td>
+                                    {{ classlist?.program?.name || '-' }}
                                 </td>
-                                 <td>
+                                   <td>
                                     {{ classlist?.ClassOrder }}
                                 </td>
                                 <td>
@@ -103,8 +103,8 @@ watch(search, debounce((value) => {
                                     <span v-if="classlist.IsActive == 1">
                                         Active
                                     </span>
-                                       <span v-else>
-                                        InActive
+                                        <span v-else>
+                                         InActive
                                     </span>
                                 </td>
                                

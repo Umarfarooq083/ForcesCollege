@@ -10,15 +10,12 @@ class ClassService
     public function index($request)
     {
         $domain = getTenantSubDomain();  
-        $query =  Classes::with('user','classType')->orderBy('ClassOrder','asc');
+        $query =  Classes::where('tenant_id', tenant('id'))->with('user', 'program')->orderBy('ClassOrder','asc');
 
 
         if ($request->filled('search')) {
             $query->where(function($q) use($request){
                 $q->where('ClassName', 'like', '%' . $request->search . '%')
-                ->orWhereHas('classType', function($sub) use($request) {
-                    $sub->where('Name', 'like', "%{$request->search}%");
-                })
                 ->orWhereHas('user', function($sub) use($request) {
                     $sub->where('name', 'like', "%{$request->search}%");
                 });
@@ -32,8 +29,7 @@ class ClassService
         if($domain == 'headoffice'){
             return $query->paginate(25)->withQueryString();
         }else{
-            $classTypeIds = campusClassList();
-            return $query->whereIn('class_type_id',$classTypeIds)->paginate(25)->withQueryString();
+            return $query->where('tenant_id', tenant('id'))->paginate(25)->withQueryString();
         }
     }
 
@@ -42,6 +38,7 @@ class ClassService
         $validated = $request->validated();
         $created = Classes::create([
             ...$validated,
+            'tenant_id' => tenant('id'),
             'CreatedBy' => auth()->user()->id,
         ]);
 
@@ -56,6 +53,7 @@ class ClassService
         $validated = $request->validated();
         $created = Classes::where('id',$request->id)->update([
             ...$validated,
+            'tenant_id' => tenant('id'),
             'ModifiedBy' => auth()->user()->id,
         ]);
 

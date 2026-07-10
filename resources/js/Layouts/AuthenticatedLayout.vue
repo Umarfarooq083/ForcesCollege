@@ -119,11 +119,11 @@ const filterMenu = (items) => {
 }
 
 const academicItems = [
+    { label: 'Program', base: 'program.index', route: ['program.index', 'program.create', 'program.edit'], icon: '' },
+    { label: 'Program Levels', base: 'programlevel.index', route: ['programlevel.index','programlevel.create', 'programlevel.submit', 'programlevel.edit','programlevel.update','programlevel.delete'], icon: '' },
     { label: 'Class', base: 'class.index', route: ['class.index', 'class.create'], icon: '' },
     { label: 'Section', base: 'section.index', route: ['section.index', 'section.create'], icon: '' },
     { label: 'Subjects', base: 'subject.index', route: ['subject.index', 'subject.create', 'subject.edit'], icon: '' },
-    { label: 'Program', base: 'program.index', route: ['program.index', 'program.create', 'program.edit'], icon: '' },
-    { label: 'Program Levels', base: 'programlevel.index', route: ['programlevel.index','programlevel.create', 'programlevel.submit', 'programlevel.edit','programlevel.update','programlevel.delete'], icon: '' }
 ]
 
 const filteredAcademicItems = computed(() => filterMenu(academicItems))
@@ -187,8 +187,8 @@ const settingsItems = [
     { label: 'Roles', base: 'role.index', route: ['role.index', 'role.create', 'role.edit', 'role.permission.assign'], icon: '' },
     { label: 'Campus', base: 'campus.index', route: ['campus.index', 'campus.create', 'campus.edit'], icon: '' },
     { label: 'Users', base: 'user.index', route: ['user.index', 'user.create', 'user.edit'], icon: '' },
-    // { label: 'Sessions', base: 'lmssessions.index', route: ['lmssessions.index', 'lmssessions.create', 'lmssessions.edit'], icon: '' },
-    // { label: 'Zones', base: 'zone.index', route: ['zone.index', 'zone.create'], icon: '' },
+    { label: 'Sessions', base: 'lmssessions.index', route: ['lmssessions.index', 'lmssessions.create', 'lmssessions.edit'], icon: '' },
+    { label: 'Zones', base: 'zone.index', route: ['zone.index', 'zone.create'], icon: '' },
 ]
 const filteredSettingsItems = computed(() => filterMenu(settingsItems))
 

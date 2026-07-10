@@ -36,8 +36,7 @@ class SectionController extends Controller
 
     public function create(): Response
     {
-        $campusClassList = campusClassList();
-        $classesList = Classes::whereIn('class_type_id', $campusClassList)->get();
+        $classesList = Classes::select('id','ClassName')->where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
         $sectionTypes = SectionType::select('id', 'name')->where('status', 1)->get();
 
         return Inertia::render('Section/Create',[

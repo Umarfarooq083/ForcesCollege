@@ -20,8 +20,7 @@ class ClassteacherAssignService
         }else{
             $data['StaffList'] = [];
         }
-        $classType_ids = campusClassList();
-        $classList = Classes::select('id', 'tenant_id', 'ClassName')->whereIn('class_type_id', $classType_ids)->get();
+        $classList = Classes::select('id', 'tenant_id', 'ClassName')->where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
         $class_ids = collect($classList);
         $data['classList'] = $classList;
         $classIdsSection = $class_ids->pluck('id')->toArray();

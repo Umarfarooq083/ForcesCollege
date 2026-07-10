@@ -29,12 +29,13 @@ class SubjectRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('subjects')
-                    ->where(fn($query) => $query->where('ClassId', $request->ClassId)->where('tenant_id',tenant('id')))
+                    ->where(fn($query) => $query->where('ClassId', $request->ClassId)->where('program_level_id',$request->program_level_id)->where('tenant_id',tenant('id')))
                     ->ignore($request->id), 
             ],
             'SubjectType' => 'required',
             'SubjectCode' => 'required',
             'ClassId' => 'required',
+            'program_level_id' => 'required|exists:program_levels,id',
         ];
     }
 }

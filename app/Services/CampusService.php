@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Campus;
-use App\Models\CampusClassType;
 use App\Models\Roles;
 use App\Models\Tenant;
 use App\Models\User;
@@ -53,13 +52,6 @@ class CampusService
             $campusCreate->update([
                 'tenant_id' => $tenant->id,
             ]);
-            // Create Campus Class Types 
-            $insertClasstype = [];
-            foreach($request->class_type_ids as $key=>$type_id){
-                $insertClasstype[$key]['campus_id'] = $campusCreate->id;
-                $insertClasstype[$key]['class_type_id'] = $type_id['id'];
-            }
-            CampusClassType::insert($insertClasstype);
 
             // Create Domin for campus 
             $tenant->domains()->create([

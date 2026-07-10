@@ -8,16 +8,16 @@ import PrimaryButton from '@/Components/PrimaryButton.vue'
 import { useForm } from '@inertiajs/vue3';
 import 'vue-multiselect/dist/vue-multiselect.min.css'
 
-
+  
 const props = defineProps({
-    classtype: Object,
     classesList: Object,
+    programs: Array,
 });
 const form = useForm({
     id: props.classesList.id,
     ClassName: props.classesList.ClassName,
     ClassOrder: props.classesList.ClassOrder,
-    class_type_id: props.classesList.class_type_id,
+    program_id: props.classesList.program_id || '',
 });
 
 </script>
@@ -29,7 +29,7 @@ const form = useForm({
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">Create Campus</h2>
         </template>
-      
+       
         <form @submit.prevent="form.post(route('class.update'))">
             <div class="row">
                 <div class="col-md-12">
@@ -45,24 +45,24 @@ const form = useForm({
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <InputLabel value="Class Type" /> <span class="text-danger font-12 position-absolute">★</span>
-                                        <select class="form-control" v-model="form.class_type_id">
-                                            <option selected disabled value="">Select Class Type</option>
-                                            <option v-for="classtypeList in classtype" :key="classtypeList.id" :value="classtypeList.id">
-                                                {{ classtypeList.Name }}
-                                            </option>
-                                        </select>
-                                         <InputError class="mt-2" :message="form.errors.class_type_id" />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <div class="mb-3">
                                         <InputLabel value="Order" /> <span class="text-danger font-12 position-absolute">★</span>
                                         <TextInput type="number" v-model="form.ClassOrder" class="form-control" />
                                         <InputError class="mt-2" :message="form.errors.ClassOrder" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <InputLabel value="Program" />
+                                        <select class="form-control" v-model="form.program_id">
+                                            <option selected disabled value="">Select Program</option>
+                                            <option v-for="program in programs" :key="program.id" :value="program.id">
+                                                {{ program.name }}
+                                            </option>
+                                        </select>
+                                        <InputError class="mt-2" :message="form.errors.program_id" />
                                     </div>
                                 </div>
 

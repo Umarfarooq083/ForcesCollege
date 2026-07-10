@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Class;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ClassRequest;
 use App\Models\Classes;
+use App\Models\Program;
 use Illuminate\Http\RedirectResponse;
-use App\Models\ClassType;
 use App\Services\ClassService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,23 +29,25 @@ class ClassController extends Controller
       ]);
    }
 
-   public function create(): Response
-   {
-      $classtype = ClassType::get();
-      return Inertia::render('Classes/Create',[
-         'classtype' => $classtype,
-      ]);
-   }
-   
-   public function edit(Request $request)
-   {
-      $classtype = ClassType::get();
-      $classesList = Classes::findOrFail($request->id);
-      return Inertia::render('Classes/Edit',[
-         'classtype' => $classtype,
-         'classesList' => $classesList,
-      ]);
-   }
+public function create(): Response
+    {
+        $programs = Program::select('id', 'name')->where('tenant_id', tenant('id'))->get();
+
+        return Inertia::render('Classes/Create',[
+            'programs' => $programs,
+        ]);
+    }
+    
+    public function edit(Request $request)
+    {
+        $classesList = Classes::with('program')->findOrFail($request->id);
+        $programs = Program::select('id', 'name')->where('tenant_id', tenant('id'))->get();
+
+        return Inertia::render('Classes/Edit',[
+            'classesList' => $classesList,
+            'programs' => $programs,
+        ]);
+    }
 
    public function submit(ClassRequest $request): RedirectResponse
    {

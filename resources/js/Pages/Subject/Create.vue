@@ -6,23 +6,49 @@ import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import { useForm } from '@inertiajs/vue3';
+import axios from 'axios';
+import { ref, watch } from 'vue';
 import 'vue-multiselect/dist/vue-multiselect.min.css'
 
 
 const props = defineProps({
     classesList: Object,
+    programs: Array,
 });
 const form = useForm({
     SubjectName: '',
     SubjectType: '',
     SubjectCode: '',
     ClassId: '',
+    program_level_id: '',
 });
 
 const SubjectTypeList = [
     { id: 'Practical', name: 'Practical' },
     { id: 'Theory', name: 'Theory' },
 ];
+
+const programLevels = ref([]);
+
+async function loadProgramLevels(classId) {
+    if (!classId) {
+        programLevels.value = [];
+        return;
+    }
+    
+    try {
+        const response = await axios.get(route('subject.program-levels', { class: classId }));
+        programLevels.value = response.data.program_level;
+    } catch (error) {
+        console.error('Error loading program levels:', error);
+        programLevels.value = [];
+    }
+}
+
+watch(() => form.ClassId, (newVal) => {
+    form.program_level_id = '';
+    loadProgramLevels(newVal);
+});
 
 </script>
 
@@ -31,14 +57,14 @@ const SubjectTypeList = [
     <Head title="Student Inquiry" />
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="text-xl font-semibold leading-tight text-gray-800">Create Campus</h2>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">Create Subject</h2>
         </template>
- 
+  
         <form @submit.prevent="form.post(route('subject.submit'))">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="header">Create Sbject</div>
+                        <div class="header">Create Subject</div>
                         <div class="body">
                             <div class="row">
                                 <div class="col-md-6">
@@ -80,6 +106,19 @@ const SubjectTypeList = [
                                             </option>
                                         </select>
                                          <InputError class="mt-2" :message="form.errors.ClassId" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <InputLabel value="Program Level *" />
+                                        <select class="form-control" v-model="form.program_level_id" :disabled="!programLevels.length">
+                                            <option selected disabled value="">Select a Program Level</option>
+                                            <option v-for="level in programLevels" :key="level.id" :value="level.id">
+                                                {{ level.title }}
+                                            </option>
+                                        </select>
+                                         <InputError class="mt-2" :message="form.errors.program_level_id" />
                                     </div>
                                 </div>
 

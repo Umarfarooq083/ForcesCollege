@@ -23,7 +23,7 @@ class StudentAttendanceService
 
     public function getClasses(): Collection
     {
-        return Classes::whereIn('class_type_id', campusClassList())->where('IsActive', 1)->get(['id', 'ClassName', 'tenant_id']);
+        return Classes::where('tenant_id', tenant('id'))->where('IsActive', 1)->get(['id', 'ClassName', 'tenant_id']);
     }
 
     public function getClassesSections($classes): Collection

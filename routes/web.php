@@ -191,6 +191,7 @@ Route::middleware([
         Route::post('submit', [SubjectController::class, 'submit'])->name('subject.submit');
         Route::get('edit', [SubjectController::class, 'edit'])->name('subject.edit');
         Route::put('update', [SubjectController::class, 'update'])->name('subject.update');
+        Route::get('program-levels/{class}', [SubjectController::class, 'getProgramLevelsByClass'])->name('subject.program-levels');
     });
 
     Route::group(['prefix' => 'program', 'middleware' => ['auth', 'check_permission']], function () {

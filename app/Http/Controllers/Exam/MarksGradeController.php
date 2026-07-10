@@ -34,8 +34,7 @@ class MarksGradeController extends Controller
 
     public function create(): Response
     {
-        $campusClassList = campusClassList();
-        $classes = Classes::whereIn('class_type_id', $campusClassList)->get();
+        $classes = Classes::where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
         return Inertia::render('Exam/ExamGrade/Create', [
             'classes' => $classes
         ]);
@@ -67,8 +66,7 @@ class MarksGradeController extends Controller
     public function edit(Request $request): Response
     {
         $grade = ExamGrade::where('tenant_id', tenant('id'))->where('id', $request->id)->first();
-        $campusClassList = campusClassList();
-        $classes = Classes::where('tenant_id', tenant('id'))->whereIn('class_type_id', $campusClassList)->get();
+        $classes = Classes::where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
         return Inertia::render('Exam/ExamGrade/Edit', [
             'grade' => $grade,
             'classes' => $classes

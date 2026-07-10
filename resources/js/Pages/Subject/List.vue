@@ -14,6 +14,8 @@ const columns = [
     { label: 'ID' },
     { label: 'Subject Name' },
     { label: 'Class Name' },
+    { label: 'Program' },
+    { label: 'Program Level' },
     { label: 'Action' },
 ];
 
@@ -73,10 +75,15 @@ watch(search, debounce((value) => {
                                 <td>
                                     {{ list.SubjectName }}
                                 </td>
-                                 <td>
-                                  {{ list.classes.ClassName }}
+                                <td>
+                                    {{ list.classes.ClassName }}
                                 </td>
-                               
+                                <td>
+                                 {{ list?.classes?.program?.name}}
+                               </td>
+                                <td>
+                                  {{ list?.program_level?.title }}
+                                </td>
                                 <td>
                                     <div class="action_btn">
                                          <Link v-if="$page.props.auth.user.user_permissions.indexOf('subject.edit') > -1" :href="route('subject.edit',{id:list.id})" method="get" type="button" 

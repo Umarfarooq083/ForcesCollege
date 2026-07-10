@@ -30,9 +30,7 @@ class ClassTimeTableController extends Controller
     public function create(): Response
     {
         $staffList = $this->timetablesService->getStaffList();
-        // $classesList = $this->timetablesService->getClassesList();
-        $classType_ids = campusClassList();
-        $classesList = Classes::select('id', 'tenant_id', 'ClassName')->whereIn('class_type_id', $classType_ids)->get();
+        $classesList = Classes::select('id', 'tenant_id', 'ClassName')->where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
         return Inertia::render('Staff/ClassTimeTable/Create', [
             'staffList' => $staffList,
             'classesList' => $classesList,

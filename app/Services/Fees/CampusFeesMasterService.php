@@ -224,7 +224,7 @@ class CampusFeesMasterService
 
     protected function getClassesList(): Collection
     {
-        return Classes::whereIn('class_type_id', campusClassList())->where('IsActive', 1)->get(['id', 'ClassName as name', 'tenant_id']);
+        return Classes::where('tenant_id', tenant('id'))->where('IsActive', 1)->get(['id', 'ClassName as name', 'tenant_id']);
     }
 
     protected function getSessionData(): ?LmsSession

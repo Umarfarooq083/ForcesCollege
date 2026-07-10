@@ -103,8 +103,7 @@ if (!function_exists('campusClassList')) {
         if(session('switched_tenant_id')){
             $tenant_id = session('switched_tenant_id');
         }
-        $campusData = Campus::select('id', 'tenant_id', 'DomainName')->where('tenant_id', $tenant_id)->with('campusClassType')->first();
-        return $campusData->campusClassType->pluck('class_type_id')->toArray();
+        return Classes::select('id', 'tenant_id', 'ClassName')->where('tenant_id', $tenant_id)->where('IsActive', 1)->get()->pluck('id', 'id')->toArray();
     }
 }
 
@@ -115,9 +114,7 @@ if (!function_exists('campusClass')) {
         if(session('switched_tenant_id')){
             $tenant_id = session('switched_tenant_id');
         }
-        $campusData = Campus::select('id', 'tenant_id', 'DomainName')->where('tenant_id', $tenant_id)->with('campusClassType')->first();
-        $class_ids = $campusData->campusClassType->pluck('class_type_id')->toArray();
-        return Classes::select('id', 'tenant_id', 'ClassName')->whereIn('class_type_id', $class_ids)->get();
+        return Classes::select('id', 'tenant_id', 'ClassName')->where('tenant_id', $tenant_id)->where('IsActive', 1)->get();
     }
 }
 
@@ -167,8 +164,7 @@ if (!function_exists('fetchCurrentSession')) {
 if (!function_exists('classAndSections')) {
     function classAndSections()
     {
-        $classType_ids = campusClassList();
-        $classList = Classes::select('id', 'tenant_id', 'ClassName')->whereIn('class_type_id', $classType_ids)->get();
+        $classList = Classes::select('id', 'tenant_id', 'ClassName')->where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
         $class_ids = collect($classList);
         $data['classList'] = $classList;
         $classIdsSection = $class_ids->pluck('id')->toArray();

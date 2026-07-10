@@ -52,7 +52,6 @@ class CampusRequest extends FormRequest
             'SortOrder' => 'nullable|integer',
             'zoneid' => 'required',
             'regionid' => 'nullable|integer|exists:regions,id',
-            'class_type_ids' => ['required', 'array', 'min:1'],
             'DomainName' => 'required|string|max:255',
         ];
 
@@ -83,7 +82,6 @@ class CampusRequest extends FormRequest
             // make these optional if not editable on update
             $rules['zoneid'] = 'nullable';
             $rules['regionid'] = 'nullable|integer|exists:regions,id';
-            $rules['class_type_ids'] = 'nullable|array|min:1';
             $rules['DomainName'] = 'nullable|string|max:255';
             $rules['IsActive'] = 'sometimes|boolean';
             $rules['IsDeleted'] = 'sometimes|boolean';

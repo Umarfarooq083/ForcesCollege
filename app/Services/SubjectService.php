@@ -28,10 +28,10 @@ class SubjectService
         $subjectUpdate->SubjectType = $request->SubjectType;
         $subjectUpdate->SubjectCode = $request->SubjectCode;
         $subjectUpdate->ClassId = $request->ClassId;
+        $subjectUpdate->program_level_id = $request->program_level_id;
 
         if($subjectUpdate->save()){
             userActivityLogs('Subject Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', AcademicLog::class);
         }
-   
     }
 }

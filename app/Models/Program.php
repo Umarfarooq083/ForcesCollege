@@ -11,4 +11,9 @@ class Program extends Model
     protected $casts = [
         'IsActive' => 'boolean',
     ];
+
+    public function programLevels()
+    {
+        return $this->hasMany(ProgramLevel::class, 'programm_id', 'id');
+    }
 }

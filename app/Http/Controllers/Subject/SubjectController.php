@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Subject;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subject\SubjectRequest;
 use App\Models\Classes;
+use App\Models\Program;
+use App\Models\ProgramLevel;
 use App\Models\Subject;
 use App\Services\SubjectService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -23,7 +26,8 @@ class SubjectController extends Controller
 
     public function index(Request $request): Response
     {
-        $subject = Subject::select('id', 'SubjectName', 'ClassId')->where('tenant_id',tenant('id'))->with('classes');
+        $subject = Subject::select('id', 'SubjectName', 'ClassId','program_level_id')->where('tenant_id',tenant('id'))->with('classes.program')->with('programLevel');
+        
         if($request->filled('search')){
             $subject->where(function($q) use($request) {
                 $q->where('SubjectName', 'like', '%'. $request->search .'%')
@@ -33,6 +37,8 @@ class SubjectController extends Controller
             });
         }
         $subject = $subject->orderBy('id','desc')->paginate(25)->withQueryString();
+        // $subject = $subject->orderBy('id','desc')->get();
+        // dd($subject->toArray());
         return Inertia::render('Subject/List', [
             'subject' => $subject,
         ]);
@@ -41,8 +47,24 @@ class SubjectController extends Controller
     public function create(): Response
     {
         $classesList = $this->classList();
+        $programs = Program::select('id', 'name')->where('tenant_id', tenant('id'))->get();
         return Inertia::render('Subject/Create', [
             'classesList' => $classesList,
+            'programs' => $programs,
+        ]);
+    }
+
+    public function getProgramLevelsByClass(int $class): JsonResponse
+    {
+        $classData = Classes::with('program')->findOrFail($class);
+        $programLevels = ProgramLevel::select('id', 'title', 'status')
+            ->where('programm_id', $classData->program_id)
+            ->where('tenant_id', tenant('id'))
+            ->get();
+
+        return response()->json([
+            'program_level' => $programLevels,
+            'program' => $classData->program,
         ]);
     }
 
@@ -56,9 +78,11 @@ class SubjectController extends Controller
     {
         $classesList = $this->classList();
         $subjectData = Subject::where('id',$request->id)->first();
+        $programs = Program::select('id', 'name')->where('tenant_id', tenant('id'))->get();
         return Inertia::render('Subject/Edit', [
             'subjectData' => $subjectData,
             'classesList' => $classesList,
+            'programs' => $programs,
         ]);
     }
 

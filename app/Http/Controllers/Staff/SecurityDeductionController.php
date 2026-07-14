@@ -22,14 +22,16 @@ class SecurityDeductionController extends Controller
     public function index(): Response
     {
         $securityDeductions = $this->securityDeductionService->index();
+
         return Inertia::render('Staff/SecurityDeduction/List', [
-            'securityDeductions' => $securityDeductions
+            'securityDeductions' => $securityDeductions,
         ]);
     }
 
     public function create(): Response
     {
         $data = $this->securityDeductionService->create();
+
         return Inertia::render('Staff/SecurityDeduction/Create', [
             'data' => $data,
         ]);
@@ -38,12 +40,14 @@ class SecurityDeductionController extends Controller
     public function submit(SecurityDeductionRequest $request): RedirectResponse
     {
         $this->securityDeductionService->submit($request);
+
         return $this->redirectSuccess('Security deduction created successfully!', 'securitydeduction.index');
     }
 
     public function edit(Request $request): Response
     {
         $data = $this->securityDeductionService->edit($request);
+
         return Inertia::render('Staff/SecurityDeduction/Edit', [
             'securityDeduction' => $data->securityDeduction,
             'staffList' => $data->staffList,
@@ -53,12 +57,14 @@ class SecurityDeductionController extends Controller
     public function update(SecurityDeductionRequest $request): RedirectResponse
     {
         $this->securityDeductionService->update($request);
+
         return $this->redirectSuccess('Security deduction updated successfully!', 'securitydeduction.index');
     }
 
     public function delete(Request $request): RedirectResponse
     {
         $this->securityDeductionService->destroy($request);
+
         return $this->redirectSuccess('Security deduction deleted successfully!', 'securitydeduction.index');
     }
 }

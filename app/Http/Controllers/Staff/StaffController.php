@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Staff\StaffRequest;
-use App\Models\DisableReason;
 use App\Models\HumanResourceLog;
 use App\Models\Staff;
 use App\Models\StaffDisableReason;
@@ -17,6 +16,7 @@ use Inertia\Response;
 class StaffController extends Controller
 {
     protected $staffService;
+
     public function __construct(StaffService $staffService)
     {
         $this->staffService = $staffService;
@@ -27,6 +27,7 @@ class StaffController extends Controller
         $staffList = $this->staffService->index();
         // dd($staffList->toArray());
         $disableReasons = StaffDisableReason::select('id', 'DisableReasonName')->get();
+
         return Inertia::render('Staff/StaffList', [
             'staffList' => $staffList,
             'disable_reasons' => $disableReasons,
@@ -36,6 +37,7 @@ class StaffController extends Controller
     public function create(): Response
     {
         $data = $this->staffService->create();
+
         return Inertia::render('Staff/StaffCreate', [
             'data' => $data,
         ]);
@@ -44,6 +46,7 @@ class StaffController extends Controller
     public function submit(StaffRequest $request): RedirectResponse
     {
         $this->staffService->submit($request);
+
         return $this->redirectSuccess('Staff created successfully!', 'staff.list');
     }
 
@@ -51,6 +54,7 @@ class StaffController extends Controller
     {
         $staff = Staff::Findorfail($request->id);
         $data = $this->staffService->create();
+
         return Inertia::render('Staff/StaffEdit', [
             'staff' => $staff,
             'data' => $data,
@@ -60,18 +64,19 @@ class StaffController extends Controller
     public function update(StaffRequest $request): RedirectResponse
     {
         $this->staffService->update($request);
+
         return $this->redirectSuccess('Staff updated successfully!', 'staff.list');
     }
 
-     public function delete(Request $request): RedirectResponse
+    public function delete(Request $request): RedirectResponse
     {
         $staff = Staff::query();
-        $staff->where('id',$request->id)->update([
-            'ModifiedBy' => auth()->user()->id
+        $staff->where('id', $request->id)->update([
+            'ModifiedBy' => auth()->user()->id,
         ]);
         $deleted = Staff::findorFail($request->id)->delete();
 
-        if($deleted){
+        if ($deleted) {
             userActivityLogs('Staff Deleted and id is '.$request->id.' User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
 
@@ -82,11 +87,11 @@ class StaffController extends Controller
     {
         $request->validate([
             'FromDate' => ['nullable', 'date'],
-            'Reason'   => ['required', 'max:255'],
+            'Reason' => ['required', 'max:255'],
         ]);
 
         $this->staffService->toggleStatus($request, $id);
+
         return $this->redirectSuccess('Staff status updated successfully!', 'staff.list');
     }
-    
 }

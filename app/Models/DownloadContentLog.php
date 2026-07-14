@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class DownloadContentLog extends Model
 {
-    protected $fillable = [ 
-        'tenant_id','user_id','domainName','upload_content_id','important_content_upload_log_id','created_at','updated_at'
+    protected $fillable = [
+        'tenant_id', 'user_id', 'domainName', 'upload_content_id', 'important_content_upload_log_id', 'created_at', 'updated_at',
     ];
 
     public function user()
@@ -24,6 +24,4 @@ class DownloadContentLog extends Model
     {
         return $this->belongsTo(Tenant::class, 'tenant_id');
     }
-
-    
 }

@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class GuardianInfo extends Model
 {
     protected $table = 'guardian_info';
+
     protected $fillable = [
-        'tenant_id','cnic','name'
+        'tenant_id', 'cnic', 'name',
     ];
 
     public function scopeTenant($query)
     {
-        return $query->where('tenant_id',tenant('id'));
+        return $query->where('tenant_id', tenant('id'));
     }
 
     public function studentInquiries()

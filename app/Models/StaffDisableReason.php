@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class StaffDisableReason extends Model
 {
     protected $table = 'staff_disable_reasons';
+
     protected $fillable = [
         'id',
         'IsActive',

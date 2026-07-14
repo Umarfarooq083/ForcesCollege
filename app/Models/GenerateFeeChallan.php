@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class GenerateFeeChallan extends Model
 {
     use SoftDeletes;
+
     protected $table = 'generate_fee_challan';
+
     protected $fillable = [
         'tenant_id',
         'challan_no',
@@ -31,11 +33,11 @@ class GenerateFeeChallan extends Model
         'Note',
         'CollectDate',
         'CollectBy',
-        'IsPartialPayment'
+        'IsPartialPayment',
     ];
 
-
-    public function student(){
+    public function student()
+    {
         return $this->hasOne(Student::class, 'id', 'StudentId')->Select('id', 'ClassId', 'SectionId', 'tenant_id', 'FirstName', 'LastName');
     }
 
@@ -51,7 +53,6 @@ class GenerateFeeChallan extends Model
         'ExpiryDate' => 'date:M-d-Y',
     ];
 
-
     public function ChallanTransactions()
     {
         return $this->hasMany(ChallanTransactions::class, 'generate_challan_id', 'id');
@@ -59,7 +60,7 @@ class GenerateFeeChallan extends Model
 
     public function StudentRel()
     {
-        return $this->hasOne(Student::class, 'id', 'StudentId')->select('id', 'FirstName', 'LastName','RollNumber','ClassId','SectionId','FatherName');
+        return $this->hasOne(Student::class, 'id', 'StudentId')->select('id', 'FirstName', 'LastName', 'RollNumber', 'ClassId', 'SectionId', 'FatherName');
     }
 
     public function partialPayments()
@@ -76,7 +77,7 @@ class GenerateFeeChallan extends Model
     {
         return $this->hasMany(ArrearChallanDetails::class, 'GenerateFeeChallanId')
             ->select('id', 'GenerateFeeChallanId', 'FKeyId')
-            ->where('transactionType','Arrears')
+            ->where('transactionType', 'Arrears')
             ->with('challan_partial_payment')
             ->withSum('arrear_challan_transaction', 'BalanceFeeAfterDiscount');
     }
@@ -85,12 +86,12 @@ class GenerateFeeChallan extends Model
     {
         return $this->hasOne(LmsSession::class, 'id', 'SessionId');
     }
-    
+
     public function ClassRel()
     {
         return $this->hasOne(Classes::class, 'id', 'ClassId');
     }
-    
+
     public function SectionRel()
     {
         return $this->hasOne(Section::class, 'id', 'SectionId');
@@ -100,7 +101,7 @@ class GenerateFeeChallan extends Model
     {
         return $this->hasMany(ArrearChallanDetails::class, 'GenerateFeeChallanId')
             ->select('id', 'GenerateFeeChallanId', 'FKeyId')
-            ->where('transactionType','Arrears')
+            ->where('transactionType', 'Arrears')
             // ->with('challan_partial_payment')
             ->with('arrear_challan_fine')
             ->withSum('arrear_challan_transaction', 'BalanceFeeAfterDiscount');

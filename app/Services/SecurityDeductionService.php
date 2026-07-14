@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\SecurityDeduction;
 use App\Models\HumanResourceLog;
+use App\Models\SecurityDeduction;
 use Illuminate\Validation\ValidationException;
 
 class SecurityDeductionService
@@ -64,7 +64,7 @@ class SecurityDeductionService
         ]);
 
         if ($created) {
-            userActivityLogs('Security Deduction Created and By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Security Deduction Created and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -122,7 +122,7 @@ class SecurityDeductionService
         ]);
 
         if ($updated) {
-            userActivityLogs('Security Deduction Updated and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Security Deduction Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -132,7 +132,7 @@ class SecurityDeductionService
         $deleted = $securityDeduction->delete();
 
         if ($deleted) {
-            userActivityLogs('Security Deduction Deleted and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Security Deduction Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 }

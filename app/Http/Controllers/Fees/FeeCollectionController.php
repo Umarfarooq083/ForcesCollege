@@ -13,9 +13,11 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response;
+
 class FeeCollectionController extends Controller
 {
     protected $feeCollectionService;
+
     public function __construct(FeeCollectionService $feeCollectionService)
     {
         $this->feeCollectionService = $feeCollectionService;
@@ -24,6 +26,7 @@ class FeeCollectionController extends Controller
     public function index(Request $request): Response
     {
         $data = $this->feeCollectionService->index($request);
+
         return Inertia::render('Fees/FeeCollection/ChallanList', $data);
     }
 
@@ -31,12 +34,13 @@ class FeeCollectionController extends Controller
     {
         $data = $this->feeCollectionService->create($request->validated());
 
-        if (!empty($data['error'])) {
-            return $this->redirectSuccess($data['error'], 'fee.collection.list'); 
+        if (! empty($data['error'])) {
+            return $this->redirectSuccess($data['error'], 'fee.collection.list');
         }
 
         $challan_after_discount = $data['GenerateFeeChallan']->transection_sum_balancefeeafterdiscount;
         $data['TotalChallanAmount'] = ($data['total_challan_amount'] + $challan_after_discount - $data['wived_off']);
+
         // dd($data['TotalChallanAmount']);
         return Inertia::render('Fees/FeeCollection/Create', $data);
     }
@@ -55,7 +59,7 @@ class FeeCollectionController extends Controller
             ->find($receipt['generate_fee_challan_id']);
 
         if ($challan) {
-            $receipt['student_name'] = trim(($challan->StudentRel?->FirstName ?? '') . ' ' . ($challan->StudentRel?->LastName ?? ''));
+            $receipt['student_name'] = trim(($challan->StudentRel?->FirstName ?? '').' '.($challan->StudentRel?->LastName ?? ''));
             $receipt['roll_no'] = $challan->StudentRel?->RollNumber;
             $receipt['father_name'] = $challan->StudentRel?->FatherName;
             $receipt['class_name'] = $challan->ClassRel?->ClassName;
@@ -73,16 +77,18 @@ class FeeCollectionController extends Controller
     public function show(FeeCollectionRequest $request): Response|RedirectResponse
     {
         $data = $this->feeCollectionService->show($request->validated());
-        if (!empty($data['error'])) {
-            return $this->redirectSuccess($data['error'], 'fee.collection.list'); 
+        if (! empty($data['error'])) {
+            return $this->redirectSuccess($data['error'], 'fee.collection.list');
         }
+
         return Inertia::render('Fees/FeeCollection/Details', $data);
     }
 
     public function delete($id): RedirectResponse
     {
         $this->feeCollectionService->delete($id);
-        return $this->redirectSuccess('challan item deleted successfully.', 'fee.collection'); 
+
+        return $this->redirectSuccess('challan item deleted successfully.', 'fee.collection');
     }
 
     public function receipt(Request $request, int $id): View
@@ -93,7 +99,7 @@ class FeeCollectionController extends Controller
         }
 
         $receipt = session('receipt');
-        if (!is_array($receipt) || ((int) ($receipt['generate_fee_challan_id'] ?? 0) !== $id)) {
+        if (! is_array($receipt) || ((int) ($receipt['generate_fee_challan_id'] ?? 0) !== $id)) {
             abort(404, 'Receipt not found (receipt is not stored).');
         }
 
@@ -103,7 +109,7 @@ class FeeCollectionController extends Controller
 
         $campusData = Campus::select('id', 'tenant_id', 'SchoolName', 'Address', 'PhoneNo', 'MobileNo', 'Logo')
             ->where('tenant_id', $tenantId)
-            ->first() ?? new Campus();
+            ->first() ?? new Campus;
 
         return view('fees.receipt', [
             'receipt' => $receipt,

@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ContentUpload extends Model
 {
     use SoftDeletes;
+
     protected $table = 'content_upload';
+
     protected $fillable = [
         'tenant_id',
         'ContentTitle',
@@ -35,14 +37,14 @@ class ContentUpload extends Model
         'termId',
         'monthId',
         'weekId',
-        'imported_upload_content_id'
+        'imported_upload_content_id',
     ];
 
     public function Classes()
     {
         return $this->hasOne(Classes::class, 'id', 'ClassId')->select('id', 'ClassName');
     }
-    
+
     public function Subjects()
     {
         return $this->hasOne(Subject::class, 'id', 'subjectId')->select('id', 'SubjectName');
@@ -52,7 +54,7 @@ class ContentUpload extends Model
     {
         return $this->hasOne(UploadContentGroup::class, 'id', 'UploadContentGroupId')->select('id', 'name');
     }
-   
+
     public function ContentRegion()
     {
         return $this->hasMany(UploadContentRegion::class, 'upload_content_id', 'id');

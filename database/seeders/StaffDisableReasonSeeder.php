@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -12,11 +11,11 @@ class StaffDisableReasonSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-   public function run(): void
+    public function run(): void
     {
         DB::table('staff_disable_reasons')->truncate();
         DB::table('staff_disable_reasons')->insert([
-           [
+            [
                 'id' => 1,
                 'IsActive' => 1,
                 'CreatedBy' => 1,

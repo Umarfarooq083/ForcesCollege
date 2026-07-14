@@ -4,8 +4,8 @@ namespace App\Http\Controllers\UploadContent;
 
 use App\Exports\DownloadedLogsExport;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UploadContent\UploadContentRequest;
 use App\Http\Requests\UploadContent\UpdateUploadContentRequest;
+use App\Http\Requests\UploadContent\UploadContentRequest;
 use App\Models\ContentUpload;
 use App\Models\Subject;
 use App\Services\UploadContentService;
@@ -49,22 +49,23 @@ class ContentUploadController extends Controller
         ]);
     }
 
-public function Approval(Request $request)
-     {
-         $contentUpload = $this->uploadContentService->Approval($request);
+    public function Approval(Request $request)
+    {
+        $contentUpload = $this->uploadContentService->Approval($request);
 
-         return Inertia::render('UploadContent/Approval', [
-             'contentUpload' => $contentUpload['contentUpload'],
-             'groups' => $contentUpload['groups'],
-             'selectedGroup' => $request->group,
-             'Campuses' => $contentUpload['campusList'],
-             'classesList' => $contentUpload['classesList'],
-         ]);
-     }
+        return Inertia::render('UploadContent/Approval', [
+            'contentUpload' => $contentUpload['contentUpload'],
+            'groups' => $contentUpload['groups'],
+            'selectedGroup' => $request->group,
+            'Campuses' => $contentUpload['campusList'],
+            'classesList' => $contentUpload['classesList'],
+        ]);
+    }
 
     public function Approve(Request $request)
     {
         $this->uploadContentService->Approve($request);
+
         return redirect()->back()->with('receipt', 'Content status updated successfully!');
 
         // return $this->redirectSuccess('Status updated successfully!', 'uploads.approval');

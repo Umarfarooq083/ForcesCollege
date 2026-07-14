@@ -8,18 +8,18 @@ use Illuminate\Support\Facades\Storage;
 
 class HomeWorkService
 {
-
     public function index($request)
     {
-        $home_work =  HomeWork::where('tenant_id', tenant('id'))->with('ClassRel','SectionRel','SubjectRel');
+        $home_work = HomeWork::where('tenant_id', tenant('id'))->with('ClassRel', 'SectionRel', 'SubjectRel');
         if ($request->filled('search')) {
-            $home_work->where(function($q) use($request){
-                $q->where('class', 'like', '%' . $request->search . '%')
-                ->orWhere('section', 'like', '%' . $request->search . '%')
-                ->orWhere('subject', 'like', '%' . $request->search . '%');
+            $home_work->where(function ($q) use ($request) {
+                $q->where('class', 'like', '%'.$request->search.'%')
+                    ->orWhere('section', 'like', '%'.$request->search.'%')
+                    ->orWhere('subject', 'like', '%'.$request->search.'%');
             });
         }
-        return $home_work->orderBy('id','desc')->paginate(25)->withQueryString();
+
+        return $home_work->orderBy('id', 'desc')->paginate(25)->withQueryString();
     }
 
     public function create(): array
@@ -27,26 +27,27 @@ class HomeWorkService
         $data = classAndSections();
         $classIds = $data['classList']->pluck('id')->toArray();
         $data['subjects'] = Subject::whereIn('ClassId', $classIds)->get();
+
         return $data;
     }
 
     public function submit($request)
     {
         $currentSession = fetchCurrentSession();
-        if(!$currentSession){
-            throw new \Exception('Current Session Not Found');  
+        if (! $currentSession) {
+            throw new \Exception('Current Session Not Found');
         }
         $validated = $request->validated();
         $filePath = null;
         if ($request->hasFile('attachDocumentPath')) {
             $filePath = $request->file('attachDocumentPath')->store('homeworks', 'public');
         }
-        $validated['tenant_id'] =  tenant('id');
-        $validated['attachDocumentPath'] =  $filePath;
+        $validated['tenant_id'] = tenant('id');
+        $validated['attachDocumentPath'] = $filePath;
         HomeWork::create([
             ...$validated,
             'sessionId' => $currentSession->id,
-            ]);
+        ]);
     }
 
     public function update($request)

@@ -21,22 +21,23 @@ class SubjectController extends Controller
 
     public function __construct(SubjectService $subjectService)
     {
-        $this->subjectService  = $subjectService;
+        $this->subjectService = $subjectService;
     }
 
     public function index(Request $request): Response
     {
-        $subject = Subject::select('id', 'SubjectName', 'ClassId','program_level_id')->where('tenant_id',tenant('id'))->with('classes.program')->with('programLevel');
-        
-        if($request->filled('search')){
-            $subject->where(function($q) use($request) {
-                $q->where('SubjectName', 'like', '%'. $request->search .'%')
-                ->orWhereHas('classes', function($sub) use($request) {
-                    $sub->where('ClassName', 'like', "%{$request->search}%");
-                });
+        $subject = Subject::select('id', 'SubjectName', 'ClassId', 'program_level_id')->where('tenant_id', tenant('id'))->with('classes.program')->with('programLevel');
+
+        if ($request->filled('search')) {
+            $subject->where(function ($q) use ($request) {
+                $q->where('SubjectName', 'like', '%'.$request->search.'%')
+                    ->orWhereHas('classes', function ($sub) use ($request) {
+                        $sub->where('ClassName', 'like', "%{$request->search}%");
+                    });
             });
         }
-        $subject = $subject->orderBy('id','desc')->paginate(25)->withQueryString();
+        $subject = $subject->orderBy('id', 'desc')->paginate(25)->withQueryString();
+
         // $subject = $subject->orderBy('id','desc')->get();
         // dd($subject->toArray());
         return Inertia::render('Subject/List', [
@@ -48,6 +49,7 @@ class SubjectController extends Controller
     {
         $classesList = $this->classList();
         $programs = Program::select('id', 'name')->where('tenant_id', tenant('id'))->get();
+
         return Inertia::render('Subject/Create', [
             'classesList' => $classesList,
             'programs' => $programs,
@@ -71,14 +73,16 @@ class SubjectController extends Controller
     public function submit(SubjectRequest $request): RedirectResponse
     {
         $this->subjectService->submit($request);
+
         return $this->redirectSuccess('Subject created successfully!', 'subject.index');
     }
 
     public function edit(Request $request): Response
     {
         $classesList = $this->classList();
-        $subjectData = Subject::where('id',$request->id)->first();
+        $subjectData = Subject::where('id', $request->id)->first();
         $programs = Program::select('id', 'name')->where('tenant_id', tenant('id'))->get();
+
         return Inertia::render('Subject/Edit', [
             'subjectData' => $subjectData,
             'classesList' => $classesList,
@@ -87,8 +91,9 @@ class SubjectController extends Controller
     }
 
     public function update(SubjectRequest $request): RedirectResponse
-    {  
+    {
         $this->subjectService->update($request);
+
         return $this->redirectSuccess('Subject created successfully!', 'subject.index');
     }
 

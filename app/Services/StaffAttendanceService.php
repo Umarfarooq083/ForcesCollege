@@ -31,19 +31,19 @@ class StaffAttendanceService
         return 0;
     }
 
-    public function staffAttendanceList($request): array 
+    public function staffAttendanceList($request): array
     {
         $data['departments'] = Department::get();
         $data['staffs'] = $this->getStaffList($request);
-        
+
         $existingAttendance = [];
-        if ($request->filled('date') && !$data['staffs']->isEmpty()) {
+        if ($request->filled('date') && ! $data['staffs']->isEmpty()) {
             $ids = $data['staffs']->pluck('id')->toArray();
             $attendances = StaffAttendance::where('AttendanceDate', $request->date)
                 ->where('tenant_id', tenant('id'))
                 ->whereIn('StaffId', $ids)
                 ->get(['StaffId', 'Attendance', 'start_time', 'end_time', 'late_minutes']);
-            
+
             foreach ($attendances as $att) {
                 $existingAttendance[$att->StaffId] = [
                     'attendance' => $att->Attendance,
@@ -53,22 +53,23 @@ class StaffAttendanceService
                 ];
             }
         }
-        
+
         $data['existingAttendance'] = $existingAttendance;
         $data['filters'] = $request->only(['department_id', 'date', 'all_staff']);
         $data['AttendanceDate'] = $request->date;
+
         return $data;
     }
 
     public function getStaffList($request): Collection
     {
-        $staffs_qry = Staff::select('id','tenant_id', 'DepartmentId','FirstName', 'LastName', 'IsActive')->where('tenant_id',tenant('id'))->where('IsActive', 1)->with('DepartmentRel');
+        $staffs_qry = Staff::select('id', 'tenant_id', 'DepartmentId', 'FirstName', 'LastName', 'IsActive')->where('tenant_id', tenant('id'))->where('IsActive', 1)->with('DepartmentRel');
         if ($request->has('all_staff') && $request->boolean('all_staff')) {
-           return $staffs_qry->get();
+            return $staffs_qry->get();
         } elseif ($request->filled('department_id')) {
-           return $staffs_qry->where('DepartmentId', $request->department_id)->get();
+            return $staffs_qry->where('DepartmentId', $request->department_id)->get();
         } else {
-           return collect();
+            return collect();
         }
     }
 
@@ -80,7 +81,7 @@ class StaffAttendanceService
         $currentSession = fetchCurrentSession();
         foreach ($attendance as $staffId => $data) {
             $status = is_array($data) ? $data['status'] : $data;
-            
+
             $isPresent = (string) $status === '1';
             $startTime = $isPresent && is_array($data) && isset($data['start_time']) ? $data['start_time'] : null;
             $endTime = $isPresent && is_array($data) && isset($data['end_time']) ? $data['end_time'] : null;
@@ -94,9 +95,9 @@ class StaffAttendanceService
                 ->where('AttendanceDate', $date)
                 ->first();
 
-            $attendanceType = match($status) {
+            $attendanceType = match ($status) {
                 '0' => 'Absent',
-                '1' => 'Present', 
+                '1' => 'Present',
                 '2' => 'Leave',
                 default => 'Present'
             };
@@ -110,7 +111,7 @@ class StaffAttendanceService
                     'ModifiedBy' => auth()->id(),
                 ]);
 
-                if($updated){
+                if ($updated) {
                     userActivityLogs('Staff Attendance Updated and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
                 }
 
@@ -129,10 +130,10 @@ class StaffAttendanceService
                     'CreatedBy' => auth()->user()->id,
                 ]);
 
-                if($created){
+                if ($created) {
                     userActivityLogs('Staff Attendance Created and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
                 }
             }
         }
-    } 
+    }
 }

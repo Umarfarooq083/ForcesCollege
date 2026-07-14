@@ -18,7 +18,7 @@ class ProgramLevelRequest extends FormRequest
             'programm_id' => [
                 'required',
                 'integer',
-                Rule::exists('programs', 'id')->where(fn($query) => $query->where('tenant_id', tenant('id'))),
+                Rule::exists('programs', 'id')->where(fn ($query) => $query->where('tenant_id', tenant('id'))),
             ],
             'title' => [
                 'required',

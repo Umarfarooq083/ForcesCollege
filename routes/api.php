@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-
-
 Route::post('/device-verification', [DeviceController::class, 'verify']);
 Route::post('/device-issue-token', [DeviceController::class, 'issueAutoLogin']);
 
@@ -31,7 +29,6 @@ Route::post('/device-issue-token', [DeviceController::class, 'issueAutoLogin']);
 //         'url' => "http://{$tenant_name}.lms/login",
 //     ]);
 // });
-
 
 // Route::get('/sections/{class_id}', [\App\Http\Controllers\SMS\SendSMSController::class, 'getByClass']);
 

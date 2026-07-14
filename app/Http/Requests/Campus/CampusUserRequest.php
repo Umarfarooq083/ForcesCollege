@@ -30,24 +30,24 @@ class CampusUserRequest extends FormRequest
                 'name' => ['required', 'string'],
                 'roles_ids' => ['required', 'array', 'min:1'],
                 'phone_no' => ['nullable', 'digits_between:4,15'],
-                'roles_ids.*.id' => ['required', 'integer', 'exists:roles,id'],     
+                'roles_ids.*.id' => ['required', 'integer', 'exists:roles,id'],
             ];
         }
-        
+
         return [
             'name' => ['required', 'string'],
             'email' => [
-            'required',
-            'string',
-            'email',
-            Rule::unique('users')->where(function ($query) {
-                return $query->where('tenant_id', tenant('id'));
-            }),
-        ],
+                'required',
+                'string',
+                'email',
+                Rule::unique('users')->where(function ($query) {
+                    return $query->where('tenant_id', tenant('id'));
+                }),
+            ],
             'password' => ['required', 'string'],
             'phone_no' => ['nullable', 'digits_between:4,15'],
             'roles_ids' => ['required', 'array', 'min:1'],
-            'roles_ids.*.id' => ['required', 'integer', 'exists:roles,id'],     
+            'roles_ids.*.id' => ['required', 'integer', 'exists:roles,id'],
         ];
     }
 }

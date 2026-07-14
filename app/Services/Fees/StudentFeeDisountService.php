@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Services\Fees;
 
 use App\Models\FeeLog;
 use App\Models\Student;
 use App\Models\StudentFeeDiscount;
-use Illuminate\Validation\ValidationException;
 use App\Models\StudentFeeDiscount as ModelsStudentFeeDiscount;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class StudentFeeDisountService
 {
@@ -27,13 +28,12 @@ class StudentFeeDisountService
         $this->handleMultiFeeCardsSubmit($validated);
     }
 
-    public function edit($request): Collection | ModelsStudentFeeDiscount
+    public function edit($request): Collection|ModelsStudentFeeDiscount
     {
-        return ModelsStudentFeeDiscount::with('studentRel', 'studentRel', 'SessionRel', 'CampusFeesMasterRel.FeeTypeRel','ClassRel','SectionRel')
+        return ModelsStudentFeeDiscount::with('studentRel', 'studentRel', 'SessionRel', 'CampusFeesMasterRel.FeeTypeRel', 'ClassRel', 'SectionRel')
             ->where('id', $request->id)
             ->first();
     }
-
 
     private function handleMultiFeeCardsSubmit(array $data): void
     {
@@ -66,14 +66,14 @@ class StudentFeeDisountService
             if ($exists) {
                 $studentName = Student::where('id', $card['studentId'])->first('FirstName');
                 throw ValidationException::withMessages([
-                    'msg' => 'Discount already applied for Student: ' . $studentName->FirstName
+                    'msg' => 'Discount already applied for Student: '.$studentName->FirstName,
                 ]);
             }
         }
 
         $created = StudentFeeDiscount::insert($createFee);
 
-        if($created){
+        if ($created) {
             userActivityLogs('Fee Discount Created and By User ID: '.auth()->user()->id.'', FeeLog::class);
         }
     }
@@ -87,7 +87,7 @@ class StudentFeeDisountService
             'TotalFee' => $request->TotalFee,
         ]);
 
-        if($updated){
+        if ($updated) {
             userActivityLogs('Fee Discount Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', FeeLog::class);
         }
     }
@@ -95,7 +95,7 @@ class StudentFeeDisountService
     public function delete($request): void
     {
         $studentFeeDiscount = ModelsStudentFeeDiscount::where('tenant_id', tenant('id'))->where('id', $request->id)->delete();
-        if($studentFeeDiscount){
+        if ($studentFeeDiscount) {
             userActivityLogs('Fee Discount Deleted and id is '.$request->id.'  By User ID: '.auth()->user()->id.'', FeeLog::class);
         }
     }

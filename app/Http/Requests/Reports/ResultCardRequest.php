@@ -21,7 +21,7 @@ class ResultCardRequest extends FormRequest
      */
     public function rules(): array
     {
-       // agar route `getexam.types` hai
+        // agar route `getexam.types` hai
         if ($this->routeIs('getexam.types')) {
             return [
                 'examtermid' => 'required|integer|exists:exam_terms,id',
@@ -31,7 +31,7 @@ class ResultCardRequest extends FormRequest
         // agar route `get.exam.students` hai
         if ($this->routeIs('get.exam.students')) {
             return [
-                'ExamId'  => 'required|integer|exists:exam_students,ExamId',
+                'ExamId' => 'required|integer|exists:exam_students,ExamId',
                 'ClassId' => 'required|integer|exists:exam_students,ClassId',
             ];
         }
@@ -40,10 +40,10 @@ class ResultCardRequest extends FormRequest
         if ($this->routeIs('result.card')) {
             return [
                 'examtermid' => 'required|integer|exists:exam_terms,id',
-                'examid'  => 'required|integer|exists:exam_students,ExamId',
+                'examid' => 'required|integer|exists:exam_students,ExamId',
                 'classid' => 'required|integer|exists:exam_students,ClassId',
                 'studentid' => 'required|integer|exists:exam_students,StudentId',
-                'session'  => 'required',
+                'session' => 'required',
             ];
         }
 

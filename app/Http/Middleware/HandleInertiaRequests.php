@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Middleware;
 use Illuminate\Validation\ValidationException;
+use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -41,7 +41,6 @@ class HandleInertiaRequests extends Middleware
         //     ],
         // ];
 
-
         $user = auth()->user();
         if ($user) {
             if (is_null($user->user_permissions)) {
@@ -51,13 +50,14 @@ class HandleInertiaRequests extends Middleware
                 ]);
             }
         }
+
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
             ],
-            'toast' => fn() => $request->session()->get('toast'),
+            'toast' => fn () => $request->session()->get('toast'),
             'flash' => [
-                'receipt' => fn() => $request->session()->get('receipt'),
+                'receipt' => fn () => $request->session()->get('receipt'),
             ],
 
         ]);

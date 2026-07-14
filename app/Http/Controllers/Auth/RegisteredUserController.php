@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -12,9 +13,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
-
-use App\Models\Tenant;
-use Stancl\Tenancy\Tenant as TenancyTenant;
 
 class RegisteredUserController extends Controller
 {
@@ -33,40 +31,38 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-    
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        
+        //     $existing = Tenant::query()
+        //     ->where('data->domain', 'tenant1')
+        //     ->exists();
 
-    //     $existing = Tenant::query()
-    //     ->where('data->domain', 'tenant1')
-    //     ->exists();
+        //     if ($existing) {
+        //         return back()->withErrors([
+        //             'domain' => 'This domain is already taken.',
+        //         ]);
+        //     }
 
-    //     if ($existing) {
-    //         return back()->withErrors([
-    //             'domain' => 'This domain is already taken.',
-    //         ]);
-    //     }
+        //    $tenant= Tenant::create([
+        //         'domain' => 'tenant1',
+        //         'name' => $request->name,
 
-    //    $tenant= Tenant::create([
-    //         'domain' => 'tenant1',
-    //         'name' => $request->name,
-            
-    //     ]);
+        //     ]);
 
-    //     $tenant->domains()->create([
-    //         'domain' => 'tenant1.test',
-    //     ]);
+        //     $tenant->domains()->create([
+        //         'domain' => 'tenant1.test',
+        //     ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            // 'tenant_id' => $tenant->id, 
+            // 'tenant_id' => $tenant->id,
         ]);
 
         event(new Registered($user));

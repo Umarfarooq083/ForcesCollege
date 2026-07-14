@@ -22,14 +22,16 @@ class SecurityRefundController extends Controller
     public function index(): Response
     {
         $securityRefunds = $this->securityRefundService->index();
+
         return Inertia::render('Staff/SecurityRefund/List', [
-            'securityRefunds' => $securityRefunds
+            'securityRefunds' => $securityRefunds,
         ]);
     }
 
     public function create(): Response
     {
         $data = $this->securityRefundService->create();
+
         return Inertia::render('Staff/SecurityRefund/Create', [
             'data' => $data,
         ]);
@@ -38,12 +40,14 @@ class SecurityRefundController extends Controller
     public function submit(SecurityRefundRequest $request): RedirectResponse
     {
         $this->securityRefundService->submit($request);
+
         return $this->redirectSuccess('Security refund created successfully!', 'securityrefund.index');
     }
 
     public function edit(Request $request): Response
     {
         $data = $this->securityRefundService->edit($request);
+
         return Inertia::render('Staff/SecurityRefund/Edit', [
             'securityRefund' => $data->securityRefund,
             'staffList' => $data->staffList,
@@ -53,12 +57,14 @@ class SecurityRefundController extends Controller
     public function update(SecurityRefundRequest $request): RedirectResponse
     {
         $this->securityRefundService->update($request);
+
         return $this->redirectSuccess('Security refund updated successfully!', 'securityrefund.index');
     }
 
     public function delete(Request $request): RedirectResponse
     {
         $this->securityRefundService->destroy($request);
+
         return $this->redirectSuccess('Security refund deleted successfully!', 'securityrefund.index');
     }
 }

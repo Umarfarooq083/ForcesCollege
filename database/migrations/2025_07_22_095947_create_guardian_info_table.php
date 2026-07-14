@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('guardian_info', function (Blueprint $table) {
             $table->id();
-            $table->string('cnic',100);
-            $table->string('name',100);
+            $table->string('cnic', 100);
+            $table->string('name', 100);
             $table->timestamps();
         });
     }

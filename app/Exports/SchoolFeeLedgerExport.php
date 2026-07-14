@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class SchoolFeeLedgerExport implements FromCollection, WithHeadings
 {
     private array $months;
+
     private array $data;
 
     public function __construct(array $months, array $data)
@@ -32,7 +33,7 @@ class SchoolFeeLedgerExport implements FromCollection, WithHeadings
             foreach ($this->months as $month) {
                 $monthData = $row[$month] ?? null;
                 if (
-                    !$monthData ||
+                    ! $monthData ||
                     (
                         isset($monthData['paid'], $monthData['pending'], $monthData['receivable'], $monthData['waived']) &&
                         $monthData['paid'] == 0 &&
@@ -40,8 +41,7 @@ class SchoolFeeLedgerExport implements FromCollection, WithHeadings
                         $monthData['receivable'] == 0 &&
                         $monthData['waived'] == 0
                     )
-                ) 
-                {
+                ) {
                     $exportRow[] = null; // blank cell
                 } else {
                     $exportRow[] = $monthData['label'] ?? '';

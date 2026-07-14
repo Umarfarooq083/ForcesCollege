@@ -15,21 +15,21 @@ class DepartmentService
             'CreatedBy' => auth()->user()->id,
         ]);
 
-        if($department){
+        if ($department) {
             userActivityLogs('Department Created and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
     public function update($request): void
     {
-       $validated = $request->validated();
+        $validated = $request->validated();
         $Department = Department::findOrFail($request->id);
         $dep_updated = $Department->update([
             ...$validated,
             'ModifiedBy' => auth()->user()->id,
         ]);
 
-        if($dep_updated){
+        if ($dep_updated) {
             userActivityLogs('Department Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }

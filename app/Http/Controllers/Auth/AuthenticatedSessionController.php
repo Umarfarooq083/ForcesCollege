@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\Redirect;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -35,12 +34,13 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
         $tenantHost = getTenantSubDomain();
-        if($tenantHost){
-            $tenantData = Tenant::where('domain',$tenantHost)->first();
-            $campusData = Campus::select('id','tenant_id')->where('tenant_id',$tenantData->id)->first();
+        if ($tenantHost) {
+            $tenantData = Tenant::where('domain', $tenantHost)->first();
+            $campusData = Campus::select('id', 'tenant_id')->where('tenant_id', $tenantData->id)->first();
             session(['selected_campus_id' => $campusData->id]);
             session(['switched_tenant_id' => $campusData->tenant_id]);
         }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -56,6 +56,7 @@ class AuthenticatedSessionController extends Controller
         // $user->delete();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return Inertia::location(route('login'));
     }
 }

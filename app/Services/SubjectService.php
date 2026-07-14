@@ -16,7 +16,7 @@ class SubjectService
             'CreatedBy' => auth()->user()->id,
         ]);
 
-        if($created){
+        if ($created) {
             userActivityLogs('Subject Created and By User ID: '.auth()->user()->id.'', AcademicLog::class);
         }
     }
@@ -30,7 +30,7 @@ class SubjectService
         $subjectUpdate->ClassId = $request->ClassId;
         $subjectUpdate->program_level_id = $request->program_level_id;
 
-        if($subjectUpdate->save()){
+        if ($subjectUpdate->save()) {
             userActivityLogs('Subject Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', AcademicLog::class);
         }
     }

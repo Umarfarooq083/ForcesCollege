@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Student extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'tenant_id',
         'SchoolId',
@@ -113,6 +114,7 @@ class Student extends Model
     {
         return $this->hasOne(Classes::class, 'id', 'ClassId');
     }
+
     public function classRel()
     {
         return $this->belongsTo(Classes::class, 'ClassId');
@@ -128,17 +130,18 @@ class Student extends Model
         return $query->where('tenant_id', tenant('id'));
     }
 
-    public function scopeClass($query,$classId)
+    public function scopeClass($query, $classId)
     {
         return $query->where('ClassId', $classId);
     }
-    
-    public function scopeSection($query,$sectionId)
+
+    public function scopeSection($query, $sectionId)
     {
         return $query->where('SectionId', $sectionId);
     }
 
-    public function ExamMarksDetails(){
+    public function ExamMarksDetails()
+    {
         return $this->hasMany(ExamMarksDetail::class, 'StudentId', 'id');
     }
 
@@ -165,13 +168,12 @@ class Student extends Model
     public function studentFeeDiscount()
     {
         return $this->hasMany(StudentFeeDiscount::class, 'StudentId', 'id')
-            ->select('id','tenant_id','SessionId','StudentId','CampusFeesMasterId',
-                    'DiscountAmount','BalanceFeeAfterDiscount','TotalFee');
+            ->select('id', 'tenant_id', 'SessionId', 'StudentId', 'CampusFeesMasterId',
+                'DiscountAmount', 'BalanceFeeAfterDiscount', 'TotalFee');
     }
 
     public function userFCMToken()
     {
         return $this->hasOne(FcmToken::class, 'user_id', 'id');
     }
-
 }

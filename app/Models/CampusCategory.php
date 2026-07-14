@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class DisableReason extends Model
+class CampusCategory extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'disable_reasons';
+    protected $table = 'campus_categories';
 
     protected $fillable = [
         'SchoolId',
@@ -20,7 +20,16 @@ class DisableReason extends Model
         'ModifiedBy',
         'ModifiedDate',
         'SessionId',
-        'DisableReasonName',
-        'DisableReasonGroupId',
+        'CategoryName',
+        'CategoryCode',
+        'CategoryType',
+        'Description',
+        'tenant_id',
+        'SortOrder',
+    ];
+
+    protected $casts = [
+        'IsActive' => 'boolean',
+        'IsDeleted' => 'boolean',
     ];
 }

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->date('ChallanMonth')->nullable();
             $table->date('DueDate')->nullable();
             $table->date('ExpiryDate')->nullable();
-            $table->string('Status',50)->nullable();
+            $table->string('Status', 50)->nullable();
             $table->date('SubmitDate')->nullable();
             $table->string('PaymentMode')->nullable();
             $table->integer('FineAmount')->nullable();

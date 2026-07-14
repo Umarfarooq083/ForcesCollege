@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 
 class LmsSession extends Model
 {
@@ -40,7 +39,6 @@ class LmsSession extends Model
         'start_date_formatted',
         'end_date_formatted',
     ];
-
 
     public function getStartDateFormattedAttribute()
     {

@@ -16,79 +16,79 @@ use Illuminate\Support\Str;
 
 class UploadContentService
 {
-public function Approval($request = null)
-     {
-         $data['contentUpload'] = '';
-         $contentUpload = ContentUpload::query();
-         $contentUpload->orderBy('id', 'desc');
+    public function Approval($request = null)
+    {
+        $data['contentUpload'] = '';
+        $contentUpload = ContentUpload::query();
+        $contentUpload->orderBy('id', 'desc');
 
-         $perPage = (int) ($request->per_page ?? 25);
+        $perPage = (int) ($request->per_page ?? 25);
 
-         if ($request && $request->has('group') && $request->group) {
-             $contentUpload->where('UploadContentGroupId', $request->group);
-         }
+        if ($request && $request->has('group') && $request->group) {
+            $contentUpload->where('UploadContentGroupId', $request->group);
+        }
 
-         if ($request->filled('title')) {
-             $contentUpload->where('ContentTitle', 'like', '%' . $request->title . '%');
-         }
+        if ($request->filled('title')) {
+            $contentUpload->where('ContentTitle', 'like', '%'.$request->title.'%');
+        }
 
-         if ($request->filled('content_type')) {
-             $contentUpload->where('ContentType', $request->content_type);
-         }
+        if ($request->filled('content_type')) {
+            $contentUpload->where('ContentType', $request->content_type);
+        }
 
-         if ($request->filled('class_id')) {
-             $contentUpload->where('ClassId', $request->class_id);
-         }
+        if ($request->filled('class_id')) {
+            $contentUpload->where('ClassId', $request->class_id);
+        }
 
-         if ($request->filled('subject_id')) {
-             $contentUpload->where('subjectId', $request->subject_id);
-         }
+        if ($request->filled('subject_id')) {
+            $contentUpload->where('subjectId', $request->subject_id);
+        }
 
-         if ($request->filled('tenant_id')) {
-             $contentUpload->where('tenant_id', $request->tenant_id);
-         }
+        if ($request->filled('tenant_id')) {
+            $contentUpload->where('tenant_id', $request->tenant_id);
+        }
 
-         if ($request->filled('date_from') && $request->filled('date_to')) {
-             $contentUpload->whereDate('UploadDate', '>=', $request->date_from)
-                 ->whereDate('UploadDate', '<=', $request->date_to);
-         } elseif ($request->filled('date_from')) {
-             $contentUpload->whereDate('UploadDate', '>=', $request->date_from);
-         } elseif ($request->filled('date_to')) {
-             $contentUpload->whereDate('UploadDate', '<=', $request->date_to);
-         }
+        if ($request->filled('date_from') && $request->filled('date_to')) {
+            $contentUpload->whereDate('UploadDate', '>=', $request->date_from)
+                ->whereDate('UploadDate', '<=', $request->date_to);
+        } elseif ($request->filled('date_from')) {
+            $contentUpload->whereDate('UploadDate', '>=', $request->date_from);
+        } elseif ($request->filled('date_to')) {
+            $contentUpload->whereDate('UploadDate', '<=', $request->date_to);
+        }
 
-         if (getTenantSubDomain() == 'headoffice') {
-             $contentUpload = $contentUpload
-                 ->select('id', 'ContentTitle', 'ContentType', 'ClassId', 'subjectId', 'ContentFilePath', 'UploadContentGroupId', 'IsActive', 'tenant_id')
-                 ->with('Classes','Subjects', 'ContentGroup')
-                 ->orderBy('id', 'desc')
-                 ->paginate($perPage)->withQueryString();
+        if (getTenantSubDomain() == 'headoffice') {
+            $contentUpload = $contentUpload
+                ->select('id', 'ContentTitle', 'ContentType', 'ClassId', 'subjectId', 'ContentFilePath', 'UploadContentGroupId', 'IsActive', 'tenant_id')
+                ->with('Classes', 'Subjects', 'ContentGroup')
+                ->orderBy('id', 'desc')
+                ->paginate($perPage)->withQueryString();
 
-             $data['contentUpload'] = $contentUpload;
-         } else {
-             $Campus = Campus::where('tenant_id', tenant('id'))->firstOrFail();
+            $data['contentUpload'] = $contentUpload;
+        } else {
+            $Campus = Campus::where('tenant_id', tenant('id'))->firstOrFail();
 
-             $contentUpload = $contentUpload
-                 ->with(['Classes','Subjects', 'ContentGroup', 'ContentRegion' => function ($q) use ($Campus) {
-                     $q->where('region_id', $Campus->regionid);
-                 }])
-                 ->whereHas('ContentRegion', function ($q) use ($Campus) {
-                     $q->where('region_id', $Campus->regionid);
-                 })
-                 ->orderBy('id', 'desc')
-                 ->paginate($perPage)->withQueryString();
+            $contentUpload = $contentUpload
+                ->with(['Classes', 'Subjects', 'ContentGroup', 'ContentRegion' => function ($q) use ($Campus) {
+                    $q->where('region_id', $Campus->regionid);
+                }])
+                ->whereHas('ContentRegion', function ($q) use ($Campus) {
+                    $q->where('region_id', $Campus->regionid);
+                })
+                ->orderBy('id', 'desc')
+                ->paginate($perPage)->withQueryString();
 
-             $data['contentUpload'] = $contentUpload;
-         }
+            $data['contentUpload'] = $contentUpload;
+        }
 
-         $data['groups'] = UploadContentGroup::orderBy('id', 'desc')->get();
-         $data['classesList'] = Classes::select('id', 'ClassName')->get();
-         $data['campusList'] = Campus::select('id', 'tenant_id', 'SchoolName')
-             ->orderBy('SchoolName')
-             ->get();
+        $data['groups'] = UploadContentGroup::orderBy('id', 'desc')->get();
+        $data['classesList'] = Classes::select('id', 'ClassName')->get();
+        $data['campusList'] = Campus::select('id', 'tenant_id', 'SchoolName')
+            ->orderBy('SchoolName')
+            ->get();
 
-         return $data;
-     }
+        return $data;
+    }
 
     public function Approve($request = null)
     {
@@ -111,7 +111,7 @@ public function Approval($request = null)
         if (getTenantSubDomain() == 'headoffice') {
             $contentUpload = $contentUpload
                 ->select('id', 'ContentTitle', 'ContentType', 'ClassId', 'subjectId', 'ContentFilePath', 'UploadContentGroupId', 'IsActive')
-                ->with('Classes','Subjects', 'ContentGroup')
+                ->with('Classes', 'Subjects', 'ContentGroup')
                 ->orderBy('id', 'desc')
                 ->paginate(25)->withQueryString();
 
@@ -130,7 +130,7 @@ public function Approval($request = null)
 
         if (getTenantSubDomain() == 'headoffice') {
             $contentUpload = ContentUpload::query()
-                ->with('Classes','Subjects', 'ContentGroup', 'ContentRegion.RegiondRel')
+                ->with('Classes', 'Subjects', 'ContentGroup', 'ContentRegion.RegiondRel')
                 ->orderByDesc('id');
 
             // Filter: group
@@ -140,7 +140,7 @@ public function Approval($request = null)
 
             // Filter: title
             if ($request->filled('title')) {
-                $contentUpload->where('ContentTitle', 'like', '%' . $request->title . '%');
+                $contentUpload->where('ContentTitle', 'like', '%'.$request->title.'%');
             }
 
             // Filter: content type
@@ -178,7 +178,7 @@ public function Approval($request = null)
             $Campus = Campus::where('tenant_id', tenant('id'))->firstOrFail();
 
             $contentUpload = ContentUpload::query()
-                ->with('Classes','Subjects', 'ContentGroup', 'ContentRegion.RegiondRel')
+                ->with('Classes', 'Subjects', 'ContentGroup', 'ContentRegion.RegiondRel')
                 ->whereHas('ContentRegion', function ($q) use ($Campus) {
                     $q->where('region_id', $Campus->regionid);
                 })
@@ -194,7 +194,7 @@ public function Approval($request = null)
 
             // Filter: title
             if ($request->filled('title')) {
-                $contentUpload->where('ContentTitle', 'like', '%' . $request->title . '%');
+                $contentUpload->where('ContentTitle', 'like', '%'.$request->title.'%');
             }
 
             // Filter: content type

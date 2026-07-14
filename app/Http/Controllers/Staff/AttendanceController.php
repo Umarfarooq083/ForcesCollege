@@ -13,6 +13,7 @@ use Inertia\Response;
 class AttendanceController extends Controller
 {
     protected $staffAttendanceService;
+
     public function __construct(StaffAttendanceService $staffAttendanceService)
     {
         $this->staffAttendanceService = $staffAttendanceService;
@@ -22,6 +23,7 @@ class AttendanceController extends Controller
     {
         $data = $this->staffAttendanceService->staffAttendanceList($request);
         $data['officeStartTime'] = $this->staffAttendanceService->getOfficeStartTime();
+
         return Inertia::render('Staff/Attendance', $data);
     }
 
@@ -29,6 +31,7 @@ class AttendanceController extends Controller
     {
         $validated = $request->validated();
         $this->staffAttendanceService->submitStaffAttendance($request);
+
         return $this->redirectSuccess('Staff attendance saved successfully.', 'staff.attendance.list');
     }
 }

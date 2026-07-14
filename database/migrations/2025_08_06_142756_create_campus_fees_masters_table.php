@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('SchoolId')->nullable();
             $table->boolean('IsActive')->default(true);
-            $table->string('tenant_id',100)->nullable();
+            $table->string('tenant_id', 100)->nullable();
             $table->integer('CreatedBy')->nullable();
             $table->integer('ModifiedBy')->nullable();
             $table->integer('SessionId')->nullable();

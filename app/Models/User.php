@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
+
     protected $fillable = [
         'name',
         'email',
@@ -23,7 +24,7 @@ class User extends Authenticatable
         'modify_at',
         'deleted_at',
         'modifyBy',
-        'imported_user_id'
+        'imported_user_id',
     ];
 
     protected $hidden = [
@@ -55,7 +56,6 @@ class User extends Authenticatable
         return $this->roles->contains('name', $roleName);
     }
 
-
     public function getAllPermissions()
     {
         return Cache::remember("user_permissions_{$this->id}", 3600, function () {
@@ -71,5 +71,4 @@ class User extends Authenticatable
                 ->toArray();
         });
     }
-
 }

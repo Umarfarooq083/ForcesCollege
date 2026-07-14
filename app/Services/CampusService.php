@@ -13,11 +13,11 @@ use Illuminate\Validation\ValidationException;
 
 class CampusService
 {
-
     public function index()
     {
         $campusList = Campus::query();
-        return $campusList = $campusList->where('tenant_id', tenant('id'))->with('zone','region')->orderby('id', 'desc')->paginate(25)->withQueryString();    
+
+        return $campusList = $campusList->where('tenant_id', tenant('id'))->with('zone', 'region')->orderby('id', 'desc')->paginate(25)->withQueryString();
     }
 
     public function submit($validated, $request): void
@@ -36,7 +36,7 @@ class CampusService
                     'DomainName' => 'This domain is already taken.',
                 ]);
             }
-            // Campus Creation 
+            // Campus Creation
             $campusCreate = Campus::create([
                 ...$validated,
                 'CreatedBy' => Auth::id(),
@@ -48,16 +48,16 @@ class CampusService
                 'domain' => $tenantSlug,
                 'name' => $request->SchoolName,
             ]);
-            // Assign Tenant to Created Campus 
+            // Assign Tenant to Created Campus
             $campusCreate->update([
                 'tenant_id' => $tenant->id,
             ]);
 
-            // Create Domin for campus 
+            // Create Domin for campus
             $tenant->domains()->create([
                 'domain' => $fullDomain,
             ]);
-            // Check User Exist or not and then Create an Admin User For Campus 
+            // Check User Exist or not and then Create an Admin User For Campus
             $userExist = User::where('email', $request->EmailAddress)->where('tenant_id', $tenant->id)->first();
             if ($userExist) {
                 throw ValidationException::withMessages([
@@ -65,7 +65,7 @@ class CampusService
                 ]);
             } else {
                 $password = Hash::make('Admin@123!@#$');
-                $createUser = new User();
+                $createUser = new User;
                 $createUser->name = $request->SchoolName;
                 $createUser->email = $request->EmailAddress;
                 $createUser->password = $password;

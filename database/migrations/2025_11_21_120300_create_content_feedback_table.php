@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('content_feedback', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_name',100)->nullable();
+            $table->string('tenant_name', 100)->nullable();
             $table->string('title')->nullable();
             $table->string('subject')->nullable();
             $table->string('job_position')->nullable();

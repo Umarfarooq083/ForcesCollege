@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StudentCategory extends Model
 {
-     use SoftDeletes;
+    use SoftDeletes;
+
     protected $table = 'student_categories';
+
     protected $fillable = [
         'SchoolId',
         'IsActive',
@@ -18,6 +20,6 @@ class StudentCategory extends Model
         'ModifiedDate',
         'SessionId',
         'CategoryName',
-        'StudentCategoryGroupId'
+        'StudentCategoryGroupId',
     ];
 }

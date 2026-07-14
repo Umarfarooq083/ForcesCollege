@@ -11,13 +11,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class StudentAttendanceService
-{   
+{
     public function attendanceList($request): array
     {
         $data['classesList'] = $this->getClasses();
         $data['sections'] = $this->getClassesSections($data['classesList']);
         $data['students'] = $this->createStudentAttendance($request);
         $data['existingAttendance'] = getExistingAttendance($request, $data['students'], StudentAttendance::class, 'StudentId', 'AttendanceType');
+
         return $data;
     }
 
@@ -33,23 +34,23 @@ class StudentAttendanceService
 
     public function createStudentAttendance($request): Collection
     {
-        $students_query = Student::where('IsActive',1)->where('tenant_id', tenant('id'))->with('class:id,tenant_id,ClassName','section.sectionType');
+        $students_query = Student::where('IsActive', 1)->where('tenant_id', tenant('id'))->with('class:id,tenant_id,ClassName', 'section.sectionType');
 
         $classId = $request->input('class_id');
         $sectionId = $request->input('section_id');
 
-        if(!empty($request->all())){
+        if (! empty($request->all())) {
             if ($classId) {
                 $students_query->where('ClassId', $classId);
             }
-    
+
             if ($sectionId) {
                 $students_query->where('SectionId', $sectionId);
             }
-    
-            return $students = $students_query->get(['id','tenant_id','ClassId','SectionId','IsActive','FirstName', 'LastName']);
-        }else{
-           return $students = collect([]);
+
+            return $students = $students_query->get(['id', 'tenant_id', 'ClassId', 'SectionId', 'IsActive', 'FirstName', 'LastName']);
+        } else {
+            return $students = collect([]);
         }
     }
 
@@ -67,9 +68,9 @@ class StudentAttendanceService
         $updateData = [];
 
         foreach ($attendance as $studentId => $status) {
-            $attendanceType = match($status) {
+            $attendanceType = match ($status) {
                 '0' => 'Absent',
-                '1' => 'Present', 
+                '1' => 'Present',
                 '2' => 'Leave',
                 default => 'Present'
             };
@@ -99,16 +100,16 @@ class StudentAttendanceService
         }
 
         // Step 2: Insert all new records at once
-        if (!empty($insertData)) {
+        if (! empty($insertData)) {
             $created = StudentAttendance::insert($insertData);
 
-            if($created){
+            if ($created) {
                 userActivityLogs('Student Attendance Created and By User ID: '.auth()->user()->id.'', StudentLog::class);
             }
         }
 
         // Step 3: Update all existing records (batch update)
-        if (!empty($updateData)) {
+        if (! empty($updateData)) {
             foreach ($updateData as $row) {
                 DB::table('student_attendances')
                     ->where('id', $row['id'])
@@ -122,5 +123,4 @@ class StudentAttendanceService
             userActivityLogs('Student Attendance Updated and By User ID: '.auth()->user()->id.'', StudentLog::class);
         }
     }
-
 }

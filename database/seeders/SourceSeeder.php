@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -13,8 +12,8 @@ class SourceSeeder extends Seeder
      */
     public function run(): void
     {
-         DB::table('sources')->truncate();
-         DB::table('sources')->insert([
+        DB::table('sources')->truncate();
+        DB::table('sources')->insert([
             ['SourceName' => 'Banner', 'created_at' => now(), 'updated_at' => now()],
             ['SourceName' => 'Cable Ad',       'created_at' => now(), 'updated_at' => now()],
             ['SourceName' => 'Hoarding',  'created_at' => now(), 'updated_at' => now()],

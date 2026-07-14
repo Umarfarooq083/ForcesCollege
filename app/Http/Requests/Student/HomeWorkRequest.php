@@ -31,7 +31,7 @@ class HomeWorkRequest extends FormRequest
             'homeworkDate' => 'required|date',
             'submissionDate' => 'required|date|after_or_equal:homeworkDate',
             'description' => 'nullable|string|max:500',
-            'attachDocumentPath' => ['nullable','mimes:pdf,doc,docx,jpg,jpeg,png','max:2048'],
+            'attachDocumentPath' => ['nullable', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:2048'],
         ];
     }
 

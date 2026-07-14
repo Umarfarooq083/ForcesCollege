@@ -6,15 +6,15 @@ use Illuminate\Http\JsonResponse;
 
 abstract class Controller
 {
-    public function redirectSuccess(string $message,$route)
+    public function redirectSuccess(string $message, $route)
     {
         return redirect()->route($route)->with('toast', [
             'type' => 'success',
             'message' => $message,
         ]);
     }
-    
-    public function redirectError(string $message,$route)
+
+    public function redirectError(string $message, $route)
     {
         return redirect()->route($route)->with('toast', [
             'type' => 'error',
@@ -32,7 +32,6 @@ abstract class Controller
         ], $code);
     }
 
-    
     protected function apiErrorResponse(string $message, int $code = 400, $errors = null): JsonResponse
     {
         return response()->json([
@@ -42,7 +41,4 @@ abstract class Controller
             'errors' => $errors,
         ], $code);
     }
-
-
-    
 }

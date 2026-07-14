@@ -87,7 +87,6 @@ class CampusRequest extends FormRequest
             $rules['IsDeleted'] = 'sometimes|boolean';
         }
 
-
         return $rules;
     }
 }

@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class StudentAttendance extends Model
 {
     use SoftDeletes;
+
     protected $table = 'student_attendances';
+
     protected $fillable = [
         'SchoolId',
         'tenant_id',
@@ -23,16 +25,15 @@ class StudentAttendance extends Model
         'AttendanceDate',
         'Note',
         'IsFromMachine',
-        'imported_student_attendance_id'
+        'imported_student_attendance_id',
     ];
 
     protected $casts = [
-        'IsActive'       => 'boolean',
-        'IsDeleted'      => 'boolean',
-        'IsFromMachine'  => 'boolean',
-        'CreatedDate'    => 'datetime',
-        'ModifiedDate'   => 'datetime',
+        'IsActive' => 'boolean',
+        'IsDeleted' => 'boolean',
+        'IsFromMachine' => 'boolean',
+        'CreatedDate' => 'datetime',
+        'ModifiedDate' => 'datetime',
         'AttendanceDate' => 'date',
     ];
-
 }

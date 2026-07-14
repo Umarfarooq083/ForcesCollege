@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\LateFine;
 use App\Models\HumanResourceLog;
+use App\Models\LateFine;
 use Illuminate\Validation\ValidationException;
 
 class LateFineService
@@ -42,7 +42,7 @@ class LateFineService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'apply_year' => ['A late fine already exists for this staff with the selected year and month.']
+                'apply_year' => ['A late fine already exists for this staff with the selected year and month.'],
             ]);
         }
 
@@ -57,7 +57,7 @@ class LateFineService
         ]);
 
         if ($created) {
-            userActivityLogs('Late Fine Created and By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Late Fine Created and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -94,7 +94,7 @@ class LateFineService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'apply_year' => ['A late fine already exists for this staff with the selected year and month.']
+                'apply_year' => ['A late fine already exists for this staff with the selected year and month.'],
             ]);
         }
 
@@ -108,7 +108,7 @@ class LateFineService
         ]);
 
         if ($updated) {
-            userActivityLogs('Late Fine Updated and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Late Fine Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -118,7 +118,7 @@ class LateFineService
         $deleted = $lateFine->delete();
 
         if ($deleted) {
-            userActivityLogs('Late Fine Deleted and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Late Fine Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 }

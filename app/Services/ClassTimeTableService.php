@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Services;
-use App\Models\ClassTimeTable;
-use App\Models\Staff;
+
 use App\Models\Classes;
+use App\Models\ClassTimeTable;
 use App\Models\HumanResourceLog;
 use App\Models\Section;
+use App\Models\Staff;
 use App\Models\Subject;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ClassTimeTableService
@@ -19,8 +20,8 @@ class ClassTimeTableService
         $timetables = ClassTimeTable::query();
 
         // Check if no filter is applied → return empty result
-        if (!$request->filled('StaffId') && !$request->filled('month') && !$request->filled('date')) {
-            return $timetables->whereRaw('1=0')->paginate(25)->through(fn($timetable) => []);
+        if (! $request->filled('StaffId') && ! $request->filled('month') && ! $request->filled('date')) {
+            return $timetables->whereRaw('1=0')->paginate(25)->through(fn ($timetable) => []);
         }
 
         // Staff Filter
@@ -37,27 +38,27 @@ class ClassTimeTableService
         if ($request->filled('date')) {
             $timetables->whereDate('date', $request->date);
         }
-        
-        return $timetablesService =  $timetables->with('class', 'section', 'subject', 'staff')
+
+        return $timetablesService = $timetables->with('class', 'section', 'subject', 'staff')
             ->orderBy('id', 'desc')
             ->paginate(25)->withQueryString()
             ->appends($request->all())
-            ->through(fn($timetable) => [
+            ->through(fn ($timetable) => [
                 'id' => $timetable->id,
                 'ClassName' => $timetable->class?->ClassName,
                 'SectionName' => $timetable->section?->SectionName,
                 'SubjectName' => $timetable->subject?->SubjectName,
-                'StaffName' => $timetable->staff?->FirstName . ' ' . $timetable->staff?->LastName,
+                'StaffName' => $timetable->staff?->FirstName.' '.$timetable->staff?->LastName,
                 'Day' => $timetable->Day,
                 'Date' => $timetable->date,
                 'TimeFrom' => $timetable->TimeFromFormatted,
                 'TimeTo' => $timetable->TimeToFormatted,
-            ]) ;
+            ]);
     }
 
     public function getStaffList()
     {
-        return Staff::select('id', 'FirstName', 'LastName')->where('tenant_id',tenant('id'))->get();
+        return Staff::select('id', 'FirstName', 'LastName')->where('tenant_id', tenant('id'))->get();
     }
 
     public function getClassesList()
@@ -86,7 +87,7 @@ class ClassTimeTableService
     //             $day = ucfirst($request->Day);
 
     //             foreach ($request->DatesArray as $date) {
-               
+
     //                 if ($this->hasStaffTimeConflict($request->StaffId, $request->Day, $row, $date)) {
     //                     throw ValidationException::withMessages([
     //                         'time_conflict' => "The selected staff already has a class scheduled on {$day} from {$timeFrom} to {$timeTo}."
@@ -117,7 +118,7 @@ class ClassTimeTableService
 
     //         DB::commit();
 
-    //     } 
+    //     }
     //     catch (\Throwable $e) {
     //         DB::rollBack();
     //         throw $e;
@@ -134,43 +135,43 @@ class ClassTimeTableService
 
             foreach ($request->rows as $row) {
                 $timeFrom = $this->formatTime($row['TimeFrom']);
-                $timeTo   = $this->formatTime($row['TimeTo']);
-                $day      = ucfirst($request->Day);
+                $timeTo = $this->formatTime($row['TimeTo']);
+                $day = ucfirst($request->Day);
 
                 if ($this->hasStaffTimeConflict($request->StaffId, $day, $row, $dates)) {
                     throw ValidationException::withMessages([
-                        'time_conflict' => "The selected staff already has a class scheduled on {$day} from {$timeFrom} to {$timeTo}."
+                        'time_conflict' => "The selected staff already has a class scheduled on {$day} from {$timeFrom} to {$timeTo}.",
                     ]);
                 }
 
                 if ($this->hasClassConflict($day, $row, $dates)) {
                     throw ValidationException::withMessages([
-                        'class_conflict' => "A class/section/subject conflict exists on {$day} from {$timeFrom} to {$timeTo}."
+                        'class_conflict' => "A class/section/subject conflict exists on {$day} from {$timeFrom} to {$timeTo}.",
                     ]);
                 }
                 $currentSession = fetchCurrentSession();
                 $insertData = [];
                 foreach ($dates as $date) {
                     $insertData[] = [
-                        'tenant_id'              => tenant('id'),
-                        'ClassId'                => $row['ClassId'],
-                        'SectionId'              => $row['SectionId'],
-                        'SubjectId'              => $row['SubjectId'],
-                        'SessionId'              => $currentSession?->id,
-                        'StaffId'                => $request->StaffId,
-                        'Day'                    => $request->Day,
-                        'Date'                   => $date,
-                        'TimeFrom'               => $row['TimeFrom'],
-                        'TimeTo'                 => $row['TimeTo'],
-                        'CreatedBy'              => auth()->id(),
-                        'ClassTimeTableGroupId'  => $groupId,
-                        'created_at'             => now(),
-                        'updated_at'             => now(),
+                        'tenant_id' => tenant('id'),
+                        'ClassId' => $row['ClassId'],
+                        'SectionId' => $row['SectionId'],
+                        'SubjectId' => $row['SubjectId'],
+                        'SessionId' => $currentSession?->id,
+                        'StaffId' => $request->StaffId,
+                        'Day' => $request->Day,
+                        'Date' => $date,
+                        'TimeFrom' => $row['TimeFrom'],
+                        'TimeTo' => $row['TimeTo'],
+                        'CreatedBy' => auth()->id(),
+                        'ClassTimeTableGroupId' => $groupId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
                 }
 
-                $created =  ClassTimeTable::insert($insertData);
-                if($created){
+                $created = ClassTimeTable::insert($insertData);
+                if ($created) {
                     userActivityLogs('Class Time Table Creation and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
                 }
             }
@@ -207,6 +208,7 @@ class ClassTimeTableService
     private function rollbackWithError(string $key, string $message)
     {
         DB::rollBack();
+
         return back()->withErrors([$key => $message]);
     }
 
@@ -214,5 +216,4 @@ class ClassTimeTableService
     {
         return Carbon::createFromFormat('H:i', $time)->format('h:i A');
     }
-
 }

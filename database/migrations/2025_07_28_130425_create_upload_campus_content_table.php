@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('upload_campus_content', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id',100)->nullable();
+            $table->string('tenant_id', 100)->nullable();
             $table->integer('campus_id')->nullable();
             $table->integer('upload_content_id')->nullable();
             $table->timestamps();

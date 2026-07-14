@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\DownloadContentLog;
 use App\Models\UploadContentGroup;
 
 class ContentGroupService
@@ -22,12 +21,11 @@ class ContentGroupService
     {
         return UploadContentGroup::findOrFail($request->id);
     }
-    
-    public function update($request):void
+
+    public function update($request): void
     {
         $UploadContentGroup = UploadContentGroup::findOrFail($request->id);
         $UploadContentGroup->name = $request->name;
         $UploadContentGroup->save();
     }
-
 }

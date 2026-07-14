@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class StaffAttendance extends Model
 {
     use SoftDeletes;
+
     protected $table = 'staff_attendances';
 
     protected $fillable = [
@@ -31,12 +32,11 @@ class StaffAttendance extends Model
 
     protected $casts = [
         // 'AttendanceDate' => 'date',
-         'AttendanceDate' => 'date:Y-m-d',
+        'AttendanceDate' => 'date:Y-m-d',
     ];
 
     public function staff()
     {
         return $this->hasOne(Staff::class, 'id', 'StaffId');
     }
-
 }

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\SecurityRefund;
 use App\Models\HumanResourceLog;
+use App\Models\SecurityRefund;
 use Illuminate\Validation\ValidationException;
 
 class SecurityRefundService
@@ -40,7 +40,7 @@ class SecurityRefundService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'staff_id' => ['A security refund already exists for this staff. Each staff can have only one security refund record.']
+                'staff_id' => ['A security refund already exists for this staff. Each staff can have only one security refund record.'],
             ]);
         }
 
@@ -54,7 +54,7 @@ class SecurityRefundService
         ]);
 
         if ($created) {
-            userActivityLogs('Security Refund Created and By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Security Refund Created and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -89,7 +89,7 @@ class SecurityRefundService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'staff_id' => ['A security refund already exists for this staff. Each staff can have only one security refund record.']
+                'staff_id' => ['A security refund already exists for this staff. Each staff can have only one security refund record.'],
             ]);
         }
 
@@ -102,7 +102,7 @@ class SecurityRefundService
         ]);
 
         if ($updated) {
-            userActivityLogs('Security Refund Updated and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Security Refund Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -112,7 +112,7 @@ class SecurityRefundService
         $deleted = $securityRefund->delete();
 
         if ($deleted) {
-            userActivityLogs('Security Refund Deleted and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Security Refund Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 }

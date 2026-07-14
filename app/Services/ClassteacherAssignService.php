@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use App\Models\AssignClassTeacher;
 use App\Models\Classes;
 use App\Models\Designation;
@@ -12,19 +13,20 @@ class ClassteacherAssignService
 {
     public function create(): array
     {
-        $disegnationFilter = ['Teaching Assistant','Primary Teacher','Senior Teacher','Teacher','Pre School Teacher'];
-        $DesignationList = Designation::whereIn('DesignationName',$disegnationFilter)->pluck('id')->toArray();
-        
-        if($DesignationList){
-            $data['StaffList'] = Staff::where('tenant_id',tenant('id'))->where('IsActive',1)->whereIn('DesignationId',$DesignationList)->get(['id','tenant_id','FirstName','LastName']);    
-        }else{
+        $disegnationFilter = ['Teaching Assistant', 'Primary Teacher', 'Senior Teacher', 'Teacher', 'Pre School Teacher'];
+        $DesignationList = Designation::whereIn('DesignationName', $disegnationFilter)->pluck('id')->toArray();
+
+        if ($DesignationList) {
+            $data['StaffList'] = Staff::where('tenant_id', tenant('id'))->where('IsActive', 1)->whereIn('DesignationId', $DesignationList)->get(['id', 'tenant_id', 'FirstName', 'LastName']);
+        } else {
             $data['StaffList'] = [];
         }
         $classList = Classes::select('id', 'tenant_id', 'ClassName')->where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
         $class_ids = collect($classList);
         $data['classList'] = $classList;
         $classIdsSection = $class_ids->pluck('id')->toArray();
-        $data['sectionList'] = Section::select('id', 'tenant_id', 'SectionName', 'ClassId')->where('tenant_id',tenant('id'))->whereIn('ClassId', $classIdsSection)->get();
+        $data['sectionList'] = Section::select('id', 'tenant_id', 'SectionName', 'ClassId')->where('tenant_id', tenant('id'))->whereIn('ClassId', $classIdsSection)->get();
+
         return $data;
     }
 
@@ -37,7 +39,7 @@ class ClassteacherAssignService
             'tenant_id' => tenant('id'),
         ]);
 
-        if($created){
+        if ($created) {
             userActivityLogs('Assinging Class Creation and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
@@ -51,7 +53,7 @@ class ClassteacherAssignService
             'ModifiedBy' => auth()->user()->id,
         ]);
 
-        if($updated){
+        if ($updated) {
             userActivityLogs('Assinging Class Updation and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }

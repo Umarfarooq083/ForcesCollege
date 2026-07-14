@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('upload_content_group', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id',100)->nullable();
+            $table->string('tenant_id', 100)->nullable();
             $table->string('name')->nullable();
             $table->string('Category')->nullable();
             $table->string('CategoryId')->nullable();

@@ -10,14 +10,15 @@ use App\Models\FeesType;
 use App\Models\LmsSession;
 use App\Models\OptionalFeeMaster;
 use App\Models\StudentFeeDiscount;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class CampusFeesMasterService
 {
     protected $campus_query;
+
     public function __construct()
     {
         $this->campus_query = CampusFeesMaster::where('tenant_id', tenant('id'))->where('IsActive', 1);
@@ -25,9 +26,9 @@ class CampusFeesMasterService
 
     public function index($request): array
     {
-        if(fetchCurrentSession() === null){
+        if (fetchCurrentSession() === null) {
             $campusQuery = [];
-            $items = collect($campusQuery); 
+            $items = collect($campusQuery);
             $page = request()->get('page', 1);
             $perPage = 25;
             $paginatedData = new LengthAwarePaginator(
@@ -53,25 +54,24 @@ class CampusFeesMasterService
             $search = $request->search;
             $campusQuery->where(function ($query) use ($search) {
                 $query->whereHas('fee_master_type', function ($q) use ($search) {
-                    $q->where('FeeName', 'like', '%' . $search . '%');
+                    $q->where('FeeName', 'like', '%'.$search.'%');
                 })
-                ->orWhereHas('fee_master_class', function ($q) use ($search) {
-                    $q->where('ClassName', 'like', '%' . $search . '%');
-                });
+                    ->orWhereHas('fee_master_class', function ($q) use ($search) {
+                        $q->where('ClassName', 'like', '%'.$search.'%');
+                    });
             });
         }
 
-
         $data['CampusFeesMasterList'] = $campusQuery->paginate(25)->withQueryString();
         $data['LmsSession'] = $this->getSessionData();
+
         return $data;
     }
 
     /**
      * Insert new campus fee master records.
      *
-     * @param array $validatedData
-     * @return void
+     * @param  array  $validatedData
      */
     public function submit($validatedData): void
     {
@@ -79,23 +79,23 @@ class CampusFeesMasterService
         $insertData = [];
         foreach ($validatedData['fees_master'] as $fee) {
             $insertData[] = [
-                'SchoolId'     => null,
-                'IsActive'     => true,
-                'tenant_id'    => tenant('id'),
-                'CreatedBy'    => auth()->id(),
-                'ModifiedBy'   => null,
-                'SessionId'    => $validatedData['session']['id'],
-                'Title'        => null,
-                'FeesTypeNId'  => $validatedData['feetypeid'],
-                'Amount'       => $fee['amount'],
-                'ClassId'      => $fee['class_id'],
-                'SectionId'    => null,
-                'group_id'     => $maxGroupId + 1,
-                'created_at'     => now(),
-                'updated_at'     => now(),
+                'SchoolId' => null,
+                'IsActive' => true,
+                'tenant_id' => tenant('id'),
+                'CreatedBy' => auth()->id(),
+                'ModifiedBy' => null,
+                'SessionId' => $validatedData['session']['id'],
+                'Title' => null,
+                'FeesTypeNId' => $validatedData['feetypeid'],
+                'Amount' => $fee['amount'],
+                'ClassId' => $fee['class_id'],
+                'SectionId' => null,
+                'group_id' => $maxGroupId + 1,
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
         }
-        $created =  DB::table('campus_fees_masters')->insert($insertData);
+        $created = DB::table('campus_fees_masters')->insert($insertData);
 
         if ($created) {
             userActivityLogs('Campus Fee Master Created and By User ID: '.auth()->user()->id.'', FeeLog::class);
@@ -104,23 +104,20 @@ class CampusFeesMasterService
 
     /**
      * Get fee types, classes and session for form.
-     *
-     * @return array
      */
     public function getData(): array
     {
         $data['FeeTypes'] = FeesType::get(['id', 'FeeName as name']);
-        $data['Classes']  = $this->getClassesList();
-        $data['Session']  = $this->getSessionData();
+        $data['Classes'] = $this->getClassesList();
+        $data['Session'] = $this->getSessionData();
+
         return $data;
     }
-
 
     /**
      * Get existing fee master group data for edit form.
      *
-     * @param Request $request
-     * @return array
+     * @param  Request  $request
      */
     public function edit($request): array
     {
@@ -135,18 +132,17 @@ class CampusFeesMasterService
             ->with('fee_master_class:id,ClassName', 'fee_master_type:id,FeesCode,FeeName')
             ->get();
 
-        $data['Classes']  = $this->getClassesList();
+        $data['Classes'] = $this->getClassesList();
         $data['fee_type_id'] = $campus_fee_master?->FeesTypeNId;
         $data['SessionId'] = $campus_fee_master?->SessionId;
+
         return $data;
     }
-
 
     /**
      * Upsert fee master records (update or insert).
      *
-     * @param Request $request
-     * @return array
+     * @param  Request  $request
      */
     public function update($request): array
     {
@@ -188,14 +184,14 @@ class CampusFeesMasterService
                     'SectionId',
                     'deleted_at',
                     'updated_at',
-                    'group_id'
+                    'group_id',
                 ]
             );
 
         userActivityLogs('Campus Fee Master Updated and By User ID: '.auth()->user()->id.'', FeeLog::class);
 
         return [
-            'collection' => $collection
+            'collection' => $collection,
         ];
     }
 
@@ -217,8 +213,9 @@ class CampusFeesMasterService
             ->where('tenant_id', tenant('id'))
             ->where('id', $request->id)
             ->delete();
-        
+
         userActivityLogs('Campus Fee Master Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', FeeLog::class);
+
         return true;
     }
 

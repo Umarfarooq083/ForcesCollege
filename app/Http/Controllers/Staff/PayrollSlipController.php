@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\PayrollSlip;
 use App\Services\PayrollSlipService;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,6 +22,7 @@ class PayrollSlipController extends Controller
     public function index(): Response
     {
         $staffList = $this->payrollSlipService->getStaffList();
+
         return Inertia::render('Staff/PayrollSlip/Index', [
             'staffList' => $staffList,
         ]);
@@ -41,6 +41,7 @@ class PayrollSlipController extends Controller
             $validated['year'],
             [$validated['staff_id']]
         );
+
         return Inertia::render('Staff/PayrollSlip/Create', [
             'payrollData' => $payrollData,
             'selectedMonth' => $validated['month'],
@@ -61,7 +62,7 @@ class PayrollSlipController extends Controller
         $staffId = $request->input('staff_id');
 
         $payrollData = $this->payrollSlipService->generatePayrollSlips($month, $year, $staffId ? [$staffId] : null);
-     
+
         $this->payrollSlipService->savePayrollSlips($payrollData);
 
         if ($staffId) {
@@ -82,11 +83,11 @@ class PayrollSlipController extends Controller
                         'isHtml5ParserEnabled' => true,
                     ]);
 
-                $fileName = $payrollSlip->staff->FirstName . '_' . $payrollSlip->staff->LastName . '_Payroll_Slip.pdf';
-                
+                $fileName = $payrollSlip->staff->FirstName.'_'.$payrollSlip->staff->LastName.'_Payroll_Slip.pdf';
+
                 return new \Illuminate\Http\Response($pdf->output(), 200, [
                     'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+                    'Content-Disposition' => 'attachment; filename="'.$fileName.'"',
                 ]);
             }
 
@@ -99,7 +100,7 @@ class PayrollSlipController extends Controller
     public function download(Request $request)
     {
         $payrollSlip = $this->payrollSlipService->getPayrollSlipDetail($request->id);
-        
+
         $pdf = Pdf::loadView('reports.payroll-slip', compact('payrollSlip'))
             ->setPaper('a4', 'portrait')
             ->setOption([
@@ -108,11 +109,11 @@ class PayrollSlipController extends Controller
                 'isHtml5ParserEnabled' => true,
             ]);
 
-        $fileName = $payrollSlip->staff->FirstName . '_' . $payrollSlip->staff->LastName . '_Payroll_Slip.pdf';
-        
+        $fileName = $payrollSlip->staff->FirstName.'_'.$payrollSlip->staff->LastName.'_Payroll_Slip.pdf';
+
         return new \Illuminate\Http\Response($pdf->output(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Content-Disposition' => 'attachment; filename="'.$fileName.'"',
         ]);
     }
 
@@ -131,6 +132,7 @@ class PayrollSlipController extends Controller
     public function detail(Request $request): Response
     {
         $payrollSlip = $this->payrollSlipService->getPayrollSlipDetail($request->id);
+
         return Inertia::render('Staff/PayrollSlip/Detail', [
             'payrollSlip' => $payrollSlip,
         ]);

@@ -28,17 +28,17 @@ class SiteSettingRequest extends FormRequest
                     Rule::exists('site_settings', 'id')->where(function ($query) {
                         return $query->where('tenant_id', tenant('id'));
                     }),
-                ]
+                ],
             ];
         }
 
         if ($this->isMethod('post')) {
             return [
                 'name' => ['required', 'string'],
-                'key' => [  'required', 'in:Fine_Late_Fee',
-                    Rule::unique('site_settings')->where(function ($query){
+                'key' => ['required', 'in:Fine_Late_Fee',
+                    Rule::unique('site_settings')->where(function ($query) {
                         return $query->where('tenant_id', tenant('id'));
-                    })
+                    }),
                 ],
                 'value' => ['required', 'integer'],
             ];
@@ -47,7 +47,7 @@ class SiteSettingRequest extends FormRequest
         if ($this->isMethod('put') || $this->isMethod('patch')) {
             return [
                 'name' => ['required', 'string'],
-                'key' =>  ['required', 'string', 'in:Fine_Late_Fee'],
+                'key' => ['required', 'string', 'in:Fine_Late_Fee'],
                 'value' => ['required', 'integer'],
             ];
         }

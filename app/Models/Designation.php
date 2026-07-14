@@ -18,7 +18,6 @@ class Designation extends Model
         'SessionId',
         'DesignationName',
         'DesignationGroupId',
-        'imported_designation_id'
+        'imported_designation_id',
     ];
-
 }

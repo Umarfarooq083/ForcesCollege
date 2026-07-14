@@ -22,14 +22,16 @@ class FineDeductionController extends Controller
     public function index(): Response
     {
         $fineDeductions = $this->fineDeductionService->index();
+
         return Inertia::render('Staff/FineDeduction/List', [
-            'fineDeductions' => $fineDeductions
+            'fineDeductions' => $fineDeductions,
         ]);
     }
 
     public function create(): Response
     {
         $data = $this->fineDeductionService->create();
+
         return Inertia::render('Staff/FineDeduction/Create', [
             'data' => $data,
         ]);
@@ -38,12 +40,14 @@ class FineDeductionController extends Controller
     public function submit(FineDeductionRequest $request): RedirectResponse
     {
         $this->fineDeductionService->submit($request);
+
         return $this->redirectSuccess('Fine deduction created successfully!', 'finededuction.index');
     }
 
     public function edit(Request $request): Response
     {
         $data = $this->fineDeductionService->edit($request);
+
         return Inertia::render('Staff/FineDeduction/Edit', [
             'fineDeduction' => $data->fineDeduction,
             'staffList' => $data->staffList,
@@ -53,12 +57,14 @@ class FineDeductionController extends Controller
     public function update(FineDeductionRequest $request): RedirectResponse
     {
         $this->fineDeductionService->update($request);
+
         return $this->redirectSuccess('Fine deduction updated successfully!', 'finededuction.index');
     }
 
     public function delete(Request $request): RedirectResponse
     {
         $this->fineDeductionService->destroy($request);
+
         return $this->redirectSuccess('Fine deduction deleted successfully!', 'finededuction.index');
     }
 }

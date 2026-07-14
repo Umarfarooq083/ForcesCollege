@@ -16,6 +16,7 @@ trait PermissionTrait
             }
             $modules[$k] = ['module_name' => $modules[$k], 'names' => $name];
         }
+
         return array_values($modules);
     }
 }

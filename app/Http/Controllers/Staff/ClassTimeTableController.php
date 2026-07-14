@@ -12,7 +12,6 @@ use Inertia\Response;
 
 class ClassTimeTableController extends Controller
 {
-
     protected $timetablesService;
 
     public function __construct(ClassTimeTableService $timetablesService)
@@ -24,6 +23,7 @@ class ClassTimeTableController extends Controller
     {
         $data['timetables'] = $this->timetablesService->index($request);
         $data['staffList'] = $this->timetablesService->getStaffList();
+
         return Inertia::render('Staff/ClassTimeTable/List', $data);
     }
 
@@ -31,6 +31,7 @@ class ClassTimeTableController extends Controller
     {
         $staffList = $this->timetablesService->getStaffList();
         $classesList = Classes::select('id', 'tenant_id', 'ClassName')->where('tenant_id', tenant('id'))->where('IsActive', 1)->get();
+
         return Inertia::render('Staff/ClassTimeTable/Create', [
             'staffList' => $staffList,
             'classesList' => $classesList,
@@ -43,18 +44,16 @@ class ClassTimeTableController extends Controller
             $this->timetablesService->getSectionsAndSubjects($classId)
         );
     }
-    
+
     public function submit(ClassTimeTableRequest $request)
     {
         // dd($request->validated());
         try {
             $this->timetablesService->createTimetableGroup($request);
+
             return $this->redirectSuccess('Timetable created successfully!', 'classtimetable.index');
-        } 
-        catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
-
-    
 }

@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\Staff;
-use App\Models\StaffAttendance;
-use App\Models\GazettedLeave;
 use App\Models\FineDeduction;
-use App\Models\MiscellaneousPayment;
-use App\Models\SalaryTax;
-use App\Models\SecurityRefund;
-use App\Models\SecurityDeduction;
-use App\Models\LeaveRequest;
-use App\Models\PayrollSlip;
+use App\Models\GazettedLeave;
 use App\Models\HumanResourceLog;
 use App\Models\LateFine;
+use App\Models\LeaveRequest;
+use App\Models\MiscellaneousPayment;
+use App\Models\PayrollSlip;
+use App\Models\SalaryTax;
+use App\Models\SecurityDeduction;
+use App\Models\SecurityRefund;
+use App\Models\Staff;
+use App\Models\StaffAttendance;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -30,15 +30,15 @@ class PayrollSlipService
     {
         return Staff::select('id', 'FirstName', 'LastName', 'BasicSalary', 'TransportAllowance', 'ComputerAllowance', 'MobileAllowance', 'RecreationAllowance')
             ->where('tenant_id', tenant('id'))
-            ->with('DesignationRel','DepartmentRel')
+            ->with('DesignationRel', 'DepartmentRel')
             ->where('IsActive', 1)
             ->get();
     }
 
-    public function generatePayrollSlips(int $month, int $year, array $staffIds = null): array
+    public function generatePayrollSlips(int $month, int $year, ?array $staffIds = null): array
     {
         $staffList = $staffIds
-            ? Staff::whereIn('id', $staffIds)->where('IsActive', 1)->with('DesignationRel','DepartmentRel')->get()
+            ? Staff::whereIn('id', $staffIds)->where('IsActive', 1)->with('DesignationRel', 'DepartmentRel')->get()
             : $this->getStaffList();
         $results = [];
         foreach ($staffList as $staff) {
@@ -85,7 +85,7 @@ class PayrollSlipService
 
         return [
             'staff_id' => $staff->id,
-            'staff_name' => $staff->FirstName . ' ' . $staff->LastName,
+            'staff_name' => $staff->FirstName.' '.$staff->LastName,
             'DesignationName' => $staff?->DesignationRel?->DesignationName,
             'DepartmentName' => $staff?->DepartmentRel?->DepartmentName,
             'payroll_month' => $month,
@@ -112,7 +112,7 @@ class PayrollSlipService
             'security_deduction' => $securityDeduction,
             'net_salary' => round($netSalary, 2),
             'applyed_leave_requests' => $attendanceData['applyed_leave_requests']->toArray(),
-            
+
         ];
     }
 
@@ -123,6 +123,7 @@ class PayrollSlipService
         $allowances += floatval($staff->ComputerAllowance ?: 0);
         $allowances += floatval($staff->MobileAllowance ?: 0);
         $allowances += floatval($staff->RecreationAllowance ?: 0);
+
         return $allowances;
     }
 
@@ -140,7 +141,7 @@ class PayrollSlipService
         $totalDays = cal_days_in_month(CAL_GREGORIAN, $month, $year);
         $workingDays = 0;
 
-        $gazettedLeaveDays = $gazettedLeaves->map(fn($d) => Carbon::parse($d)->format('Y-m-d'))->toArray();
+        $gazettedLeaveDays = $gazettedLeaves->map(fn ($d) => Carbon::parse($d)->format('Y-m-d'))->toArray();
 
         for ($d = 1; $d <= $totalDays; $d++) {
             $date = Carbon::create($year, $month, $d);
@@ -174,7 +175,7 @@ class PayrollSlipService
             ->where('tenant_id', tenant('id'))
             ->whereMonth('AttendanceDate', $month)
             ->whereYear('AttendanceDate', $year)
-            ->selectRaw("DATE(AttendanceDate) as date, Attendance")
+            ->selectRaw('DATE(AttendanceDate) as date, Attendance')
             ->get()
             ->keyBy('date');
 
@@ -186,7 +187,7 @@ class PayrollSlipService
             ->keyBy(function ($item) {
                 return Carbon::parse($item->date)->format('Y-m-d');
             });
-            
+
         $applyedleaveRequests = LeaveRequest::where('staff_id', $staffId)
             ->where('tenant_id', tenant('id'))
             ->whereYear('date', $year)
@@ -204,9 +205,10 @@ class PayrollSlipService
                 continue;
             }
 
-            $gazettedLeaveDaysArr = $gazettedLeaves->map(fn($d) => Carbon::parse($d)->format('Y-m-d'))->toArray();
+            $gazettedLeaveDaysArr = $gazettedLeaves->map(fn ($d) => Carbon::parse($d)->format('Y-m-d'))->toArray();
             if (in_array($dateString, $gazettedLeaveDaysArr)) {
                 $gazettedLeaveCount++;
+
                 continue;
             }
 
@@ -218,11 +220,13 @@ class PayrollSlipService
 
             if ($leaveApproved) {
                 $leaveDays++;
+
                 continue;
             }
 
             if ($leaveNotApproved) {
                 $absentDays++;
+
                 continue;
             }
 
@@ -247,6 +251,7 @@ class PayrollSlipService
         $gazettedLeaveDeduction = $gazettedLeaveCount;
 
         $absentDays = $this->checkSandwichLeaves($staffId, $month, $year, $absentDays, $gazettedLeaves, $weekendDays);
+
         return [
             'present_days' => $presentDays,
             'applyed_leave_requests' => $applyedleaveRequests,
@@ -265,16 +270,16 @@ class PayrollSlipService
             ->whereYear('AttendanceDate', $year)
             ->where('Attendance', 'Absent')
             ->pluck('AttendanceDate')
-            ->map(fn($date) => Carbon::parse($date)->day)
+            ->map(fn ($date) => Carbon::parse($date)->day)
             ->toArray();
-        $gazettedLeaveDays = $gazettedLeaves->map(fn($gl) => Carbon::parse($gl)->day)->toArray();
+        $gazettedLeaveDays = $gazettedLeaves->map(fn ($gl) => Carbon::parse($gl)->day)->toArray();
 
         $allAttendanceDates = StaffAttendance::where('StaffId', $staffId)
             ->where('tenant_id', tenant('id'))
             ->whereMonth('AttendanceDate', $month)
             ->whereYear('AttendanceDate', $year)
             ->pluck('AttendanceDate')
-            ->map(fn($date) => Carbon::parse($date)->day)
+            ->map(fn ($date) => Carbon::parse($date)->day)
             ->toArray();
         $sandwichDeduction = 0;
 
@@ -287,9 +292,9 @@ class PayrollSlipService
                 $nextWorkday = $date->copy()->addDays($daysUntilNextWorkday);
                 $nextWorkdayDay = $nextWorkday->day;
 
-                if (!in_array($nextWorkday->dayOfWeek, $weekendDays) && $nextWorkday->dayOfWeek === 1) {
-                    $nextWorkdayHasMissingAttendance = !in_array($nextWorkdayDay, $allAttendanceDates);
-                    if (!in_array($nextWorkdayDay, $gazettedLeaveDays) && !in_array($nextWorkdayDay, $absentDates) && $nextWorkdayHasMissingAttendance) {
+                if (! in_array($nextWorkday->dayOfWeek, $weekendDays) && $nextWorkday->dayOfWeek === 1) {
+                    $nextWorkdayHasMissingAttendance = ! in_array($nextWorkdayDay, $allAttendanceDates);
+                    if (! in_array($nextWorkdayDay, $gazettedLeaveDays) && ! in_array($nextWorkdayDay, $absentDates) && $nextWorkdayHasMissingAttendance) {
                         $sandwichDeduction++;
                     }
                 }
@@ -306,7 +311,7 @@ class PayrollSlipService
 
         foreach ($daysToCheck as $daysAhead) {
             $nextDay = ($currentDay + $daysAhead) % 7;
-            if (!in_array($nextDay, $weekendDays)) {
+            if (! in_array($nextDay, $weekendDays)) {
                 return $daysAhead;
             }
         }
@@ -325,7 +330,7 @@ class PayrollSlipService
 
         return $fine ? floatval($fine->amount) : 0;
     }
-   
+
     protected function getLateFineDeduction(int $staffId, int $month, int $year): float
     {
         $fine = LateFine::where('staff_id', $staffId)
@@ -367,6 +372,7 @@ class PayrollSlipService
             ->where('applicable_month', $month)
             ->whereNull('deleted_at')
             ->first();
+
         // dd($refund,$month);
         return $refund ? floatval($refund->amount) : 0;
     }
@@ -404,7 +410,7 @@ class PayrollSlipService
                 ])
             );
 
-            userActivityLogs('Payroll Slip generated for staff ID: ' . $data['staff_id'], HumanResourceLog::class);
+            userActivityLogs('Payroll Slip generated for staff ID: '.$data['staff_id'], HumanResourceLog::class);
         }
     }
 

@@ -25,7 +25,7 @@ class InquiryRequest extends FormRequest
         if ($request->method() === 'PUT') {
             return [
                 'id' => 'required|exists:student_inquiries,id',
-                'SessionId' => 'required ' ,
+                'SessionId' => 'required ',
                 'Date' => ['required'],
                 'ClassId' => ['required'],
                 'Name' => ['required'],
@@ -37,12 +37,12 @@ class InquiryRequest extends FormRequest
                 'FatherName' => 'required',
                 'FatherPhoneNo' => [
                     'required',
-                    'regex:/^\+92\d{10}$/'
+                    'regex:/^\+92\d{10}$/',
                 ],
                 'MotherName' => 'nullable',
                 'MotherPhoneNo' => [
                     'nullable',
-                    'regex:/^\+92\d{10}$/'
+                    'regex:/^\+92\d{10}$/',
                 ],
                 'SourceId' => 'required|numeric',
                 'ReferenceId' => ['required'],
@@ -52,32 +52,31 @@ class InquiryRequest extends FormRequest
             ];
         }
 
-
-         return [
-                'SessionId' => 'required',
-                'Date' => ['required'],
-                'ClassId' => ['required'],
-                'Name' => ['required'],
-                'LastName' => 'nullable',
-                'BirthDate' => ['required', 'date', 'before:today'],
-                'Gender' => ['required'],
-                'PreviousInstitute' => 'nullable',
-                'Address' => 'nullable',
-                'FatherName' => 'required',
-                'FatherPhoneNo' => [
-                    'required',
-                    'regex:/^\+92\d{10}$/'
-                ],
-                'MotherName' => 'nullable',
-                'MotherPhoneNo' => [
-                    'nullable',
-                    'regex:/^\+92\d{10}$/'
-                ],
-                'SourceId' => 'required|numeric',
-                'ReferenceId' => ['required'],
-                'cnic' => ['required'],
-                'guardian_relation_id' => ['required'],
-                'IsSmsSent' => 'nullable',
-            ];
+        return [
+            'SessionId' => 'required',
+            'Date' => ['required'],
+            'ClassId' => ['required'],
+            'Name' => ['required'],
+            'LastName' => 'nullable',
+            'BirthDate' => ['required', 'date', 'before:today'],
+            'Gender' => ['required'],
+            'PreviousInstitute' => 'nullable',
+            'Address' => 'nullable',
+            'FatherName' => 'required',
+            'FatherPhoneNo' => [
+                'required',
+                'regex:/^\+92\d{10}$/',
+            ],
+            'MotherName' => 'nullable',
+            'MotherPhoneNo' => [
+                'nullable',
+                'regex:/^\+92\d{10}$/',
+            ],
+            'SourceId' => 'required|numeric',
+            'ReferenceId' => ['required'],
+            'cnic' => ['required'],
+            'guardian_relation_id' => ['required'],
+            'IsSmsSent' => 'nullable',
+        ];
     }
 }

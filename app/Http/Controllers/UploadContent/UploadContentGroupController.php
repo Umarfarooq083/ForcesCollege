@@ -16,20 +16,22 @@ use Inertia\Response;
 class UploadContentGroupController extends Controller
 {
     protected $ContentGroupService;
+
     public function __construct(ContentGroupService $ContentGroupService)
     {
         $this->ContentGroupService = $ContentGroupService;
     }
 
-    public function index():Response
+    public function index(): Response
     {
-        $UploadContentGroup = UploadContentGroup::orderBy('id','desc')->paginate(25)->withQueryString();
-        return Inertia::render('ContentUploadGroup/List',[
+        $UploadContentGroup = UploadContentGroup::orderBy('id', 'desc')->paginate(25)->withQueryString();
+
+        return Inertia::render('ContentUploadGroup/List', [
             'UploadContentGroup' => $UploadContentGroup,
         ]);
     }
 
-    public function create():Response
+    public function create(): Response
     {
         return Inertia::render('ContentUploadGroup/Create');
     }
@@ -37,35 +39,39 @@ class UploadContentGroupController extends Controller
     public function submit(ContentGroupRequest $request): RedirectResponse
     {
         $this->ContentGroupService->submit($request);
+
         return $this->redirectSuccess('Content group created successfully!', 'uploads.index');
     }
 
     public function edit(Request $request): Response
     {
         $UploadContentGroup = $this->ContentGroupService->edit($request);
-        return Inertia::render('ContentUploadGroup/Edit',[
-        'UploadContentGroup' => $UploadContentGroup,
-       ]);
+
+        return Inertia::render('ContentUploadGroup/Edit', [
+            'UploadContentGroup' => $UploadContentGroup,
+        ]);
     }
 
     public function update(Request $request): RedirectResponse
     {
         $this->ContentGroupService->update($request);
+
         return $this->redirectSuccess('Content group updated successfully!', 'uploads.index');
     }
-   
+
     public function delete(Request $request)
-    {     
+    {
         $ContentUpload = ContentUpload::where('UploadContentGroupId', $request->id)->exists();
-        if($ContentUpload){
+        if ($ContentUpload) {
             return $this->redirectError('Content exists for this group please delete content first', 'content.index');
         }
 
         $group = UploadContentGroup::findorFail($request->id);
         $deleted = $group->delete();
-        
-        if($deleted){
+
+        if ($deleted) {
             userActivityLogs('Content Group Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', FeeLog::class);
+
             return $this->redirectSuccess('Content group delted successfully', 'content.index');
         }
     }

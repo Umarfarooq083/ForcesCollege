@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('tenant_id');
             $table->integer('SessionId')->nullable();
             $table->string('Name')->nullable();
-             $table->string('LastName',100)->nullable();
+            $table->string('LastName', 100)->nullable();
             $table->string('StudentName')->nullable();
             $table->string('Phone')->nullable();
             $table->string('Email')->nullable();
@@ -25,11 +25,11 @@ return new class extends Migration
             $table->integer('ClassId')->nullable();
             $table->timestamp('BirthDate')->useCurrent();
             $table->string('Gender');
-            $table->string('PreviousInstitute',191)->nullable();
-            $table->string('FatherName',100)->nullable();
-            $table->string('FatherPhoneNo',500)->nullable();
-            $table->string('MotherName',100)->nullable();
-            $table->string('MotherPhoneNo',50)->nullable();
+            $table->string('PreviousInstitute', 191)->nullable();
+            $table->string('FatherName', 100)->nullable();
+            $table->string('FatherPhoneNo', 500)->nullable();
+            $table->string('MotherName', 100)->nullable();
+            $table->string('MotherPhoneNo', 50)->nullable();
             $table->string('Description')->nullable();
             $table->integer('Status')->default(0)->nullable();
             $table->string('SchoolId')->nullable();

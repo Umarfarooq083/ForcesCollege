@@ -15,6 +15,7 @@ use Inertia\Response;
 class FeesTypeController extends Controller
 {
     protected $feeTypeService;
+
     public function __construct(FeeTypeService $feeTypeService)
     {
         $this->feeTypeService = $feeTypeService;
@@ -23,8 +24,9 @@ class FeesTypeController extends Controller
     public function index(Request $request): Response
     {
         $feesType = $this->feeTypeService->index($request);
+
         return Inertia::render('Fees/FeesType/List', [
-            'feesType' => $feesType
+            'feesType' => $feesType,
         ]);
     }
 
@@ -36,13 +38,15 @@ class FeesTypeController extends Controller
     public function submit(FeeTypeRequest $request): RedirectResponse
     {
         $this->feeTypeService->submit($request);
+
         return $this->redirectSuccess('Fee type created successfully!', 'fees.list');
     }
 
     public function edit(Request $request): Response
     {
         $feesType = FeesType::find($request->id);
-        return Inertia::render('Fees/FeesType/Edit',[
+
+        return Inertia::render('Fees/FeesType/Edit', [
             'feesType' => $feesType,
         ]);
     }
@@ -50,17 +54,18 @@ class FeesTypeController extends Controller
     public function update(FeeTypeRequest $request): RedirectResponse
     {
         $this->feeTypeService->update($request);
+
         return $this->redirectSuccess('Fee type updated successfully!', 'fees.list');
     }
 
-    public function delete(Request $request):RedirectResponse
+    public function delete(Request $request): RedirectResponse
     {
         $deleted = FeesType::findorFail($request->id)->delete();
 
-        if($deleted){
+        if ($deleted) {
             userActivityLogs('Fee Type Deleted and id is '.$request->id.' User ID: '.auth()->user()->id.'', FeeLog::class);
         }
+
         return $this->redirectSuccess('Fee type deleted successfully!', 'fees.list');
     }
-    
 }

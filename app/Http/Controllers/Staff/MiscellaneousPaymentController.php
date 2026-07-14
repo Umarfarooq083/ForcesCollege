@@ -22,14 +22,16 @@ class MiscellaneousPaymentController extends Controller
     public function index(): Response
     {
         $miscellaneousPayments = $this->miscellaneousPaymentService->index();
+
         return Inertia::render('Staff/MiscellaneousPayment/List', [
-            'miscellaneousPayments' => $miscellaneousPayments
+            'miscellaneousPayments' => $miscellaneousPayments,
         ]);
     }
 
     public function create(): Response
     {
         $data = $this->miscellaneousPaymentService->create();
+
         return Inertia::render('Staff/MiscellaneousPayment/Create', [
             'data' => $data,
         ]);
@@ -38,12 +40,14 @@ class MiscellaneousPaymentController extends Controller
     public function submit(MiscellaneousPaymentRequest $request): RedirectResponse
     {
         $this->miscellaneousPaymentService->submit($request);
+
         return $this->redirectSuccess('Miscellaneous payment created successfully!', 'miscellaneouspayment.index');
     }
 
     public function edit(Request $request): Response
     {
         $data = $this->miscellaneousPaymentService->edit($request);
+
         return Inertia::render('Staff/MiscellaneousPayment/Edit', [
             'miscellaneousPayment' => $data->miscellaneousPayment,
             'staffList' => $data->staffList,
@@ -53,12 +57,14 @@ class MiscellaneousPaymentController extends Controller
     public function update(MiscellaneousPaymentRequest $request): RedirectResponse
     {
         $this->miscellaneousPaymentService->update($request);
+
         return $this->redirectSuccess('Miscellaneous payment updated successfully!', 'miscellaneouspayment.index');
     }
 
     public function delete(Request $request): RedirectResponse
     {
         $this->miscellaneousPaymentService->destroy($request);
+
         return $this->redirectSuccess('Miscellaneous payment deleted successfully!', 'miscellaneouspayment.index');
     }
 }

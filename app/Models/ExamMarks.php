@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ExamMarks extends Model
 {
     use SoftDeletes;
+
     protected $table = 'exam_marks';
+
     protected $fillable = [
         'tenant_id',
         'SchoolId',
@@ -21,7 +23,7 @@ class ExamMarks extends Model
         'SessionId',
         'ExamSubjectId',
         'ExamMarksGroupId',
-        'imported_exam_marks_id'
+        'imported_exam_marks_id',
     ];
 
     public function ExamSubject()
@@ -29,7 +31,8 @@ class ExamMarks extends Model
         return $this->hasOne(ExamSubject::class, 'id', 'ExamSubjectId');
     }
 
-    public function ExamMarksDetails(){
+    public function ExamMarksDetails()
+    {
         return $this->hasMany(ExamMarksDetail::class, 'ExamMarksId', 'id');
     }
 }

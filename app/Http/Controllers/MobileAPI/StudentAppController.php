@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\MobileAPI;
 
 use App\Http\Controllers\Controller;
-use App\Models\Campus;
 use App\Models\ClassTimeTable;
 use App\Models\ExamGrade;
 use App\Models\ExamMarks;
@@ -16,12 +15,10 @@ use App\Models\HomeWork;
 use App\Models\Student;
 use App\Models\StudentAttendance;
 use App\Models\Tenant;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-
-
 
 class StudentAppController extends Controller
 {
@@ -37,15 +34,14 @@ class StudentAppController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $tenant = MobileTenantVerifaction($request);
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->apiErrorResponse('Student or Campus Not Found', 404);
         }
-
 
         $student = Student::with('class', 'section')
             ->where('tenant_id', $tenant->id)
@@ -57,11 +53,12 @@ class StudentAppController extends Controller
             if ($FcmToken) {
                 $FcmToken->update(['fcm_token' => $request->fcm_token]);
             } else {
-                $FcmTokenCreate = new FcmToken();
+                $FcmTokenCreate = new FcmToken;
                 $FcmTokenCreate->user_id = $student->id;
                 $FcmTokenCreate->fcm_token = $request->fcm_token;
                 $FcmTokenCreate->save();
             }
+
             return $this->apiSuccessResponse('Student retrieved successfully', $student);
         } else {
             return $this->apiErrorResponse('Student or Campus Not Found', 404);
@@ -71,21 +68,23 @@ class StudentAppController extends Controller
     public function Campuses()
     {
         $tenants = Tenant::select('id', 'domain', 'data')->get();
+
         return $this->apiSuccessResponse('Campuses retrieved successfully', $tenants);
     }
 
     public function homeWork(Request $request)
     {
         $tenant = MobileTenantVerifaction($request);
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->apiErrorResponse('Student or Campus Not Found', 404);
         }
         $currentSession = APIfetchCurrentSession($tenant);
-        if (!$currentSession) {
+        if (! $currentSession) {
             return $this->apiErrorResponse('Current Session Not Found', 404);
         }
 
         $homeWorks = HomeWork::with('SubjectRel')->where('sessionId', $currentSession->id)->where('classId', $request->classId)->where('sectionId', $request->sectionId)->where('tenant_id', $tenant->id)->get();
+
         return $this->apiSuccessResponse('HomeWorks retrieved successfully', $homeWorks);
     }
 
@@ -93,11 +92,11 @@ class StudentAppController extends Controller
     {
         // return $request->all();
         $tenant = MobileTenantVerifaction($request);
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->apiErrorResponse('Student or Campus Not Found', 404);
         }
         $currentSession = APIfetchCurrentSession($tenant);
-        if (!$currentSession) {
+        if (! $currentSession) {
             return $this->apiErrorResponse('Current Session Not Found', 404);
         }
 
@@ -109,6 +108,7 @@ class StudentAppController extends Controller
             ->whereDate('date', $date)
             ->where('tenant_id', $tenant->id)
             ->get();
+
         return $this->apiSuccessResponse('Class Time Table retrieved successfully', $classTimeTables);
     }
 
@@ -116,30 +116,30 @@ class StudentAppController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'start_date' => 'nullable|date',
-            'end_date'   => 'nullable|date',
-            'studentId'  => 'required|integer|exists:students,id',
-            'campus'     => 'required',
+            'end_date' => 'nullable|date',
+            'studentId' => 'required|integer|exists:students,id',
+            'campus' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $tenant = MobileTenantVerifaction($request);
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->apiErrorResponse('Student or Campus Not Found', 404);
         }
 
         $currentSession = APIfetchCurrentSession($tenant);
-        if (!$currentSession) {
+        if (! $currentSession) {
             return $this->apiErrorResponse('Current Session Not Found', 404);
         }
 
         $startDate = \Carbon\Carbon::parse($request->start_date ?? now())->toDateString();
-        $endDate   = \Carbon\Carbon::parse($request->end_date ?? $startDate)->toDateString();
+        $endDate = \Carbon\Carbon::parse($request->end_date ?? $startDate)->toDateString();
 
         // $studentAttendance = StudentAttendance::where('tenant_id', $tenant->id)
         //     ->where('SessionId', $currentSession->id)
@@ -162,11 +162,11 @@ class StudentAppController extends Controller
     {
 
         $tenant = MobileTenantVerifaction($request);
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->apiErrorResponse('Student or Campus Not Found', 404);
         }
         $currentSession = APIfetchCurrentSession($tenant);
-        if (!$currentSession) {
+        if (! $currentSession) {
             return $this->apiErrorResponse('Current Session Not Found', 404);
         }
         $student = Student::select('id', 'tenant_id', 'IsActive', 'RollNumber', 'FirstName', 'LastName')->where('tenant_id', $tenant->id)->where('IsActive', 1)->where('id', $request->studentId)->firstOrFail();
@@ -182,7 +182,7 @@ class StudentAppController extends Controller
             ->get();
 
         $generateFeeChallan->map(function ($item) {
-            return $item->amount_total =  $item->challanArrearsSumMobile->sum('arrear_challan_transaction_sum_feeamount')
+            return $item->amount_total = $item->challanArrearsSumMobile->sum('arrear_challan_transaction_sum_feeamount')
                 + $item->challanArrearsSumMobile->sum('arrear_challan_fine.FineAmount') + $item->transection_sum_balancefeeafterdiscount;
         });
 
@@ -195,11 +195,11 @@ class StudentAppController extends Controller
     public function getStudentExams(Request $request)
     {
         $tenant = MobileTenantVerifaction($request);
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->apiErrorResponse('Student or Campus Not Found', 404);
         }
         $currentSession = APIfetchCurrentSession($tenant);
-        if (!$currentSession) {
+        if (! $currentSession) {
             return $this->apiErrorResponse('Current Session Not Found', 404);
         }
 
@@ -239,6 +239,7 @@ class StudentAppController extends Controller
             ->get()
             ->map(function ($exam) use ($request) {
                 $exam->student_id = $request->studentId;
+
                 return $exam;
             });
 
@@ -248,11 +249,11 @@ class StudentAppController extends Controller
     public function getStudentExamsDetail(Request $request)
     {
         $tenant = MobileTenantVerifaction($request);
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->apiErrorResponse('Student or Campus Not Found', 404);
         }
         $currentSession = APIfetchCurrentSession($tenant);
-        if (!$currentSession) {
+        if (! $currentSession) {
             return $this->apiErrorResponse('Current Session Not Found', 404);
         }
 
@@ -280,11 +281,11 @@ class StudentAppController extends Controller
                     $query->select('id', 'IsActive', 'SessionId', 'ExamSubjectId')->where('SessionId', $currentSession->id)
                         ->with([
                             'ExamSubject' => function ($subjectQuery) use ($request, $currentSession) {
-                                $subjectQuery->select('id', 'tenant_id', 'SessionId', 'Title', 'ExamId', 'SubjectId','MarksMax')->where('ExamId', $request->exam_id)
+                                $subjectQuery->select('id', 'tenant_id', 'SessionId', 'Title', 'ExamId', 'SubjectId', 'MarksMax')->where('ExamId', $request->exam_id)
                                     ->where('SessionId', $currentSession->id)->with('Subject:id,SubjectName');
-                            }
+                            },
                         ]);
-                }
+                },
             ])
             ->get();
         $data['examDetail'] = $examDetail;
@@ -306,30 +307,28 @@ class StudentAppController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         $tenant = MobileTenantVerifaction($request);
-        if (!$tenant) {
+        if (! $tenant) {
             return $this->apiErrorResponse('Student or Campus Not Found', 404);
         }
         $currentSession = APIfetchCurrentSession($tenant);
-        if (!$currentSession) {
+        if (! $currentSession) {
             return $this->apiErrorResponse('Current Session Not Found', 404);
         }
 
         $student = Student::where('id', $request->studentId)->first();
         if ($student) {
-            if (!Hash::check($request->oldPassword, $student->Password)) {
+            if (! Hash::check($request->oldPassword, $student->Password)) {
                 return $this->apiErrorResponse('Old password is incorrect', 404);
             }
             $student->update([
-                'Password' => Hash::make($request->newPassword)
+                'Password' => Hash::make($request->newPassword),
             ]);
         }
-
-
 
         return $this->apiSuccessResponse('Password updated successfully');
     }

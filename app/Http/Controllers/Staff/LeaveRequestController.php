@@ -22,6 +22,7 @@ class LeaveRequestController extends Controller
     public function index(): Response
     {
         $leaveRequests = $this->leaveRequestService->index();
+
         return Inertia::render('Staff/LeaveRequest/List', [
             'leaveRequests' => $leaveRequests,
         ]);
@@ -30,6 +31,7 @@ class LeaveRequestController extends Controller
     public function create(): Response
     {
         $data = $this->leaveRequestService->create();
+
         return Inertia::render('Staff/LeaveRequest/Create', [
             'staffList' => $data['staffList'],
         ]);
@@ -38,6 +40,7 @@ class LeaveRequestController extends Controller
     public function submit(LeaveRequest $request): RedirectResponse
     {
         $this->leaveRequestService->submit($request);
+
         return $this->redirectSuccess('Leave request(s) submitted successfully!', 'leave-request.index');
     }
 
@@ -58,18 +61,21 @@ class LeaveRequestController extends Controller
     public function update(LeaveRequest $request): RedirectResponse
     {
         $this->leaveRequestService->update($request);
+
         return $this->redirectSuccess('Leave request updated successfully!', 'leave-request.index');
     }
 
     public function approve(Request $request, $id): RedirectResponse
     {
         $this->leaveRequestService->approve($request, $id);
+
         return $this->redirectSuccess('Leave request updated successfully!', 'leave-request.index');
     }
 
     public function delete(Request $request): RedirectResponse
     {
         $this->leaveRequestService->destroy($request);
+
         return $this->redirectSuccess('Leave request deleted successfully!', 'leave-request.index');
     }
 }

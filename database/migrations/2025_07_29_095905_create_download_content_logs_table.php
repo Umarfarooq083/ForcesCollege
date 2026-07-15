@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('download_content_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id',100)->nullable();
+            $table->string('tenant_id', 100)->nullable();
             $table->integer('user_id')->nullable();
-            $table->string('domainName',100)->nullable();
+            $table->string('domainName', 100)->nullable();
             $table->integer('upload_content_id')->nullable();
             $table->timestamps();
         });

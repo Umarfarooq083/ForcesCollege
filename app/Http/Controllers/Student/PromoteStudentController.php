@@ -11,7 +11,6 @@ use App\Models\StudentFeeDiscount;
 use App\Models\StudentLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 
 class PromoteStudentController extends Controller
 {
@@ -21,18 +20,19 @@ class PromoteStudentController extends Controller
         $sectionList = Section::where('tenant_id', tenant('id'))->get();
         $activeSession = fetchCurrentSession();
         $activeSessionList = LmsSession::orderBy('id', 'desc')->get();
+
         // dd($activeSession);
         return inertia('PromoteStudent/List', [
             'classList' => $classList,
             'sectionList' => $sectionList,
             'activeSession' => $activeSession,
-            'activeSessionsList' => $activeSessionList
+            'activeSessionsList' => $activeSessionList,
         ]);
     }
 
     public function fetch(Request $request)
     {
-        $studentData = Student::select('id', 'tenant_id', 'IsActive', 'RollNumber', 'FirstName', 'LastName','ClassId','SectionId','SessionId')
+        $studentData = Student::select('id', 'tenant_id', 'IsActive', 'RollNumber', 'FirstName', 'LastName', 'ClassId', 'SectionId', 'SessionId')
             ->with(['studentFeeDiscount' => function ($query) use ($request) {
                 $query->where('SessionId', $request->fetch_student['SessionId'])->with('CampusFeesMasterRel.FeeTypeRel');
             }])
@@ -42,6 +42,7 @@ class PromoteStudentController extends Controller
             ->where('SectionId', $request->fetch_student['SectionId'])
             ->where('SessionId', $request->fetch_student['SessionId'])
             ->get();
+
         return $studentData;
     }
 
@@ -74,6 +75,7 @@ class PromoteStudentController extends Controller
         $data['previousStudentData'] = $previousStudentData;
         $data['studentData'] = $studentData;
         $data['campusFeesMasterData'] = $campusFeesMasterData;
+
         return $data;
     }
 
@@ -108,17 +110,17 @@ class PromoteStudentController extends Controller
                         }
                     }
                 }
-                Student::where('id',$promote['student_id'])->update([
+                Student::where('id', $promote['student_id'])->update([
                     'promoted_date' => now(),
                     'ClassId' => $request->promote_student['PromoteClassId'],
                     'SectionId' => $request->promote_student['PromoteSectionId'],
-                    'SessionId' => $request->promote_student['PromoteSessionId']
+                    'SessionId' => $request->promote_student['PromoteSessionId'],
                 ]);
                 userActivityLogs('Student promoted student id '.$promote['student_id'].' promoted session id '.$request->promote_student['PromoteSessionId'].'  and Promoted By => User ID: '.auth()->user()->id.'', StudentLog::class);
                 StudentFeeDiscount::insert($discountedObjects);
             }
 
-              DB::commit(); 
+            DB::commit();
 
             return $this->redirectSuccess('Student promoted successfully!', 'promotestudent.index');
 
@@ -128,7 +130,7 @@ class PromoteStudentController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Something went wrong',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

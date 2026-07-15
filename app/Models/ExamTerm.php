@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ExamTerm extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
-        'tenant_id', 'SchoolId', 'IsActive', 'CreatedBy', 'ModifiedBy', 'SessionId', 'ExamTermName','imported_exam_term_id'
+        'tenant_id', 'SchoolId', 'IsActive', 'CreatedBy', 'ModifiedBy', 'SessionId', 'ExamTermName', 'imported_exam_term_id',
     ];
 }

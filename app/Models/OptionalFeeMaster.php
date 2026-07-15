@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class OptionalFeeMaster extends Model
 {
     use SoftDeletes;
+
     protected $table = 'optional_fee_mapping';
+
     protected $fillable = [
         'tenant_id',
         'FeesTypeNId',
@@ -24,7 +26,7 @@ class OptionalFeeMaster extends Model
         'ModifiedBy',
         'SessionId',
         'imported_fee_mapping_id',
-        'deleted_at'
+        'deleted_at',
     ];
 
     protected $casts = [
@@ -49,7 +51,7 @@ class OptionalFeeMaster extends Model
 
     public function studentRel()
     {
-        return $this->hasOne(Student::class, 'id', 'StudentId')->select('id', 'FirstName','LastName');
+        return $this->hasOne(Student::class, 'id', 'StudentId')->select('id', 'FirstName', 'LastName');
     }
 
     public function feeTypeRel()

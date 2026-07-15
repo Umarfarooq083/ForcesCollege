@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\StudentRequest;
-use App\Models\Campus;
 use App\Models\Classes;
 use App\Models\DisableReason;
 use App\Models\GuardianRelation;

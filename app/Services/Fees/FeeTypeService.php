@@ -10,13 +10,13 @@ class FeeTypeService
 {
     public function index($request): LengthAwarePaginator
     {
-        $feetype = FeesType::where('IsActive',1)->orderBy('id', 'desc');
-        
+        $feetype = FeesType::where('IsActive', 1)->orderBy('id', 'desc');
+
         if ($request->filled('search')) {
-            $feetype->where(function($q) use($request){
-                $q->where('FeeName', 'like', '%' . $request->search . '%')
-                ->orWhere('FeeCycle', 'like', '%' . $request->search . '%')
-                ->orWhere('FeesCode', 'like', '%' . $request->search . '%');
+            $feetype->where(function ($q) use ($request) {
+                $q->where('FeeName', 'like', '%'.$request->search.'%')
+                    ->orWhere('FeeCycle', 'like', '%'.$request->search.'%')
+                    ->orWhere('FeesCode', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -31,7 +31,7 @@ class FeeTypeService
             'CreatedBy' => auth()->user()->id,
         ]);
 
-        if($created){
+        if ($created) {
             userActivityLogs('Fee Type Created and By User ID: '.auth()->user()->id.'', FeeLog::class);
         }
     }
@@ -45,7 +45,7 @@ class FeeTypeService
             'CreatedBy' => auth()->user()->id,
         ]);
 
-        if($created){
+        if ($created) {
             userActivityLogs('Fee Type Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', FeeLog::class);
         }
     }

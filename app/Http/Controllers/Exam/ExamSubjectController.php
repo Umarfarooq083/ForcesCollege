@@ -25,12 +25,14 @@ class ExamSubjectController extends Controller
     public function index(Request $request): Response
     {
         $data = $this->examSubjectService->index($request);
+
         return Inertia::render('Exam/ExamSubject/List', $data);
     }
 
     public function create(): Response
     {
         $data = $this->examSubjectService->create();
+
         return Inertia::render('Exam/ExamSubject/Create', $data);
     }
 
@@ -38,6 +40,7 @@ class ExamSubjectController extends Controller
     {
         $this->examSubjectService->submit($request);
         userActivityLogs('Exam Subject Created and User ID: '.auth()->user()->id.'', ExamLog::class);
+
         return $this->redirectSuccess('Exam subject created successfully .', 'examsubject.index');
     }
 
@@ -47,6 +50,7 @@ class ExamSubjectController extends Controller
         $data['examSubject'] = ExamSubject::where('tenant_id', tenant('id'))
             ->where('id', $request->id)
             ->first();
+
         return Inertia::render('Exam/ExamSubject/Edit', $data);
     }
 
@@ -54,6 +58,7 @@ class ExamSubjectController extends Controller
     {
         $this->examSubjectService->update($request);
         userActivityLogs('Exam Subject Updated and id is '.$request->id.' User ID: '.auth()->user()->id.'', ExamLog::class);
+
         return $this->redirectSuccess('Exam subject updated successfully .', 'examsubject.index');
     }
 
@@ -61,7 +66,8 @@ class ExamSubjectController extends Controller
     {
         try {
             $this->examSubjectService->delete($request->validated());
-            userActivityLogs('Exam Subject deleted and id is '.$request->id.' by '. auth()->user()->id, ExamLog::class);
+            userActivityLogs('Exam Subject deleted and id is '.$request->id.' by '.auth()->user()->id, ExamLog::class);
+
             return $this->redirectSuccess('Exam subject deleted successfully.', 'examsubject.index');
         } catch (ValidationException $e) {
             return $this->redirectError('Please first of all delete related Exam Students and Exam Marks.', 'examsubject.index');

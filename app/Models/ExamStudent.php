@@ -21,7 +21,7 @@ class ExamStudent extends Model
         'ExamId',
         'ExamSubjectId',
         'StudentId',
-        'deleted_at'
+        'deleted_at',
     ];
 
     public function Student()

@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Permissions;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Route;
 
 class PermissionSeeder extends Seeder
 {
@@ -62,7 +62,6 @@ class PermissionSeeder extends Seeder
     //     });
     // }
 
-
     public function run(): void
     {
         // Clear the permissions table
@@ -76,10 +75,10 @@ class PermissionSeeder extends Seeder
             $parts = explode('.', $route['name']);
             $module = ucfirst($parts[0] ?? 'General');
             $action = ucfirst($parts[1] ?? 'Access');
-            $permissionName = $action . ' ' . $module;
-            $key = $module . '_' . $action;
+            $permissionName = $action.' '.$module;
+            $key = $module.'_'.$action;
 
-            if (!isset($modules[$key])) {
+            if (! isset($modules[$key])) {
                 $modules[$key] = [
                     'abilities' => 'tenant',
                     'module_name' => $module,
@@ -98,13 +97,14 @@ class PermissionSeeder extends Seeder
             Permissions::create($item);
         }
     }
+
     protected function getTenantRoutes()
     {
         return collect(\Route::getRoutes())->filter(function ($route) {
             $name = $route->getName();
 
             // Skip routes with no name or without dot format (e.g. zone.index)
-            if (!$name || !str_contains($name, '.')) {
+            if (! $name || ! str_contains($name, '.')) {
                 return false;
             }
 
@@ -127,7 +127,7 @@ class PermissionSeeder extends Seeder
                 'password.confirm',
                 'password.update',
                 'storage.local',
-                'create.fetch.student'
+                'create.fetch.student',
             ];
 
             foreach ($excludedPrefixes as $prefix) {

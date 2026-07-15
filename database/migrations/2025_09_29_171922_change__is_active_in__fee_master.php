@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('campus_fees_masters', function (Blueprint $table) {
-            $table->string('IsActive',100)->nullable()->change();
+            $table->string('IsActive', 100)->nullable()->change();
         });
     }
 

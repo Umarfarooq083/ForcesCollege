@@ -20,7 +20,7 @@ class ProgramRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('programs')
-                    ->where(fn($query) => $query->where('tenant_id', tenant('id')))
+                    ->where(fn ($query) => $query->where('tenant_id', tenant('id')))
                     ->ignore($this->id),
             ],
             'type' => 'required|in:annual,semester',

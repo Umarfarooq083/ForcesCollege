@@ -23,6 +23,7 @@ const columns = [
   { label: 'ID', key: 'id' },
   { label: 'School Name', key: 'SchoolName' },
   { label: 'Owner Name', key: 'OwnerName' },
+  { label: 'Campus Category', key: 'campus_category' },
   { label: 'Address', key: 'Address' },
   { label: 'Phone No', key: 'PhoneNo' },
   { label: 'Email', key: 'EmailAddress' },
@@ -65,6 +66,9 @@ const columns = [
                                 </td>
                                 <td >
                                     {{campus.OwnerName}}
+                                </td>
+                                <td>
+                                    {{campus?.campus_category?.CategoryName || 'N/A'}}
                                 </td>
                                 <td>
                                     {{campus.Address}}

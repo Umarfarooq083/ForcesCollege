@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\HumanResourceLog;
@@ -14,27 +15,28 @@ class StaffService
     public function index(): object
     {
         $staffList = Staff::query();
-       return $staffList = $staffList
-                ->select(
-                    'id',
-                    'DisableReasonId',
-                    'StaffCode',
-                    'tenant_id',
-                    'RolesId',
-                    'DesignationId',
-                    'DepartmentId',
-                    'FirstName',
-                    'LastName',
-                    'Gender',
-                    'DateOfJoining',
-                    'PhotoPath',
-                    'IsActive'
-                )
-                ->Tenant()
-                ->orderby('id', 'desc')
-                ->with('StaffRole', 'DesignationRel', 'DepartmentRel', 'disabledReason')
-                // ->get();
-                ->paginate(25)->withQueryString();
+
+        return $staffList = $staffList
+            ->select(
+                'id',
+                'DisableReasonId',
+                'StaffCode',
+                'tenant_id',
+                'RolesId',
+                'DesignationId',
+                'DepartmentId',
+                'FirstName',
+                'LastName',
+                'Gender',
+                'DateOfJoining',
+                'PhotoPath',
+                'IsActive'
+            )
+            ->Tenant()
+            ->orderby('id', 'desc')
+            ->with('StaffRole', 'DesignationRel', 'DepartmentRel', 'disabledReason')
+                 // ->get();
+            ->paginate(25)->withQueryString();
     }
 
     public function create(): array
@@ -44,10 +46,10 @@ class StaffService
             ->get();
         $rolesListOnNull = [];
         $rolesListOnTenant = [];
-        if(getTenantSubDomain() !== 'headoffice'){
-            $rolesListOnNull = $rolesList->where('tenant_id',NULL)->toArray();
-            $rolesListOnTenant = $rolesList->where('tenant_id',tenant('id'))->toArray();
-            $rolesList = array_merge($rolesListOnNull,$rolesListOnTenant);
+        if (getTenantSubDomain() !== 'headoffice') {
+            $rolesListOnNull = $rolesList->where('tenant_id', null)->toArray();
+            $rolesListOnTenant = $rolesList->where('tenant_id', tenant('id'))->toArray();
+            $rolesList = array_merge($rolesListOnNull, $rolesListOnTenant);
         }
         $desiginationList = Designation::select('id', 'DesignationName')
             ->get();
@@ -56,6 +58,7 @@ class StaffService
         $data['rolesList'] = $rolesList;
         $data['desiginationList'] = $desiginationList;
         $data['departmentList'] = $departmentList;
+
         return $data;
     }
 
@@ -67,8 +70,8 @@ class StaffService
             $file = $request->file('PhotoPath');
             $ext = $file->extension();
 
-            $folder = 'staff/profile/' . now()->year . '/' . now()->format('F');
-            $fileName = uniqid() . '_' . time() . '.' . $ext;
+            $folder = 'staff/profile/'.now()->year.'/'.now()->format('F');
+            $fileName = uniqid().'_'.time().'.'.$ext;
             $filePath = $file->storeAs($folder, $fileName, 'public');
         }
 
@@ -79,12 +82,12 @@ class StaffService
             'PhotoPath' => $filePath,
         ]);
 
-        if($created){
+        if ($created) {
             userActivityLogs('Staff Created and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
 
         if ($request->CreateUser == 1) {
-            $createUser = new User();
+            $createUser = new User;
             $createUser->name = $request->FirstName;
             $createUser->email = $request->Email;
             $createUser->tenant_id = tenant('id');
@@ -106,8 +109,8 @@ class StaffService
             }
             $file = $request->file('PhotoPath');
             $ext = $file->extension();
-            $folder = 'staff/profile/' . now()->year . '/' . now()->format('F');
-            $fileName = uniqid() . '_' . time() . '.' . $ext;
+            $folder = 'staff/profile/'.now()->year.'/'.now()->format('F');
+            $fileName = uniqid().'_'.time().'.'.$ext;
             $filePath = $file->storeAs($folder, $fileName, 'public');
 
             $updated = $staff->update([
@@ -116,7 +119,7 @@ class StaffService
                 'ModifiedBy' => auth()->user()->id,
             ]);
 
-            if($updated){
+            if ($updated) {
                 userActivityLogs('Staff Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
             }
 
@@ -126,7 +129,7 @@ class StaffService
                 'ModifiedBy' => auth()->user()->id,
             ]);
 
-            if($updated){
+            if ($updated) {
                 userActivityLogs('Staff Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
             }
         }
@@ -135,7 +138,7 @@ class StaffService
     public function toggleStatus($request, $id): void
     {
         $staff = Staff::where('tenant_id', tenant('id'))->findOrFail($id);
-        $staff->IsActive = !$staff->IsActive;
+        $staff->IsActive = ! $staff->IsActive;
 
         if (isset($request->Status) && $request->Status === 'disabled') {
             $staff->DisableReasonId = $request->ReasonId;
@@ -161,8 +164,8 @@ class StaffService
             'updated_at' => now(),
         ]);
 
-        if($staff->save()){
-            userActivityLogs('Staff Status Updated and id is '.$id.' to '.$request->Reason['name']. ' and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
+        if ($staff->save()) {
+            userActivityLogs('Staff Status Updated and id is '.$id.' to '.$request->Reason['name'].' and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 }

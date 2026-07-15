@@ -22,11 +22,11 @@ class StudentFeeDiscount extends FormRequest
     public function rules(): array
     {
         return [
-            'ClassId'            => 'required',
-            'SectionId'          => 'required',
+            'ClassId' => 'required',
+            'SectionId' => 'required',
             'loadedCampusMaster' => 'required',
             'CampusFeesMasterId' => 'required',
-            'FeeCards'           => 'required|array',
+            'FeeCards' => 'required|array',
         ];
     }
 }

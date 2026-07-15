@@ -22,6 +22,7 @@ class CampusWeeklyHolidayController extends Controller
     public function index(): Response
     {
         $holidays = $this->campusWeeklyHolidayService->index();
+
         return Inertia::render('Staff/CampusWeeklyHoliday/List', [
             'holidays' => $holidays,
         ]);
@@ -30,6 +31,7 @@ class CampusWeeklyHolidayController extends Controller
     public function create(): Response
     {
         $campusList = $this->campusWeeklyHolidayService->getCampusList();
+
         return Inertia::render('Staff/CampusWeeklyHoliday/Create', [
             'campusList' => $campusList,
         ]);
@@ -38,6 +40,7 @@ class CampusWeeklyHolidayController extends Controller
     public function submit(CampusWeeklyHolidayRequest $request): RedirectResponse
     {
         $this->campusWeeklyHolidayService->submit($request);
+
         return $this->redirectSuccess('Campus weekly holiday configured successfully!', 'campus-weekly-holiday.index');
     }
 
@@ -45,7 +48,7 @@ class CampusWeeklyHolidayController extends Controller
     {
         $holiday = \App\Models\CampusWeeklyHoliday::with('campus')->findOrFail($request->id);
         $campusList = $this->campusWeeklyHolidayService->getCampusList();
-        
+
         return Inertia::render('Staff/CampusWeeklyHoliday/Edit', [
             'holiday' => $holiday,
             'campusList' => $campusList,
@@ -55,12 +58,14 @@ class CampusWeeklyHolidayController extends Controller
     public function update(CampusWeeklyHolidayRequest $request): RedirectResponse
     {
         $this->campusWeeklyHolidayService->update($request);
+
         return $this->redirectSuccess('Campus weekly holiday updated successfully!', 'campus-weekly-holiday.index');
     }
 
     public function destroy(Request $request): RedirectResponse
     {
         $this->campusWeeklyHolidayService->destroy($request->id);
+
         return $this->redirectSuccess('Campus weekly holiday deleted successfully!', 'campus-weekly-holiday.index');
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ClassTimeTable extends Model
 {
@@ -31,14 +31,12 @@ class ClassTimeTable extends Model
         'TimeTo',
         'RoomNo',
         'ClassTimeTableGroupId',
-        'imported_class_time_table'
+        'imported_class_time_table',
     ];
-    
 
     protected $casts = [
         'IsActive' => 'boolean',
     ];
-
 
     public function getTimeFromFormattedAttribute(): ?string
     {
@@ -47,7 +45,6 @@ class ClassTimeTable extends Model
             : null;
     }
 
-    
     public function getTimeToFormattedAttribute(): ?string
     {
         return $this->TimeTo
@@ -55,24 +52,20 @@ class ClassTimeTable extends Model
             : null;
     }
 
-
     public function staff(): BelongsTo
     {
         return $this->belongsTo(Staff::class, 'StaffId');
     }
-
 
     public function class(): BelongsTo
     {
         return $this->belongsTo(Classes::class, 'ClassId');
     }
 
-
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class, 'SectionId');
     }
-
 
     public function subject(): BelongsTo
     {

@@ -23,8 +23,8 @@ class StaffRequest extends FormRequest
      */
     public function rules(Request $request): array
     {
-         return [
-           'RolesId' => 'required|integer',
+        return [
+            'RolesId' => 'required|integer',
             'DesignationId' => 'required|integer',
             'DepartmentId' => 'required|integer',
             'FirstName' => 'required',
@@ -34,7 +34,7 @@ class StaffRequest extends FormRequest
             'Email' => [
                 'required',
                 'email',
-                    Rule::unique('staff', 'Email')->ignore($request->id),
+                Rule::unique('staff', 'Email')->ignore($request->id),
             ],
             'Gender' => 'required',
             'DateOfBirth' => 'required|date|before:today',
@@ -47,17 +47,17 @@ class StaffRequest extends FormRequest
             'Qualification' => 'required',
             'WorkExperience' => 'required',
             'Note' => 'nullable',
-'BasicSalary' => 'required|integer',
-             'TransportAllowance' => 'nullable|integer',
-             'ComputerAllowance' => 'nullable|integer',
-             'MobileAllowance' => 'nullable|integer',
-             'RecreationAllowance' => 'nullable|integer',
-             'HasProvidentFund' => 'nullable|boolean',
-             'ProvidentFundAmount' => ['nullable', 'numeric', 'between:0,100'],
-             'HasEOBI' => 'nullable|boolean',
-             'EOBIAmount' => 'nullable|integer',
-             'employerAmount' => 'nullable|integer',
-             // 'CreateUser' => 'required',
+            'BasicSalary' => 'required|integer',
+            'TransportAllowance' => 'nullable|integer',
+            'ComputerAllowance' => 'nullable|integer',
+            'MobileAllowance' => 'nullable|integer',
+            'RecreationAllowance' => 'nullable|integer',
+            'HasProvidentFund' => 'nullable|boolean',
+            'ProvidentFundAmount' => ['nullable', 'numeric', 'between:0,100'],
+            'HasEOBI' => 'nullable|boolean',
+            'EOBIAmount' => 'nullable|integer',
+            'employerAmount' => 'nullable|integer',
+            // 'CreateUser' => 'required',
         ];
     }
 }

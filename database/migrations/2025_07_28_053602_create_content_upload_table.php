@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('content_upload', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id',100)->nullable();
-            $table->string('ContentTitle',100)->nullable();
-            $table->string('ContentType',100)->nullable();
+            $table->string('tenant_id', 100)->nullable();
+            $table->string('ContentTitle', 100)->nullable();
+            $table->string('ContentType', 100)->nullable();
             $table->integer('ClassId')->nullable();
             $table->integer('SectionId')->nullable();
             $table->integer('subjectId')->nullable();

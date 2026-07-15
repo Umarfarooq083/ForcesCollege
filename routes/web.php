@@ -20,8 +20,8 @@ use App\Http\Controllers\Fees\OptionalFeeMasterController;
 use App\Http\Controllers\Fees\StudentFeeDiscountController;
 use App\Http\Controllers\LmsSessions\LmsSessionsController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Reports\MasterReportController;
-use App\Http\Controllers\Reports\ResultCardController;
+use App\Http\Controllers\Program\ProgramController;
+use App\Http\Controllers\Program\ProgramLevelController;
 use App\Http\Controllers\Roles\RolesController;
 use App\Http\Controllers\Section\SectionController;
 use App\Http\Controllers\Setting\SiteSettingController;
@@ -37,8 +37,6 @@ use App\Http\Controllers\Student\HomeWorkController;
 use App\Http\Controllers\Student\PromoteStudentController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\StudentInquiry\StudentInquiryController;
-use App\Http\Controllers\Program\ProgramController;
-use App\Http\Controllers\Program\ProgramLevelController;
 use App\Http\Controllers\Subject\SubjectController;
 use App\Http\Controllers\UploadContent\ContentUploadController;
 use App\Http\Controllers\UploadContent\UploadContentGroupController;
@@ -356,8 +354,6 @@ Route::middleware([
         Route::get('payroll-slip/download', [\App\Http\Controllers\Staff\PayrollSlipController::class, 'download'])->name('payrollslip.download')->withoutMiddleware('check_permission');
     });
 
-
-
     Route::group(['prefix' => 'feestype', 'middleware' => ['auth', 'check_permission']], function () {
         Route::get('/list', [FeesTypeController::class, 'index'])->name('fees.list');
         Route::get('/create', [FeesTypeController::class, 'create'])->name('fees.create');
@@ -470,7 +466,6 @@ Route::middleware([
 
     });
 
- 
     Route::post('uploads/content/fetch-subject', [ContentUploadController::class, 'classSubjectFetch'])->name('class.subject.fetch');
 
     Route::get('/testing', function () {

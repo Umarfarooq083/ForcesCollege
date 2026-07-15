@@ -49,7 +49,7 @@ class LeaveRequestService
                 ]);
 
                 if ($leave) {
-                    userActivityLogs('Leave request created for date: ' . $date . ' and By User ID: ' . auth()->user()->id, HumanResourceLog::class);
+                    userActivityLogs('Leave request created for date: '.$date.' and By User ID: '.auth()->user()->id, HumanResourceLog::class);
                 }
             }
         });
@@ -68,7 +68,7 @@ class LeaveRequestService
             'ModifiedBy' => auth()->id(),
         ]);
 
-        userActivityLogs('Leave request updated and id is '.$request->id.' By User ID: ' . auth()->user()->id, HumanResourceLog::class);
+        userActivityLogs('Leave request updated and id is '.$request->id.' By User ID: '.auth()->user()->id, HumanResourceLog::class);
     }
 
     public function approve($request, $id): void
@@ -83,7 +83,7 @@ class LeaveRequestService
             'ModifiedBy' => auth()->id(),
         ]);
 
-        userActivityLogs('Leave request ' . $request->status . ' and By User ID: ' . auth()->user()->id, HumanResourceLog::class);
+        userActivityLogs('Leave request '.$request->status.' and By User ID: '.auth()->user()->id, HumanResourceLog::class);
     }
 
     public function destroy($request): void
@@ -92,7 +92,7 @@ class LeaveRequestService
         $deleted = $leave->delete();
 
         if ($deleted) {
-            userActivityLogs('Leave request deleted and id is '.$request->id.' By User ID: ' . auth()->user()->id, HumanResourceLog::class);
+            userActivityLogs('Leave request deleted and id is '.$request->id.' By User ID: '.auth()->user()->id, HumanResourceLog::class);
         }
     }
 }

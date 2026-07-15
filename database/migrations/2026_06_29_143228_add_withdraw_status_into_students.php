@@ -28,7 +28,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('students', function (Blueprint $table) {
-            $table->dropColumn(['withdraw_status','withdraw_date', 'withdraw_reason', 'last_challan_no', 'last_challan_amount', 'last_challan_status']);
+            $table->dropColumn(['withdraw_status', 'withdraw_date', 'withdraw_reason', 'last_challan_no', 'last_challan_amount', 'last_challan_status']);
         });
     }
 };

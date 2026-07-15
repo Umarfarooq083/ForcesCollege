@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ExamGrade extends Model
 {
     use SoftDeletes;
+
     protected $table = 'marks_grade';
+
     protected $fillable = [
         'tenant_id',
         'SchoolId',
@@ -21,8 +23,9 @@ class ExamGrade extends Model
         'PercentUpt',
         'Description',
         'MarksGradeGroupId',
-        'imported_marks_grade_id'
+        'imported_marks_grade_id',
     ];
+
     public function classRel()
     {
         return $this->belongsTo(Classes::class, 'ClassId', 'id');

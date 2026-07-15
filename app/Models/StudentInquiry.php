@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class StudentInquiry extends Model
 {
-    protected $fillable = [ 
-        'SessionId','Date','ClassId','Name','LastName','BirthDate','Gender',
-        'PreviousInstitute','Address','FatherName','FatherPhoneNo','MotherName',
-        'MotherPhoneNo','SourceId','ReferenceId','IsSmsSent','tenant_id',
-        'CreatedBy','ModifiedBy','guardian_id','guardian_relation_id','status','imported_inquiry_id'
+    protected $fillable = [
+        'SessionId', 'Date', 'ClassId', 'Name', 'LastName', 'BirthDate', 'Gender',
+        'PreviousInstitute', 'Address', 'FatherName', 'FatherPhoneNo', 'MotherName',
+        'MotherPhoneNo', 'SourceId', 'ReferenceId', 'IsSmsSent', 'tenant_id',
+        'CreatedBy', 'ModifiedBy', 'guardian_id', 'guardian_relation_id', 'status', 'imported_inquiry_id',
     ];
 
     public function scopeTenant($query)
@@ -19,7 +18,7 @@ class StudentInquiry extends Model
         return $query->where('tenant_id', tenant('id'));
     }
 
-    public function scopeById($query,$id)
+    public function scopeById($query, $id)
     {
         return $query->where('id', $id);
     }
@@ -34,22 +33,22 @@ class StudentInquiry extends Model
 
     public function source()
     {
-        return $this->hasOne(Source::class, 'id','SourceId'); 
+        return $this->hasOne(Source::class, 'id', 'SourceId');
     }
-    
+
     public function guardian()
     {
-        return $this->hasOne(GuardianInfo::class, 'id','guardian_id'); 
+        return $this->hasOne(GuardianInfo::class, 'id', 'guardian_id');
     }
 
     public function class()
     {
-        return $this->hasOne(Classes::class, 'id','ClassId'); 
+        return $this->hasOne(Classes::class, 'id', 'ClassId');
     }
 
     public function inqSession()
     {
-        return $this->hasOne(LmsSession::class, 'id','SessionId')->select('start_date', 'end_date', 'id'); 
+        return $this->hasOne(LmsSession::class, 'id', 'SessionId')->select('start_date', 'end_date', 'id');
     }
 
     public function guardianRelation()

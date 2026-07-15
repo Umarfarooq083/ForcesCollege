@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
-
 
 class Staff extends Model
 {
     use SoftDeletes;
+
     protected $table = 'staff';
+
     protected $fillable = [
         'tenant_id',
         'SchoolId',
@@ -72,7 +71,7 @@ class Staff extends Model
         'JoiningLetterPath',
         'OtherDocumentsPath',
         'CreateUser',
-        'imported_staff_id'
+        'imported_staff_id',
     ];
 
     protected $appends = ['PhotoPathUrl'];
@@ -108,9 +107,10 @@ class Staff extends Model
     public function getPhotoPathUrlAttribute()
     {
         if (empty($this->PhotoPath)) {
-            return url('assets/images/staff_profile.jpg'); 
+            return url('assets/images/staff_profile.jpg');
         }
-        return url('storage/' . $this->PhotoPath);
+
+        return url('storage/'.$this->PhotoPath);
     }
 
     public function attendance()

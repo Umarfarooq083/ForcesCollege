@@ -4,7 +4,6 @@ namespace App\Http\Requests\Zone;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class ZoneRequest extends FormRequest
 {

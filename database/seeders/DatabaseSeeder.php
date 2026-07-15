@@ -2,13 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Database\Seeders\GuardianRelationSeeder;
-use Database\Seeders\StudentCategorySeeder;
-use Database\Seeders\DisableReasonSeeder;
-use Database\Seeders\SectionTypesSeeder;
-use Database\Seeders\SourceSeeder;
-use Database\Seeders\RegionSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -34,6 +27,7 @@ class DatabaseSeeder extends Seeder
             SectionTypesSeeder::class,
             RegionSeeder::class,
             PermissionSeeder::class,
+            CampusCategorySeeder::class,
         ]);
     }
 }

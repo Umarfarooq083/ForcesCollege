@@ -50,7 +50,7 @@ class StudentRequest extends FormRequest
             'Email' => [
                 'nullable',
                 'email',
-                Rule::unique('students', 'Email')->where('tenant_id',tenant('id'))->ignore($request->id), 
+                Rule::unique('students', 'Email')->where('tenant_id', tenant('id'))->ignore($request->id),
             ],
             'AdmissionDate' => 'required|date',
             'StudentPhotoPath' => 'nullable',
@@ -113,7 +113,7 @@ class StudentRequest extends FormRequest
 
             // 'IsDisable' => 'nullable|boolean',
             'DisableReasonId' => 'nullable|integer',
-            
+
             'Password' => 'nullable|string|min:6|max:100',
             'MobDeviceId' => 'nullable|string|max:100',
             'FcmDeviceToken' => 'nullable|string|max:255',

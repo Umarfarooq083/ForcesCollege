@@ -27,7 +27,7 @@ class GazettedLeaveService
         ]);
 
         if ($created) {
-            userActivityLogs('Gazetted Leave Created '.$created->id.' and By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Gazetted Leave Created '.$created->id.' and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -44,7 +44,7 @@ class GazettedLeaveService
         ]);
 
         if ($updated) {
-            userActivityLogs('Gazetted Leave Updated '. $request->id .' and By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Gazetted Leave Updated '.$request->id.' and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -55,7 +55,7 @@ class GazettedLeaveService
         $deleted = $gazettedLeave->delete();
 
         if ($deleted) {
-            userActivityLogs('Gazetted Leave Deleted and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Gazetted Leave Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 }

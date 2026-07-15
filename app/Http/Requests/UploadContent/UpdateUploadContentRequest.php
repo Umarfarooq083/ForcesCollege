@@ -30,4 +30,3 @@ class UpdateUploadContentRequest extends FormRequest
         ];
     }
 }
-

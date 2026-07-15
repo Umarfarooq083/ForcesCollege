@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('student_documents', function (Blueprint $table) {
             $table->id();
             $table->integer('student_id')->nullable();
-            $table->string('tenant_id',100)->nullable();
-            $table->string('Title',100)->nullable();
+            $table->string('tenant_id', 100)->nullable();
+            $table->string('Title', 100)->nullable();
             $table->string('document')->nullable();
-            $table->string('status',20)->nullable();
+            $table->string('status', 20)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

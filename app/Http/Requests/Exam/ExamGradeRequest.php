@@ -16,7 +16,7 @@ class ExamGradeRequest extends FormRequest
 
     /**
      * Prepare the data for validation.
-    */
+     */
     protected function prepareForValidation()
     {
         if (isset($this->ClassId) && is_array($this->ClassId)) {
@@ -27,19 +27,18 @@ class ExamGradeRequest extends FormRequest
         }
     }
 
-
     /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {   
+    {
         if ($this->isMethod('post')) {
             return [
                 'GradeName' => 'required|string|max:255',
-                'ClassId'      => 'required|array', 
-                'ClassId.*'    => 'required|exists:classes,id', 
+                'ClassId' => 'required|array',
+                'ClassId.*' => 'required|exists:classes,id',
                 'PercentFrom' => 'required|numeric|min:0|max:100',
                 'PercentUpt' => 'required|numeric|min:0|max:100|gte:PercentFrom',
                 'Description' => 'nullable|string|max:1000',
@@ -49,10 +48,10 @@ class ExamGradeRequest extends FormRequest
         if ($this->isMethod('put') || $this->isMethod('patch')) {
             // Update ke liye
             return [
-                'GradeName'   => 'required|string|max:255',
-                'ClassId'     => 'required|exists:classes,id', // yahan single id
+                'GradeName' => 'required|string|max:255',
+                'ClassId' => 'required|exists:classes,id', // yahan single id
                 'PercentFrom' => 'required|numeric|min:0|max:100',
-                'PercentUpt'  => 'required|numeric|min:0|max:100|gte:PercentFrom',
+                'PercentUpt' => 'required|numeric|min:0|max:100|gte:PercentFrom',
                 'Description' => 'nullable|string|max:1000',
             ];
         }

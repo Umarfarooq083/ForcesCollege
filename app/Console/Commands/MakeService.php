@@ -24,9 +24,9 @@ class MakeService extends Command
 
         $servicePath = app_path('Services');
 
-        if (!File::exists($servicePath)) {
+        if (! File::exists($servicePath)) {
             File::makeDirectory($servicePath, 0755, true);
-            $this->info("Created directory: app/Services");
+            $this->info('Created directory: app/Services');
         }
 
         $className = ucfirst($name);
@@ -34,6 +34,7 @@ class MakeService extends Command
 
         if (File::exists($filePath)) {
             $this->error("Service {$className} already exists!");
+
             return self::FAILURE;
         }
 

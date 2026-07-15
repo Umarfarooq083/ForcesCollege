@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('class_time_tables', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id',100)->nullable();
+            $table->string('tenant_id', 100)->nullable();
             $table->integer('SchoolId')->nullable();
             $table->boolean('IsActive')->default(true);
             $table->integer('CreatedBy')->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('RoomNo', 50)->nullable();
             $table->integer('ClassTimeTableGroupId')->nullable();
             $table->softDeletes();
-            $table->timestamps(); 
+            $table->timestamps();
         });
     }
 

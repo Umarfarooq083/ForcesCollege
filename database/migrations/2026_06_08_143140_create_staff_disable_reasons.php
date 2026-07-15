@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('staff_disable_reasons', function (Blueprint $table) {
-           $table->id();
+            $table->id();
             $table->integer('SchoolId')->nullable();
             $table->boolean('IsActive')->default(true);
             $table->integer('CreatedBy')->nullable();

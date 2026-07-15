@@ -22,14 +22,16 @@ class LateFineController extends Controller
     public function index(): Response
     {
         $lateFines = $this->lateFineService->index();
+
         return Inertia::render('Staff/LateFine/List', [
-            'lateFines' => $lateFines
+            'lateFines' => $lateFines,
         ]);
     }
 
     public function create(): Response
     {
         $data = $this->lateFineService->create();
+
         return Inertia::render('Staff/LateFine/Create', [
             'data' => $data,
         ]);
@@ -38,12 +40,14 @@ class LateFineController extends Controller
     public function submit(LateFineRequest $request): RedirectResponse
     {
         $this->lateFineService->submit($request);
+
         return $this->redirectSuccess('Late fine created successfully!', 'latefine.index');
     }
 
     public function edit(Request $request): Response
     {
         $data = $this->lateFineService->edit($request);
+
         return Inertia::render('Staff/LateFine/Edit', [
             'lateFine' => $data->lateFine,
             'staffList' => $data->staffList,
@@ -53,12 +57,14 @@ class LateFineController extends Controller
     public function update(LateFineRequest $request): RedirectResponse
     {
         $this->lateFineService->update($request);
+
         return $this->redirectSuccess('Late fine updated successfully!', 'latefine.index');
     }
 
     public function delete(Request $request): RedirectResponse
     {
         $this->lateFineService->destroy($request);
+
         return $this->redirectSuccess('Late fine deleted successfully!', 'latefine.index');
     }
 }

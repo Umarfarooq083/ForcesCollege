@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ExamMarksDetail extends Model
 {
     use HasFactory, SoftDeletes;
+
     protected $table = 'exam_marks_details';
 
     protected $fillable = [
@@ -24,22 +25,25 @@ class ExamMarksDetail extends Model
         'Marks',
         'Remarks',
         'deleted_at',
-        'imported_exam_detail_id'
+        'imported_exam_detail_id',
     ];
 
     protected $casts = [
         'Marks' => 'decimal:2',
     ];
 
-    public function exam(){
+    public function exam()
+    {
         return $this->hasOne(ExamType::class, 'id', 'ExamMarksId');
     }
 
-    public function student(){
+    public function student()
+    {
         return $this->hasOne(Student::class, 'id', 'StudentId');
     }
 
-    public function examMarks(){
+    public function examMarks()
+    {
         return $this->hasOne(ExamMarks::class, 'id', 'ExamMarksId');
     }
 }

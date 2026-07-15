@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ChallanPartialPayment extends Model
 {
     use SoftDeletes;
-    
+
     protected $table = 'challan_partial_payments';
 
     protected $fillable = [
@@ -25,7 +25,7 @@ class ChallanPartialPayment extends Model
         'PaymentMode',
         'SubmitDate',
         'note',
-        'imported_challan_partial_payment_id'
+        'imported_challan_partial_payment_id',
     ];
 
     protected $casts = [
@@ -37,6 +37,4 @@ class ChallanPartialPayment extends Model
     {
         return $this->belongsTo(GenerateFeeChallan::class, 'GenerateClassChallanId', 'id')->select('id', 'tenant_id', 'challan_no', 'StudentId', 'ChallanMonth');
     }
-
-    
 }

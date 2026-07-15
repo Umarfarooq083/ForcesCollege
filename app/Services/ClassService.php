@@ -9,16 +9,15 @@ class ClassService
 {
     public function index($request)
     {
-        $domain = getTenantSubDomain();  
-        $query =  Classes::where('tenant_id', tenant('id'))->with('user', 'program')->orderBy('ClassOrder','asc');
-
+        $domain = getTenantSubDomain();
+        $query = Classes::where('tenant_id', tenant('id'))->with('user', 'program')->orderBy('ClassOrder', 'asc');
 
         if ($request->filled('search')) {
-            $query->where(function($q) use($request){
-                $q->where('ClassName', 'like', '%' . $request->search . '%')
-                ->orWhereHas('user', function($sub) use($request) {
-                    $sub->where('name', 'like', "%{$request->search}%");
-                });
+            $query->where(function ($q) use ($request) {
+                $q->where('ClassName', 'like', '%'.$request->search.'%')
+                    ->orWhereHas('user', function ($sub) use ($request) {
+                        $sub->where('name', 'like', "%{$request->search}%");
+                    });
             });
         }
 
@@ -26,9 +25,9 @@ class ClassService
         //     $query->where('ClassName', 'like', '%' . $request->search . '%');
         // }
 
-        if($domain == 'headoffice'){
+        if ($domain == 'headoffice') {
             return $query->paginate(25)->withQueryString();
-        }else{
+        } else {
             return $query->where('tenant_id', tenant('id'))->paginate(25)->withQueryString();
         }
     }
@@ -42,41 +41,40 @@ class ClassService
             'CreatedBy' => auth()->user()->id,
         ]);
 
-        if($created){
+        if ($created) {
             userActivityLogs('Class Created and By User ID: '.auth()->user()->id.'', AcademicLog::class);
         }
     }
 
-
     public function update($request): void
     {
         $validated = $request->validated();
-        $created = Classes::where('id',$request->id)->update([
+        $created = Classes::where('id', $request->id)->update([
             ...$validated,
             'tenant_id' => tenant('id'),
             'ModifiedBy' => auth()->user()->id,
         ]);
 
-        if($created){
+        if ($created) {
             userActivityLogs('Class Created and id is '.$request->id.' By User ID: '.auth()->user()->id.'', AcademicLog::class);
         }
     }
-   
+
     public function delete($request): void
     {
-        $created = Classes::where('id',$request->id)->delete();
-        if($created){
+        $created = Classes::where('id', $request->id)->delete();
+        if ($created) {
             userActivityLogs('Class Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', AcademicLog::class);
         }
     }
 
-    public function statusUpdate($request, $id):void
+    public function statusUpdate($request, $id): void
     {
         $class = Classes::findOrFail($id);
         $class->IsActive = $request->status;
         $class->ModifiedBy = auth()->user()->id;
 
-        if($class->save()){
+        if ($class->save()) {
             userActivityLogs('Class Status Updated and id is '.$id.' By User ID: '.auth()->user()->id.'', AcademicLog::class);
         }
     }

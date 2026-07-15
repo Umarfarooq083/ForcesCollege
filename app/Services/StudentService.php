@@ -256,12 +256,12 @@ class StudentService
             $student->readmission_status = true;
             $student->IsActive = 1;
             $student->IsDisable = 0;
-            $student->last_challan_status = NULL;
-            $student->last_challan_amount = NULL;
-            $student->withdraw_date = NULL;
-            $student->last_challan_no = NULL;
-            $student->withdraw_status = NULL;
-            $student->withdraw_reason = NULL;
+            $student->last_challan_status = null;
+            $student->last_challan_amount = null;
+            $student->withdraw_date = null;
+            $student->last_challan_no = null;
+            $student->withdraw_status = null;
+            $student->withdraw_reason = null;
             $student->save();
         }
 

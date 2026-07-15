@@ -23,7 +23,8 @@ class AssignClassTeacherRequest extends FormRequest
      */
     public function rules(Request $request): array
     {
-        $id = $request->id; 
+        $id = $request->id;
+
         return [
             'ClassId' => ['required'],
             'SectionId' => ['required'],
@@ -33,7 +34,7 @@ class AssignClassTeacherRequest extends FormRequest
                     ->ignore($id)
                     ->where(function ($query) {
                         return $query->where('tenant_id', tenant('id'))
-                        ->whereNull('deleted_at');
+                            ->whereNull('deleted_at');
                     }),
             ],
             'SectionId' => [
@@ -43,7 +44,7 @@ class AssignClassTeacherRequest extends FormRequest
                     ->where(function ($query) {
                         return $query->where('ClassId', $this->ClassId)
                             ->where('tenant_id', tenant('id'))
-                            ->whereNull('deleted_at');  
+                            ->whereNull('deleted_at');
                     }),
             ],
 

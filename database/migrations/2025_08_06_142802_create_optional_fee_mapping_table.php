@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('optional_fee_mapping', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id',100)->nullable();
+            $table->string('tenant_id', 100)->nullable();
             $table->integer('FeesTypeNId')->nullable();
             $table->integer('ClassId')->nullable();
             $table->integer('SectionId')->nullable();

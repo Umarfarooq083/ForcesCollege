@@ -11,11 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class FeeCollectionService
 {
-    
     public function index($request): array
     {
         $query = GenerateFeeChallan::where('tenant_id', tenant('id'))
-            ->where('Status','Paid')
+            ->where('Status', 'Paid')
             ->with('student.section', 'student.class')
             ->withSum('partialPayments', 'ReceivedAmount')
             ->withSum('transection', 'BalanceFeeAfterDiscount')
@@ -30,42 +29,43 @@ class FeeCollectionService
             $query->where(function ($q) use ($search) {
                 // dd($search);
                 $q->where('challan_no', 'like', "%{$search}%")
-                ->orWhereHas('student', function ($sub) use ($search) {
-                    $sub->where('FirstName', 'like', "%{$search}%");
-                })
-                ->orWhereHas('student.class', function ($sub) use ($search) {
-                    $sub->where('ClassName', 'like', "%{$search}%");
-                })
-                ->orWhereHas('student.section', function ($sub) use ($search) {
-                    $sub->where('SectionName', 'like', "%{$search}%");
-                });
+                    ->orWhereHas('student', function ($sub) use ($search) {
+                        $sub->where('FirstName', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('student.class', function ($sub) use ($search) {
+                        $sub->where('ClassName', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('student.section', function ($sub) use ($search) {
+                        $sub->where('SectionName', 'like', "%{$search}%");
+                    });
             });
         }
 
         $data['GenerateFeeChallan'] = $query->paginate(25)->withQueryString();
         $data['filters'] = $request->only('search');
+
         return $data;
     }
 
-    public function create($validated): array | RedirectResponse
+    public function create($validated): array|RedirectResponse
     {
-       
-        $data['paidChallan']  = GenerateFeeChallan::where('tenant_id', tenant('id'))
-                ->where('challan_no', (int)$validated['ChallanNo'])
-                ->where('Status', 'Paid')
+
+        $data['paidChallan'] = GenerateFeeChallan::where('tenant_id', tenant('id'))
+            ->where('challan_no', (int) $validated['ChallanNo'])
+            ->where('Status', 'Paid')
                 // ->where('IsPartialPayment', 0)
-                ->first();
+            ->first();
         // dd($data['paidChallan']);
-        if(isset($data['paidChallan'])){
+        if (isset($data['paidChallan'])) {
             $data['error'] = 'This challan has already been fully paid....';
+
             return $data;
         }
 
-        
         $data = $this->getChallanData($validated['ChallanNo']);
 
         if (isset($data['error'])) {
-           return ['error' => 'Challan not found.'];
+            return ['error' => 'Challan not found.'];
         }
 
         $latestChallan = GenerateFeeChallan::with('ChallanArrearsRel')
@@ -79,24 +79,22 @@ class FeeCollectionService
         }
 
         $latestChallanData = GenerateFeeChallan::with('ChallanArrearsRel')
-                ->where('tenant_id', tenant('id'))
-                ->where('challan_no', (int)$validated['ChallanNo'])
-                ->where('Status', 'Unpaid')
-                ->first();
+            ->where('tenant_id', tenant('id'))
+            ->where('challan_no', (int) $validated['ChallanNo'])
+            ->where('Status', 'Unpaid')
+            ->first();
 
-         $wived_off = 0;
-               foreach($latestChallanData['ChallanArrearsRel'] as $arrears){
-                    $generateChallanFineList = GenerateFeeChallan::where('id', $arrears['FKeyId'])->where('tenant_id', tenant('id'))->first();
-                    if($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList->IsPartialPayment == 0)
-                    {
-                        $wived_off += $generateChallanFineList['WaivedFineAmount'] ? $generateChallanFineList['WaivedFineAmount'] : 0;
-                    }
-                    if($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList->IsPartialPayment == 1)
-                    {
-                        $wived_off += $generateChallanFineList['WaivedFineAmount'] ? $generateChallanFineList['WaivedFineAmount'] : 0;
-                    }
-               }
-          $data['wived_off'] = $wived_off;
+        $wived_off = 0;
+        foreach ($latestChallanData['ChallanArrearsRel'] as $arrears) {
+            $generateChallanFineList = GenerateFeeChallan::where('id', $arrears['FKeyId'])->where('tenant_id', tenant('id'))->first();
+            if ($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList->IsPartialPayment == 0) {
+                $wived_off += $generateChallanFineList['WaivedFineAmount'] ? $generateChallanFineList['WaivedFineAmount'] : 0;
+            }
+            if ($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList->IsPartialPayment == 1) {
+                $wived_off += $generateChallanFineList['WaivedFineAmount'] ? $generateChallanFineList['WaivedFineAmount'] : 0;
+            }
+        }
+        $data['wived_off'] = $wived_off;
         // dd($data['TotalReceivedAmount']);
         // $TotalReceivedAmount = $data['TotalReceivedAmount'] + (int) $data['GenerateFeeChallan']->WaivedFineAmount;
 
@@ -106,7 +104,6 @@ class FeeCollectionService
 
         return $data;
     }
-
 
     public function submit($request): array
     {
@@ -154,7 +151,7 @@ class FeeCollectionService
             $alreadyPaidAfter = $alreadyPaidBefore + $receivedNow;
             $balanceAfter = $payableAmount - $alreadyPaidAfter - $waivedTotal;
 
-            $receiptNo = 'RCPT-' . now()->format('Ymd-His') . '-' . strtoupper(substr(bin2hex(random_bytes(3)), 0, 6));
+            $receiptNo = 'RCPT-'.now()->format('Ymd-His').'-'.strtoupper(substr(bin2hex(random_bytes(3)), 0, 6));
 
             return [
                 'tenant_id' => $tenantId,
@@ -185,9 +182,10 @@ class FeeCollectionService
     public function show($validated): array
     {
         $data = $this->getChallanData($validated['ChallanNo']);
-        if (!$data) {
+        if (! $data) {
             return ['error' => 'No challan found.'];
         }
+
         return $data;
     }
 
@@ -200,8 +198,8 @@ class FeeCollectionService
         if ($remainingPayments === 0) {
             GenerateFeeChallan::where('id', $challanItem->GenerateClassChallanId)
                 ->update([
-                    'IsPartialPayment' => false, 
-                    'ModifiedBy' => auth()->user()->id, 
+                    'IsPartialPayment' => false,
+                    'ModifiedBy' => auth()->user()->id,
                     'Status' => 'Unpaid',
                     'PaymentMode' => null,
                     'WaivedFineAmount' => 0,
@@ -209,129 +207,124 @@ class FeeCollectionService
         }
     }
 
-
     protected function getChallanData($challanNo): ?array
     {
         $data['GenerateFeeChallan'] = GenerateFeeChallan::where('tenant_id', tenant('id'))
             ->where('challan_no', $challanNo)
             ->with([
-                'student.section', 
-                'student.class', 
-                'partialPayments.feeChallan.student.section', 
-                'partialPayments.feeChallan.student.class'
+                'student.section',
+                'student.class',
+                'partialPayments.feeChallan.student.section',
+                'partialPayments.feeChallan.student.class',
             ])
             ->withSum('transection', 'BalanceFeeAfterDiscount')
             ->first();
 
-        if (!$data['GenerateFeeChallan']) {
+        if (! $data['GenerateFeeChallan']) {
             return ['error' => 'Challan not found.'];
         }
 
-        $data['PartialChallanList']   = $data['GenerateFeeChallan']->partialPayments;
-        $data['TotalReceivedAmount']  = (int) $data['GenerateFeeChallan']->partialPayments->sum('ReceivedAmount');
-        $data['dueDate']              = $data['GenerateFeeChallan']->getRawOriginal('DueDate') ?? null;
-        $data['FineLateFee']          = getSiteMeta('Fine_Late_Fee');
+        $data['PartialChallanList'] = $data['GenerateFeeChallan']->partialPayments;
+        $data['TotalReceivedAmount'] = (int) $data['GenerateFeeChallan']->partialPayments->sum('ReceivedAmount');
+        $data['dueDate'] = $data['GenerateFeeChallan']->getRawOriginal('DueDate') ?? null;
+        $data['FineLateFee'] = getSiteMeta('Fine_Late_Fee');
 
         $data['total_challan_amount'] = $this->getChallanArrearsAndFine($data['GenerateFeeChallan']->id);
+
         return $data;
     }
-
 
     private function getChallanArrearsAndFine($generated_challan_Id): array|float
     {
         $tenant_id = tenant('id');
-        if(session('switched_tenant_id')){
+        if (session('switched_tenant_id')) {
             $tenant_id = session('switched_tenant_id');
         }
-        
+
         $ids = explode(',', $generated_challan_Id);
-          $challan = GenerateFeeChallan::with('ChallanTransactions','StudentRel.class','StudentRel.section','ChallanArrearsRel')
-          ->whereIn('id', $ids)
-          ->where('tenant_id', $tenant_id)
-          ->get();
-          $challans = $challan->toArray();
+        $challan = GenerateFeeChallan::with('ChallanTransactions', 'StudentRel.class', 'StudentRel.section', 'ChallanArrearsRel')
+            ->whereIn('id', $ids)
+            ->where('tenant_id', $tenant_id)
+            ->get();
+        $challans = $challan->toArray();
 
-         $previousChallanData = [];
-          foreach($challans as $challnList)
-          {
-               foreach($challnList['challan_arrears_rel'] as $arrears){
-                    $generateChallanFineList = GenerateFeeChallan::where('id', $arrears['FKeyId'])->where('tenant_id', $tenant_id)->first();
-                    if($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList->IsPartialPayment == 0)
-                    {
-                         $ChallanTransactionsSum = ChallanTransactions::where('generate_challan_id', $arrears['FKeyId'])->sum('BalanceFeeAfterDiscount');
-                         $ChallanTransactionsDueMonth = GenerateFeeChallan::select('id','tenant_id','challan_no','ChallanMonth','WaivedFineAmount','FineAmount')
-                         ->where('tenant_id', $tenant_id)
-                         ->where('id',$arrears['FKeyId'])->first();
+        $previousChallanData = [];
+        foreach ($challans as $challnList) {
+            foreach ($challnList['challan_arrears_rel'] as $arrears) {
+                $generateChallanFineList = GenerateFeeChallan::where('id', $arrears['FKeyId'])->where('tenant_id', $tenant_id)->first();
+                if ($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList->IsPartialPayment == 0) {
+                    $ChallanTransactionsSum = ChallanTransactions::where('generate_challan_id', $arrears['FKeyId'])->sum('BalanceFeeAfterDiscount');
+                    $ChallanTransactionsDueMonth = GenerateFeeChallan::select('id', 'tenant_id', 'challan_no', 'ChallanMonth', 'WaivedFineAmount', 'FineAmount')
+                        ->where('tenant_id', $tenant_id)
+                        ->where('id', $arrears['FKeyId'])->first();
 
-                         $formatedMonth = Carbon::parse($ChallanTransactionsDueMonth['ChallanMonth'])->format('M-Y');
-                        //  $dueDate = Carbon::createFromFormat('M-Y-d', $challnList['DueDate']);
-                        //  $expiryDate = Carbon::createFromFormat('M-d-Y', $challnList['ExpiryDate']);
-                        //  $days = $dueDate->diffInDays($expiryDate);
+                    $formatedMonth = Carbon::parse($ChallanTransactionsDueMonth['ChallanMonth'])->format('M-Y');
+                    //  $dueDate = Carbon::createFromFormat('M-Y-d', $challnList['DueDate']);
+                    //  $expiryDate = Carbon::createFromFormat('M-d-Y', $challnList['ExpiryDate']);
+                    //  $days = $dueDate->diffInDays($expiryDate);
 
-                        $dueDate = Carbon::parse($generateChallanFineList['DueDate']);
-                        $expiryDate = Carbon::parse($generateChallanFineList['ExpiryDate']);
-                        $days = $dueDate->diffInDays($expiryDate);
+                    $dueDate = Carbon::parse($generateChallanFineList['DueDate']);
+                    $expiryDate = Carbon::parse($generateChallanFineList['ExpiryDate']);
+                    $days = $dueDate->diffInDays($expiryDate);
 
-                        $totalFine = $days * $generateChallanFineList['per_day_fine'];
-                        $previousChallanData[$challnList['id']][] = [
-                              'total_amount' => $ChallanTransactionsSum,
-                              'total_fine' => $generateChallanFineList['per_day_fine'] ? $totalFine : $generateChallanFineList['FineAmount'],
-                              'ChallanMonth' => $formatedMonth,
-                              'has_arraear' => 'no',
-                        ];
-                    }
-                    if($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList->IsPartialPayment == 1)
-                    {
-                        $ChallanTransactionsSum = ChallanTransactions::where('generate_challan_id', $arrears['FKeyId'])->sum('BalanceFeeAfterDiscount');
-                        $ChallanTransactionsDueMonth = GenerateFeeChallan::select('id','tenant_id','challan_no','ChallanMonth','WaivedFineAmount','FineAmount')
-                         ->where('tenant_id', $tenant_id)
-                         ->where('id',$arrears['FKeyId'])->first();
+                    $totalFine = $days * $generateChallanFineList['per_day_fine'];
+                    $previousChallanData[$challnList['id']][] = [
+                        'total_amount' => $ChallanTransactionsSum,
+                        'total_fine' => $generateChallanFineList['per_day_fine'] ? $totalFine : $generateChallanFineList['FineAmount'],
+                        'ChallanMonth' => $formatedMonth,
+                        'has_arraear' => 'no',
+                    ];
+                }
+                if ($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList->IsPartialPayment == 1) {
+                    $ChallanTransactionsSum = ChallanTransactions::where('generate_challan_id', $arrears['FKeyId'])->sum('BalanceFeeAfterDiscount');
+                    $ChallanTransactionsDueMonth = GenerateFeeChallan::select('id', 'tenant_id', 'challan_no', 'ChallanMonth', 'WaivedFineAmount', 'FineAmount')
+                        ->where('tenant_id', $tenant_id)
+                        ->where('id', $arrears['FKeyId'])->first();
 
-                        $formatedMonth = Carbon::parse($ChallanTransactionsDueMonth['ChallanMonth'])->format('M-Y');
-                    
-                        $ChallanPartialPaymentSum = ChallanPartialPayment::where('GenerateClassChallanId', $arrears['FKeyId'])->sum('ReceivedAmount');
-                        $dueDate = Carbon::parse($generateChallanFineList['DueDate']);
-                        $expiryDate = Carbon::parse($generateChallanFineList['ExpiryDate']);
-                        $days = $dueDate->diffInDays($expiryDate);
-                        $totalFine = $days * $generateChallanFineList['per_day_fine'];
-                        $previousChallanData[$challnList['id']][] = [
-                            'total_amount' => $ChallanTransactionsSum - $ChallanPartialPaymentSum,
-                            'total_fine' => $generateChallanFineList['per_day_fine'] ? $totalFine : $generateChallanFineList['FineAmount'],
-                            'ChallanMonth' => $formatedMonth,
-                            'has_arraear' => 'yes',
-                        ];
-                    }
+                    $formatedMonth = Carbon::parse($ChallanTransactionsDueMonth['ChallanMonth'])->format('M-Y');
 
-                    if($arrears['TransactionType'] == 'Fine')
-                    {
-                         $fineAmount = GenerateFeeChallan::select('id','tenant_id','challan_no','ChallanMonth','WaivedFineAmount','FineAmount')
-                         ->where('tenant_id', $tenant_id)
-                         ->where('id',$arrears['FKeyId'])->first();
-                      
-                         $previousChallanData[$challnList['id']][] = [
-                              'total_amount' => 0,
-                              'total_fine' => $fineAmount->FineAmount,
-                              'ChallanMonth' => $fineAmount->ChallanMonth->toDateString(),
-                              'has_arraear' => 'no',
-                         ];
-                    }
-                    
-               }
-          }
-          $balance          = collect($previousChallanData)->flatten(1)->sum('total_amount');
-          $total_fine       = collect($previousChallanData)->flatten(1)->sum('total_fine');
-      
-          return $total_remainings = $balance + $total_fine;
+                    $ChallanPartialPaymentSum = ChallanPartialPayment::where('GenerateClassChallanId', $arrears['FKeyId'])->sum('ReceivedAmount');
+                    $dueDate = Carbon::parse($generateChallanFineList['DueDate']);
+                    $expiryDate = Carbon::parse($generateChallanFineList['ExpiryDate']);
+                    $days = $dueDate->diffInDays($expiryDate);
+                    $totalFine = $days * $generateChallanFineList['per_day_fine'];
+                    $previousChallanData[$challnList['id']][] = [
+                        'total_amount' => $ChallanTransactionsSum - $ChallanPartialPaymentSum,
+                        'total_fine' => $generateChallanFineList['per_day_fine'] ? $totalFine : $generateChallanFineList['FineAmount'],
+                        'ChallanMonth' => $formatedMonth,
+                        'has_arraear' => 'yes',
+                    ];
+                }
+
+                if ($arrears['TransactionType'] == 'Fine') {
+                    $fineAmount = GenerateFeeChallan::select('id', 'tenant_id', 'challan_no', 'ChallanMonth', 'WaivedFineAmount', 'FineAmount')
+                        ->where('tenant_id', $tenant_id)
+                        ->where('id', $arrears['FKeyId'])->first();
+
+                    $previousChallanData[$challnList['id']][] = [
+                        'total_amount' => 0,
+                        'total_fine' => $fineAmount->FineAmount,
+                        'ChallanMonth' => $fineAmount->ChallanMonth->toDateString(),
+                        'has_arraear' => 'no',
+                    ];
+                }
+
+            }
+        }
+        $balance = collect($previousChallanData)->flatten(1)->sum('total_amount');
+        $total_fine = collect($previousChallanData)->flatten(1)->sum('total_fine');
+
+        return $total_remainings = $balance + $total_fine;
 
     }
 
     protected function updateChallanStatus($challanId, $request = null): void
-    {   
+    {
         $sum = ChallanPartialPayment::where('GenerateClassChallanId', $challanId)->sum('ReceivedAmount');
         $totalReceived = $sum + $request->waived_amount;
         $challan = GenerateFeeChallan::withSum('transection', 'BalanceFeeAfterDiscount')->findOrFail($challanId);
         $total_challan_amount = $this->getChallanArrearsAndFine($challanId);
-        $final_challan_amount =  $total_challan_amount +  $challan->transection_sum_balancefeeafterdiscount;
+        $final_challan_amount = $total_challan_amount + $challan->transection_sum_balancefeeafterdiscount;
 
         if ((int) $totalReceived >= $final_challan_amount) {
             $data = $this->getGenerateChallanData($request);
@@ -339,17 +332,17 @@ class FeeCollectionService
         } else {
             $challan->update([
                 'IsPartialPayment' => false,
-                'SubmitDate' => $request->SubmitDate, 
+                'SubmitDate' => $request->SubmitDate,
                 'WaivedFineAmount' => $request->waived_amount,
-                'IsPartialPayment' => true, 
+                'IsPartialPayment' => true,
                 'ModifiedBy' => auth()->user()->id,
                 'PaymentMode' => $request->PaymentMode,
                 'Status' => 'Unpaid',
             ]);
-                
+
         }
 
-        if($request->waived_amount > 0) {
+        if ($request->waived_amount > 0) {
             $challan->update(['WaivedFineAmount' => $request->waived_amount]);
         }
     }
@@ -364,7 +357,7 @@ class FeeCollectionService
     protected function getGenerateChallanData($request): array
     {
         return [
-            'IsPartialPayment' => false, 
+            'IsPartialPayment' => false,
             'ModifiedBy' => auth()->user()->id,
             // 'Note' => $request->note,
             'PaymentMode' => $request->PaymentMode,
@@ -372,8 +365,7 @@ class FeeCollectionService
             'SubmitDate' => $request->SubmitDate,
             'WaivedFineAmount' => $request->waived_amount,
             'FineAmount' => $request->fine_amount,
-            'Status' => 'Paid'
+            'Status' => 'Paid',
         ];
     }
-
 }

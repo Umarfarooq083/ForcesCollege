@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class UploadContentRegion extends Model
 {
     protected $table = 'upload_content_regions';
+
     protected $fillable = [
         'region_id',
         'upload_content_id',

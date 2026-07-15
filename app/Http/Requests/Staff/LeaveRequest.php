@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Staff;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Models\LeaveRequest as LeaveRequestModel;
+use Illuminate\Foundation\Http\FormRequest;
 
 class LeaveRequest extends FormRequest
 {

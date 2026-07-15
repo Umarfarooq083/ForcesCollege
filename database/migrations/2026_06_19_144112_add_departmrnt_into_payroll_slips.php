@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-       Schema::table('payroll_slips', function (Blueprint $table) {
+        Schema::table('payroll_slips', function (Blueprint $table) {
             $table->dropColumn('department_name');
             $table->dropColumn('desigination_name');
         });

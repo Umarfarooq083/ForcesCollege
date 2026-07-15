@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('sectiones', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id',100)->nullable();
+            $table->string('tenant_id', 100)->nullable();
             $table->integer('SessionId')->nullable();
-            $table->string('SectionName',100);
+            $table->string('SectionName', 100);
             $table->integer('ClassId');
             $table->integer('SchoolId')->nullable();
-            $table->boolean('IsActive',100)->default(true);
-            $table->string('CreatedBy',100);
+            $table->boolean('IsActive', 100)->default(true);
+            $table->string('CreatedBy', 100);
             $table->integer('ModifiedBy')->nullable();
-            $table->string('ClassGroupId',100)->nullable();
+            $table->string('ClassGroupId', 100)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

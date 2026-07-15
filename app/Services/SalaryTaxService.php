@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\SalaryTax;
 use App\Models\HumanResourceLog;
+use App\Models\SalaryTax;
 use Illuminate\Validation\ValidationException;
 
 class SalaryTaxService
@@ -39,7 +39,7 @@ class SalaryTaxService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'staff_id' => ['A salary tax already exists for this staff.']
+                'staff_id' => ['A salary tax already exists for this staff.'],
             ]);
         }
 
@@ -52,7 +52,7 @@ class SalaryTaxService
         ]);
 
         if ($created) {
-            userActivityLogs('Salary Tax Created and By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Salary Tax Created and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -86,7 +86,7 @@ class SalaryTaxService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'staff_id' => ['A salary tax already exists for this staff.']
+                'staff_id' => ['A salary tax already exists for this staff.'],
             ]);
         }
 
@@ -98,7 +98,7 @@ class SalaryTaxService
         ]);
 
         if ($updated) {
-            userActivityLogs('Salary Tax Updated and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Salary Tax Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -108,7 +108,7 @@ class SalaryTaxService
         $deleted = $salaryTax->delete();
 
         if ($deleted) {
-            userActivityLogs('Salary Tax Deleted and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Salary Tax Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 }

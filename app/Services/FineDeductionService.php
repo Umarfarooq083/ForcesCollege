@@ -42,7 +42,7 @@ class FineDeductionService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'apply_year' => ['A fine deduction already exists for this staff with the selected year and month.']
+                'apply_year' => ['A fine deduction already exists for this staff with the selected year and month.'],
             ]);
         }
 
@@ -57,7 +57,7 @@ class FineDeductionService
         ]);
 
         if ($created) {
-            userActivityLogs('Fine Deduction Created and By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Fine Deduction Created and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -94,7 +94,7 @@ class FineDeductionService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'apply_year' => ['A fine deduction already exists for this staff with the selected year and month.']
+                'apply_year' => ['A fine deduction already exists for this staff with the selected year and month.'],
             ]);
         }
 
@@ -108,7 +108,7 @@ class FineDeductionService
         ]);
 
         if ($updated) {
-            userActivityLogs('Fine Deduction Updated and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Fine Deduction Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -118,7 +118,7 @@ class FineDeductionService
         $deleted = $fineDeduction->delete();
 
         if ($deleted) {
-            userActivityLogs('Fine Deduction Deleted and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Fine Deduction Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 }

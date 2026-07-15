@@ -6,31 +6,37 @@ use App\Events\FileUploaded;
 use App\Models\ContentUpload;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProcessContentUpload implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
 
     public $contentUpload;
+
     public $disk;
+
     public $tempPath;
+
     public $newPath;
+
     public $user_id;
+
     public $tenantId;
+
     public $oldPath;
 
     public function __construct(ContentUpload $contentUpload, $disk, $tempPath, $newPath, $user_id, $tenantId, $oldPath = null)
     {
         $this->contentUpload = $contentUpload;
-        $this->disk          = $disk;
-        $this->tempPath      = $tempPath;
-        $this->newPath       = $newPath;
-        $this->user_id       = $user_id;
-        $this->tenantId      = $tenantId;
-        $this->oldPath       = $oldPath;
+        $this->disk = $disk;
+        $this->tempPath = $tempPath;
+        $this->newPath = $newPath;
+        $this->user_id = $user_id;
+        $this->tenantId = $tenantId;
+        $this->oldPath = $oldPath;
     }
 
     public function handle()
@@ -41,13 +47,14 @@ class ProcessContentUpload implements ShouldQueue
         $disk = $this->disk ?: (string) config('filesystems.content_upload_disk', 'public');
 
         try {
-            if (!Storage::disk($disk)->exists($this->tempPath)) {
+            if (! Storage::disk($disk)->exists($this->tempPath)) {
                 \Log::error('Content upload: temp file missing', [
                     'tenant_id' => $this->tenantId,
                     'upload_content_id' => $this->contentUpload->id,
                     'disk' => $disk,
                     'temp_path' => $this->tempPath,
                 ]);
+
                 return;
             }
 
@@ -61,6 +68,7 @@ class ProcessContentUpload implements ShouldQueue
                     'disk' => $disk,
                     'temp_path' => $this->tempPath,
                 ]);
+
                 return;
             }
 
@@ -72,7 +80,7 @@ class ProcessContentUpload implements ShouldQueue
                 }
             }
 
-            if (!$stored || !Storage::disk($disk)->exists($this->newPath)) {
+            if (! $stored || ! Storage::disk($disk)->exists($this->newPath)) {
                 \Log::error('Content upload: failed to store final file', [
                     'tenant_id' => $this->tenantId,
                     'upload_content_id' => $this->contentUpload->id,
@@ -81,6 +89,7 @@ class ProcessContentUpload implements ShouldQueue
                     'final_path' => $this->newPath,
                     'stored' => (bool) $stored,
                 ]);
+
                 return;
             }
 

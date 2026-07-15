@@ -4,28 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use PhpParser\Node\Expr\FuncCall;
 
 class Classes extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
-        'SessionId', 'ClassName','IsActive','CreatedBy','ModifiedBy','deleted_at','tenant_id','ClassOrder','program_id'
+        'SessionId', 'ClassName', 'IsActive', 'CreatedBy', 'ModifiedBy', 'deleted_at', 'tenant_id', 'ClassOrder', 'program_id',
     ];
 
     public function scopeTenant($query)
     {
-        return $query->where('tenant_id',tenant('id'));
+        return $query->where('tenant_id', tenant('id'));
     }
 
     public function user()
     {
-        return $this->hasOne(User::class,'id','CreatedBy')->select('id','name');
+        return $this->hasOne(User::class, 'id', 'CreatedBy')->select('id', 'name');
     }
 
     public function subject()
     {
-        return $this->hasOne(Subject::class,'ClassId','id')->select('id','SubjectName','ClassId');
+        return $this->hasOne(Subject::class, 'ClassId', 'id')->select('id', 'SubjectName', 'ClassId');
     }
 
     // public function Session()
@@ -35,12 +35,12 @@ class Classes extends Model
 
     public function sections()
     {
-        return $this->hasMany(Section::class, 'ClassId', 'id')->select('id','SectionName', 'ClassId', 'SectionType')->where('tenant_id',tenant('id'));
+        return $this->hasMany(Section::class, 'ClassId', 'id')->select('id', 'SectionName', 'ClassId', 'SectionType')->where('tenant_id', tenant('id'));
     }
 
     public function assignedTeacher()
     {
-        return $this->hasOne(AssignClassTeacher::class,'ClassId', 'id');
+        return $this->hasOne(AssignClassTeacher::class, 'ClassId', 'id');
     }
 
     public function students()
@@ -52,5 +52,4 @@ class Classes extends Model
     {
         return $this->belongsTo(Program::class, 'program_id', 'id');
     }
-    
 }

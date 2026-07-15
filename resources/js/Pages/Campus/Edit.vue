@@ -10,6 +10,7 @@ const props = defineProps({
     campus: Object,
     zones: Object,
     regions: Object,
+    campus_categories: Array,
 });
 
 const form = useForm({
@@ -17,6 +18,7 @@ const form = useForm({
     SessionId:props.campus.SessionId,
     zoneid:props.campus.zoneid,
     regionid: props.campus.regionid,
+    campus_category_id: props.campus.campus_category_id,
     OwnerName: props.campus.OwnerName,
     SchoolName: props.campus.SchoolName,
     Address: props.campus.Address,
@@ -93,7 +95,7 @@ const form = useForm({
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+<div class="col-md-6">
                                     <div class="mb-3">
                                         <InputLabel for="Region" value="Region" />
                                         <select class="form-control" v-model="form.regionid">
@@ -104,7 +106,19 @@ const form = useForm({
                                         </select>
                                     </div>
                                 </div>
-                            </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <InputLabel value="Campus Category" />
+                                        <select class="form-control" v-model="form.campus_category_id">
+                                            <option value="">Select Category</option>
+                                            <option v-for="category in campus_categories" :key="category.id" :value="category.id">
+                                                {{ category.CategoryName }}
+                                            </option>
+                                        </select>
+                                           <InputError class="mt-2" :message="form.errors.campus_category_id" />
+                                    </div>
+                                </div>
+                             </div>
                         </div>
                     </div>
                 </div>

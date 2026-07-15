@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Jobs;
+
 use App\Models\StudentAttendance;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,8 +15,11 @@ class StudentAttendancejob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public array $chunk;
+
     public int $tries = 3;
+
     public int $timeout = 120;
+
     protected $ImportHelper;
 
     public function __construct(array $chunk, $ImportHelper)
@@ -33,11 +37,11 @@ class StudentAttendancejob implements ShouldQueue
                 'attendanceType' => $item['attendanceType'],
                 'attendanceDate' => $item['attendanceDate'],
                 'imported_attendance_id' => $item['id'],
-                'sessionId'       => $item['sessionId'],
-                'isFromMachine'   => $item['isFromMachine'],
-                'isActive'        => $item['isActive'],
-                'createdBy'       => $item['createdBy'],
-                'createdDate'     => $item['createdDate'],
+                'sessionId' => $item['sessionId'],
+                'isFromMachine' => $item['isFromMachine'],
+                'isActive' => $item['isActive'],
+                'createdBy' => $item['createdBy'],
+                'createdDate' => $item['createdDate'],
             ];
         }, $this->chunk);
 
@@ -79,7 +83,7 @@ class StudentAttendancejob implements ShouldQueue
             }
         }
 
-        if (!empty($newAttendances)) {
+        if (! empty($newAttendances)) {
             DB::table('student_attendances')->insert($newAttendances);
             $insertedAttendances = StudentAttendance::where('tenant_id', $current_tenant_id)
                 ->whereIn('imported_student_attendance_id', array_column($newAttendances, 'imported_student_attendance_id'))
@@ -94,18 +98,17 @@ class StudentAttendancejob implements ShouldQueue
             }
         }
 
-        if (!empty($updates)) {
-            $updateQuery = "UPDATE imported_student_attendance SET 
-            internal_attendance_id = CASE imported_attendance_id " .
-                implode(" ", array_map(fn($u) => "WHEN {$u['imported_attendance_id']} THEN {$u['internal_attendance_id']}", $updates)) .
-                " END,
-            internal_student_id = CASE imported_attendance_id " .
-                implode(" ", array_map(fn($u) => "WHEN {$u['imported_attendance_id']} THEN {$u['internal_student_id']}", $updates)) .
-                " END
-            WHERE imported_attendance_id IN (" . implode(',', array_column($updates, 'imported_attendance_id')) . ")";
+        if (! empty($updates)) {
+            $updateQuery = 'UPDATE imported_student_attendance SET 
+            internal_attendance_id = CASE imported_attendance_id '.
+                implode(' ', array_map(fn ($u) => "WHEN {$u['imported_attendance_id']} THEN {$u['internal_attendance_id']}", $updates)).
+                ' END,
+            internal_student_id = CASE imported_attendance_id '.
+                implode(' ', array_map(fn ($u) => "WHEN {$u['imported_attendance_id']} THEN {$u['internal_student_id']}", $updates)).
+                ' END
+            WHERE imported_attendance_id IN ('.implode(',', array_column($updates, 'imported_attendance_id')).')';
 
             DB::statement($updateQuery);
         }
     }
-
 }

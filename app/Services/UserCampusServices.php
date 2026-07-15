@@ -7,33 +7,32 @@ use App\Models\SettingLog;
 use App\Models\StudentLog;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class UserCampusServices
 {
-    public function index($request) 
+    public function index($request)
     {
         $users = User::query();
-        if($request->filled('search'))
-        {
-            $users->where('name', 'like', '%'. $request->search .'%');
+        if ($request->filled('search')) {
+            $users->where('name', 'like', '%'.$request->search.'%');
         }
-        return $users = $users->Tenant(tenant('id'))->with('roles')->orderBy('id','desc')->paginate(25)->withQueryString();
+
+        return $users = $users->Tenant(tenant('id'))->with('roles')->orderBy('id', 'desc')->paginate(25)->withQueryString();
     }
 
-    public function getTenantRoles() 
+    public function getTenantRoles()
     {
-       $domain = getTenantSubDomain();
+        $domain = getTenantSubDomain();
         $roles = Roles::query();
         if ($domain === 'headoffice') {
-           return $roles->get();
+            return $roles->get();
         } else {
             return $roles->Tenant(tenant('id'))->get();
         }
     }
 
     public function submit($request): void
-    { 
+    {
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -44,14 +43,14 @@ class UserCampusServices
             'createdBy' => auth()->user()->id,
         ]);
 
-        if($user){
+        if ($user) {
             userActivityLogs('User Created and By User ID: '.auth()->user()->id.'', SettingLog::class);
         }
 
         $roleIds = collect($request->roles_ids)->pluck('id');
         $user->roles()->attach($roleIds);
-        getRolesPermissions($roleIds,$user->id);
-        
+        getRolesPermissions($roleIds, $user->id);
+
     }
 
     public function update($request): void
@@ -62,12 +61,12 @@ class UserCampusServices
         $userData->address = $request->address;
         $userData->modify_at = now();
         $userData->modifyBy = auth()->user()->id;
-        if($userData->save()){
+        if ($userData->save()) {
             userActivityLogs('User Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', SettingLog::class);
         }
         $roleIds = collect($request->roles_ids)->pluck('id');
         $userData->roles()->sync($roleIds);
-        getRolesPermissions($roleIds,$request->id);
+        getRolesPermissions($roleIds, $request->id);
     }
 
     public function delete($request)
@@ -76,8 +75,9 @@ class UserCampusServices
             return false;
         }
         $userData = User::findOrFail($request->id);
-        if($userData->delete()){
-            userActivityLogs('User Deleted and id is '.$request->id.' By - '.auth()->user()->id , StudentLog::class);
+        if ($userData->delete()) {
+            userActivityLogs('User Deleted and id is '.$request->id.' By - '.auth()->user()->id, StudentLog::class);
+
             return true;
         }
     }

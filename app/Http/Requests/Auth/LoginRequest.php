@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Requests\Auth;
+
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -39,7 +40,7 @@ class LoginRequest extends FormRequest
      */
     public function authenticate(): void
     {
-        
+
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
@@ -49,7 +50,7 @@ class LoginRequest extends FormRequest
                 'email' => trans('auth.failed'),
             ]);
         }
-        // uncomment this code when device fingerprint feature need to implement 
+        // uncomment this code when device fingerprint feature need to implement
         // $register_device_key = session('register_device_key');
 
         // if($register_device_key == null){
@@ -58,26 +59,25 @@ class LoginRequest extends FormRequest
         //         'email' => 'Invalid device token .',
         //     ]);
         // }
-        
 
         // dd($register_device_key);
         RateLimiter::clear($this->throttleKey());
         $domainTenant = getDomainTenantId();
-        
+
         $user = Auth::user();
-        if($domainTenant != $user->tenant_id ){
-           Auth::logout();
+        if ($domainTenant != $user->tenant_id) {
+            Auth::logout();
             throw ValidationException::withMessages([
                 'email' => 'Invalid tenant account.',
             ]);
         }
 
         $roleUsers = DB::table('role_user')
-        ->where('user_id', $user->id)
-        ->get()->pluck('role_id')->toArray();
-        if($roleUsers){
-            getRolesPermissions($roleUsers,$user->id);
-        }else{
+            ->where('user_id', $user->id)
+            ->get()->pluck('role_id')->toArray();
+        if ($roleUsers) {
+            getRolesPermissions($roleUsers, $user->id);
+        } else {
             Auth::logout();
             throw ValidationException::withMessages([
                 'email' => "Access denied you don't have permission.",

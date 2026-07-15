@@ -9,18 +9,19 @@ use App\Models\RolePermission;
 use App\Models\Roles;
 use App\Models\SettingLog;
 use App\Services\RoleServices;
-use Inertia\Inertia;
-use App\Traits\PermissionTrait;
 use App\Traits\CampusListTrait;
+use App\Traits\PermissionTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Response;
 
 class RolesController extends Controller
 {
-    use PermissionTrait,CampusListTrait;
+    use CampusListTrait,PermissionTrait;
 
     protected $roleServices;
+
     public function __construct(RoleServices $roleServices)
     {
         $this->roleServices = $roleServices;
@@ -28,7 +29,8 @@ class RolesController extends Controller
 
     public function index(Request $request): Response
     {
-        $roles =  $this->roleServices->index($request);
+        $roles = $this->roleServices->index($request);
+
         return Inertia::render('Roles/List', compact('roles'));
     }
 
@@ -42,7 +44,8 @@ class RolesController extends Controller
     public function submit(RolesRequest $request): RedirectResponse
     {
         $this->roleServices->submit($request->validated(), $request);
-        return $this->redirectSuccess('Role created successfully!','role.index');
+
+        return $this->redirectSuccess('Role created successfully!', 'role.index');
     }
 
     public function edit(RolesRequest $request): Response
@@ -56,29 +59,32 @@ class RolesController extends Controller
     public function update(RolesRequest $request): RedirectResponse
     {
         $this->roleServices->update($request->validated(), $request);
-        return $this->redirectSuccess('Role updated successfully!','role.index');
+
+        return $this->redirectSuccess('Role updated successfully!', 'role.index');
     }
 
     public function delete(RolesRequest $request): RedirectResponse
     {
         $role = Roles::query();
-        $role->where('id',$request->id)->update([
-            'deletedBy' => auth()->user()->id
+        $role->where('id', $request->id)->update([
+            'deletedBy' => auth()->user()->id,
         ]);
         $this->findRole($request->id)->delete();
         userActivityLogs('Role Deleted and id is '.$request->id.' User ID: '.auth()->user()->id.'', SettingLog::class);
-        return $this->redirectSuccess('Role deleted successfully!','role.index');
+
+        return $this->redirectSuccess('Role deleted successfully!', 'role.index');
     }
 
     public function permissionAssign(Request $request): Response
     {
         $permissions = Permissions::toBase()->get();
-        $assignedPermissions = RolePermission::toBase()->where('role_id',$request->id)->get()->pluck('permission_id');
+        $assignedPermissions = RolePermission::toBase()->where('role_id', $request->id)->get()->pluck('permission_id');
         $tree_permission = $this->permissionTreeView($permissions);
+
         return Inertia::render('Roles/AssignPermission', [
-            'role_id' =>$request->id,
-            'tree_permission' =>$tree_permission,
-            'assignedPermissions' =>$assignedPermissions,
+            'role_id' => $request->id,
+            'tree_permission' => $tree_permission,
+            'assignedPermissions' => $assignedPermissions,
         ]);
     }
 
@@ -86,7 +92,7 @@ class RolesController extends Controller
     {
         RolePermission::where('role_id', $request->role_id)->delete();
         $insertArray = [];
-        foreach($request->permission as $key=>$list){
+        foreach ($request->permission as $key => $list) {
             $insertArray[$key]['role_id'] = $request->role_id;
             $insertArray[$key]['permission_id'] = $list;
             $insertArray[$key]['created_at'] = now();
@@ -95,7 +101,8 @@ class RolesController extends Controller
         RolePermission::insert($insertArray);
         removeUserPermission($request->role_id);
         userActivityLogs('Permission Assigned To Role and User ID: '.auth()->user()->id.'', SettingLog::class);
-        return $this->redirectSuccess('Permission assigned successfully!','role.index');
+
+        return $this->redirectSuccess('Permission assigned successfully!', 'role.index');
     }
 
     private function findRole(int $id)

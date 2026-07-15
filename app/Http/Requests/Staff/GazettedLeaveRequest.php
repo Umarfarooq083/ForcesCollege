@@ -22,7 +22,7 @@ class GazettedLeaveRequest extends FormRequest
                 'required',
                 'date',
                 Rule::unique('gazetted_leaves', 'date')
-                    ->where(fn($q) => $q->where('tenant_id', $tenantId)->whereNull('deleted_at'))
+                    ->where(fn ($q) => $q->where('tenant_id', $tenantId)->whereNull('deleted_at'))
                     ->ignore($this->id),
             ],
             // 'status' => 'sometimes|boolean',

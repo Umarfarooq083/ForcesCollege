@@ -55,6 +55,7 @@ class ProgramLevelController extends Controller
     public function submit(ProgramLevelRequest $request): RedirectResponse
     {
         $this->programLevelService->submit($request);
+
         return $this->redirectSuccess('Program level created successfully!', 'programlevel.index');
     }
 
@@ -75,12 +76,14 @@ class ProgramLevelController extends Controller
     public function update(ProgramLevelRequest $request): RedirectResponse
     {
         $this->programLevelService->update($request);
+
         return $this->redirectSuccess('Program level updated successfully!', 'programlevel.index');
     }
 
     public function delete(Request $request): RedirectResponse
     {
         $this->programLevelService->delete($request);
+
         return $this->redirectSuccess('Program level deleted successfully!', 'programlevel.index');
     }
 }

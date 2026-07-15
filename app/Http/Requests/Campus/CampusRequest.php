@@ -53,6 +53,7 @@ class CampusRequest extends FormRequest
             'zoneid' => 'required',
             'regionid' => 'nullable|integer|exists:regions,id',
             'DomainName' => 'required|string|max:255',
+            'campus_category_id' => 'required|exists:campus_categories,id',
         ];
 
         // For create (POST)
@@ -65,6 +66,7 @@ class CampusRequest extends FormRequest
             $campusId = $this->route('id') ?? $this->id;
 
             $rules['id'] = 'required|exists:campuses,id';
+            $rules['campus_category_id'] = 'required|exists:campus_categories,id';
 
             // unique with ignore
             $rules['SchoolName'] = [
@@ -86,7 +88,6 @@ class CampusRequest extends FormRequest
             $rules['IsActive'] = 'sometimes|boolean';
             $rules['IsDeleted'] = 'sometimes|boolean';
         }
-
 
         return $rules;
     }

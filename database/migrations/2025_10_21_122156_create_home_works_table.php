@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('home_works', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id',191);
+            $table->string('tenant_id', 191);
             $table->integer('classId')->nullable();
             $table->string('class')->nullable();
             $table->integer('sectionId')->nullable();

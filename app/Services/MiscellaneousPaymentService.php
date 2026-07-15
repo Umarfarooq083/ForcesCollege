@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\MiscellaneousPayment;
 use App\Models\HumanResourceLog;
+use App\Models\MiscellaneousPayment;
 use Illuminate\Validation\ValidationException;
 
 class MiscellaneousPaymentService
@@ -42,7 +42,7 @@ class MiscellaneousPaymentService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'apply_year' => ['A miscellaneous payment already exists for this staff with the selected year and month.']
+                'apply_year' => ['A miscellaneous payment already exists for this staff with the selected year and month.'],
             ]);
         }
 
@@ -57,7 +57,7 @@ class MiscellaneousPaymentService
         ]);
 
         if ($created) {
-            userActivityLogs('Miscellaneous Payment Created and By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Miscellaneous Payment Created and By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -94,7 +94,7 @@ class MiscellaneousPaymentService
 
         if ($exists) {
             throw ValidationException::withMessages([
-                'apply_year' => ['A miscellaneous payment already exists for this staff with the selected year and month.']
+                'apply_year' => ['A miscellaneous payment already exists for this staff with the selected year and month.'],
             ]);
         }
 
@@ -108,7 +108,7 @@ class MiscellaneousPaymentService
         ]);
 
         if ($updated) {
-            userActivityLogs('Miscellaneous Payment Updated and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Miscellaneous Payment Updated and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 
@@ -118,7 +118,7 @@ class MiscellaneousPaymentService
         $deleted = $miscellaneousPayment->delete();
 
         if ($deleted) {
-            userActivityLogs('Miscellaneous Payment Deleted and id is '.$request->id.' By User ID: ' . auth()->user()->id . '', HumanResourceLog::class);
+            userActivityLogs('Miscellaneous Payment Deleted and id is '.$request->id.' By User ID: '.auth()->user()->id.'', HumanResourceLog::class);
         }
     }
 }

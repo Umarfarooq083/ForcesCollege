@@ -37,12 +37,11 @@ class Section extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class,'id','CreatedBy')->select('id','name');
+        return $this->hasOne(User::class, 'id', 'CreatedBy')->select('id', 'name');
     }
 
     public function students()
     {
         return $this->hasMany(Student::class, 'SectionId');
     }
-
 }

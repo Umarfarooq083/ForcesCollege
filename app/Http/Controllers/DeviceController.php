@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 use App\Models\DeviceToken;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DeviceController extends Controller
-{ 
-   public function issueAutoLogin(Request $request)
+{
+    public function issueAutoLogin(Request $request)
     {
         $request->validate(['device_key' => 'required|string']);
         $deviceKey = $request->device_key;
@@ -24,10 +22,11 @@ class DeviceController extends Controller
         ]);
         $tenantDomain = 'headoffice';
         $loginUrl = "http://{$tenantDomain}.lms/auto-login?token={$token}";
+
         return response()->json([
-            'status'     => 'ok',
-            'tenant'     => 'headoffice',
-            'url'        => $loginUrl,
+            'status' => 'ok',
+            'tenant' => 'headoffice',
+            'url' => $loginUrl,
             'expires_at' => $expires->toIso8601String(),
         ]);
     }
@@ -35,20 +34,21 @@ class DeviceController extends Controller
     public function autoLogin(Request $request)
     {
         $token = $request->query('token');
-        if (!$token) abort(400, 'Token required');
+        if (! $token) {
+            abort(400, 'Token required');
+        }
 
-        $record = DeviceToken::where('token',$token)
-            ->where('used',false)
-            ->where('expires_at','>=',now())
+        $record = DeviceToken::where('token', $token)
+            ->where('used', false)
+            ->where('expires_at', '>=', now())
             ->first();
 
-        if (!$record) abort(403, 'Invalid or expired token');
-        $record->update(['used'=>true]); 
+        if (! $record) {
+            abort(403, 'Invalid or expired token');
+        }
+        $record->update(['used' => true]);
         session(['register_device_key' => $record->device_key]);
-        return redirect('/login'); 
+
+        return redirect('/login');
     }
-
-
-
-
 }

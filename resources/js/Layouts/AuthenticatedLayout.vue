@@ -129,9 +129,9 @@ const academicItems = [
 const filteredAcademicItems = computed(() => filterMenu(academicItems))
 
 const studentItems = [
-    // { label: 'Student Inquiry', base: 'inquiry.index', route: ['inquiry.index', 'inquiry.create', 'inquiry.edit', 'student.create','inquiry.detail'], icon: '' },
+    { label: 'Student Inquiry', base: 'inquiry.index', route: ['inquiry.index', 'inquiry.create', 'inquiry.edit', 'student.create','inquiry.detail'], icon: '' },
     { label: 'Students', base: 'student.index', route: ['student.index','student.detail'], icon: '' },
-    // { label: 'Student Attendance', base: 'attendance.create', route: ['attendance.create'], icon: '' },
+    { label: 'Student Attendance', base: 'attendance.create', route: ['attendance.create'], icon: '' },
     // { label: 'Student HomeWork', base: 'homework.index', route: ['homework.index', 'homework.create', 'homework.edit', 'homework.show'], icon: '' },
     // { label: 'Promote Student', base: 'promotestudent.index', route: ['promotestudent.index'], icon: '' },
     // { label: 'Withdraw Student', base: 'student.withdrawlist', route: ['student.withdrawlist'], icon: '' },

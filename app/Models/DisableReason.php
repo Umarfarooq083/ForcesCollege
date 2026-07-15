@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class DisableReason extends Model
 {
     use SoftDeletes;
+
     protected $table = 'disable_reasons';
+
     protected $fillable = [
         'SchoolId',
         'IsActive',
@@ -19,6 +21,6 @@ class DisableReason extends Model
         'ModifiedDate',
         'SessionId',
         'DisableReasonName',
-        'DisableReasonGroupId'
+        'DisableReasonGroupId',
     ];
 }

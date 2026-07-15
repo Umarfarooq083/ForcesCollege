@@ -32,14 +32,14 @@ class OptionalFeesRequest extends FormRequest
             'StudentId' => ['required', 'array'],
             'StudentId.*' => [
                 'required',
-                Rule::unique('optional_fee_mapping', 'StudentId') 
+                Rule::unique('optional_fee_mapping', 'StudentId')
                     ->where(function ($query) use ($request) {
                         return $query->where('tenant_id', tenant('id'))
                             ->where('ClassId', $request->ClassId)
                             ->where('SectionId', $request->SectionId)
                             ->where('CampusFeesMasterId', $request->CampusFeesMasterId)
                             ->whereNull('deleted_at');
-                    })
+                    }),
             ],
             'FromMonth' => ['required', 'date_format:Y-m'],
             'ToMonth' => ['required', 'date_format:Y-m'],
@@ -49,7 +49,7 @@ class OptionalFeesRequest extends FormRequest
     public function messages()
     {
         return [
-            'StudentId.*.unique' => 'This student already exists with the same class and campus fee master.'
+            'StudentId.*.unique' => 'This student already exists with the same class and campus fee master.',
         ];
     }
 }

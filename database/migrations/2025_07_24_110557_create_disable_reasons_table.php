@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('disable_reasons', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id',100);
+            $table->string('tenant_id', 100);
             $table->integer('SchoolId')->nullable();
             $table->boolean('IsActive')->default(true);
             $table->integer('CreatedBy')->nullable();

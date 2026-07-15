@@ -11,17 +11,16 @@ use App\Models\GenerateFeeChallan;
 use App\Models\OptionalFeeMaster;
 use App\Models\Student;
 use App\Models\StudentFeeDiscount;
-use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class GenerateFeeChallanService
 {
-
     public function index($request): array
     {
         $data['classAndSections'] = classAndSections();
         $challans = GenerateFeeChallan::where('tenant_id', tenant('id'))
-            ->with('ChallanTransactions', 'StudentRel','ClassRel','SectionRel')
+            ->with('ChallanTransactions', 'StudentRel', 'ClassRel', 'SectionRel')
             ->orderBy('id', 'desc');
 
         if ($request->filled('search')) {
@@ -29,21 +28,22 @@ class GenerateFeeChallanService
 
             $challans->where(function ($q) use ($search) {
                 $q->where('challan_no', 'like', "%{$search}%")
-                ->orWhereHas('StudentRel', function ($sub) use ($search) {
-                $sub->where('FirstName', 'like', "%{$search}%")
-                    ->orWhere('LastName', 'like', "%{$search}%")
-                    ->orWhereRaw("CONCAT(FirstName, ' ', LastName) LIKE ?", ["%{$search}%"]);
-                })
-                ->orWhereHas('ClassRel', function ($sub) use ($search) {
-                    $sub->where('ClassName', 'like', "%{$search}%");
-                })
-                ->orWhereHas('SectionRel', function ($sub) use ($search) {
-                    $sub->where('SectionName', 'like', "%{$search}%");
-                });
+                    ->orWhereHas('StudentRel', function ($sub) use ($search) {
+                        $sub->where('FirstName', 'like', "%{$search}%")
+                            ->orWhere('LastName', 'like', "%{$search}%")
+                            ->orWhereRaw("CONCAT(FirstName, ' ', LastName) LIKE ?", ["%{$search}%"]);
+                    })
+                    ->orWhereHas('ClassRel', function ($sub) use ($search) {
+                        $sub->where('ClassName', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('SectionRel', function ($sub) use ($search) {
+                        $sub->where('SectionName', 'like', "%{$search}%");
+                    });
             });
         }
 
-        $data['challansList'] =  $challans->paginate(25)->withQueryString();
+        $data['challansList'] = $challans->paginate(25)->withQueryString();
+
         return $data;
     }
 
@@ -53,7 +53,7 @@ class GenerateFeeChallanService
         $currentSession = fetchCurrentSession();
         $requestedMonth = Carbon::createFromFormat('Y-m', $request->ChallanMonth)->startOfMonth();
         foreach ($request->StudentId as $key => $value) {
-            $date = $request->ChallanMonth . "-01";
+            $date = $request->ChallanMonth.'-01';
 
             // If this month is already covered by a combined challan (Fee Cycle), block single-month generation.
             $existingCombined = GenerateFeeChallan::where('tenant_id', tenant('id'))
@@ -65,7 +65,7 @@ class GenerateFeeChallanService
 
             foreach ($existingCombined as $existingRow) {
                 $range = $this->parseFeeCycleRange($existingRow->Note);
-                if (!$range) {
+                if (! $range) {
                     continue;
                 }
                 [$existingStart, $existingEnd] = $range;
@@ -76,7 +76,7 @@ class GenerateFeeChallanService
                         ->first(['FirstName']);
 
                     return throw ValidationException::withMessages([
-                        'StudentId' => 'Challan already created for this student (Fee Cycle covers ' . $requestedMonth->format('M-Y') . '): ' . ($studentData->FirstName ?? ''),
+                        'StudentId' => 'Challan already created for this student (Fee Cycle covers '.$requestedMonth->format('M-Y').'): '.($studentData->FirstName ?? ''),
                     ]);
                 }
             }
@@ -87,24 +87,25 @@ class GenerateFeeChallanService
                 ->first();
             if ($generateFeeChallanExist) {
                 $studentData = Student::where('tenant_id', tenant('id'))->where('IsDisable', 0)->where('id', $generateFeeChallanExist->StudentId)->first('FirstName');
+
                 return throw ValidationException::withMessages([
-                    'StudentId' => 'Challan already created for this student: ' . $studentData->FirstName,
+                    'StudentId' => 'Challan already created for this student: '.$studentData->FirstName,
                 ]);
             }
             $challanNo = generateChallanNo();
-             
+
             $previousChallan = GenerateFeeChallan::where('tenant_id', tenant('id'))
                 ->where('StudentId', $value['id'])
                 ->orderBy('id', 'desc')
                 ->first();
-            
-            $generateChallan = new GenerateFeeChallan();
+
+            $generateChallan = new GenerateFeeChallan;
             $generateChallan->tenant_id = tenant('id');
             $generateChallan->challan_no = $challanNo;
             $generateChallan->per_day_fine = $per_day_fine;
             $generateChallan->IsActive = 1;
             $generateChallan->StudentId = $value['id'];
-            $generateChallan->ChallanMonth = $request->ChallanMonth . '-01';
+            $generateChallan->ChallanMonth = $request->ChallanMonth.'-01';
             $generateChallan->DueDate = $request->DueDate;
             $generateChallan->SessionId = $currentSession->id;
             $generateChallan->ClassId = $request->ClassId;
@@ -114,15 +115,15 @@ class GenerateFeeChallanService
             $generateChallan->IsPartialPayment = 0;
             $generateChallan->FineAmount = 0;
             $generateChallan->CreatedBy = auth()->user()->id;
-            if($generateChallan->save()){
+            if ($generateChallan->save()) {
                 userActivityLogs('Generate Fee Challan and By User ID: '.auth()->user()->id.'', FeeLog::class);
-                $studentData = Student::select('id','tenant_id','FirstName','LastName')->with('userFCMToken')->where('tenant_id', tenant('id'))->where('id', $value['id'])->first();
-                $title = "New Challan Generated";
-                $body = "New challan generated for " . $studentData->FirstName . " " . $studentData->LastName . " successfully.";
+                $studentData = Student::select('id', 'tenant_id', 'FirstName', 'LastName')->with('userFCMToken')->where('tenant_id', tenant('id'))->where('id', $value['id'])->first();
+                $title = 'New Challan Generated';
+                $body = 'New challan generated for '.$studentData->FirstName.' '.$studentData->LastName.' successfully.';
                 try {
-                sendTestNotification($request, $title, $body, $studentData);
+                    sendTestNotification($request, $title, $body, $studentData);
                 } catch (\Exception $e) {
-                    \Log::error('FCM Error: ' . $e->getMessage());
+                    \Log::error('FCM Error: '.$e->getMessage());
                 }
             }
 
@@ -164,7 +165,6 @@ class GenerateFeeChallanService
     //         })
     //         ->sort()
     //         ->values();
-            
 
     //     foreach ($months as $month) {
     //         $monthRequest = clone $request;
@@ -285,25 +285,24 @@ class GenerateFeeChallanService
             ->values();
         $startMonth = $months->first();
         $endMonth = $months->last();
-        
-        if (!$startMonth || !$endMonth) {
+
+        if (! $startMonth || ! $endMonth) {
             return;
         }
 
-        $startDate = $startMonth->format('Y-m') . '-01';
-        $endDate = $endMonth->format('Y-m') . '-01';
+        $startDate = $startMonth->format('Y-m').'-01';
+        $endDate = $endMonth->format('Y-m').'-01';
 
-        
         [$dueDate] = $this->calculateDueAndExpiryDates($startMonth);
         [, $expiryDate] = $this->calculateDueAndExpiryDates($endMonth);
-        
+
         foreach ($request->StudentId as $value) {
-            $datesToBlock = $months->map(fn ($m) => $m->format('Y-m') . '-01')->toArray();
+            $datesToBlock = $months->map(fn ($m) => $m->format('Y-m').'-01')->toArray();
             $existingAnyMonth = GenerateFeeChallan::where('tenant_id', tenant('id'))
-            ->where('StudentId', $value['id'])
-            ->whereIn('ChallanMonth', $datesToBlock)
-            ->first();
-        
+                ->where('StudentId', $value['id'])
+                ->whereIn('ChallanMonth', $datesToBlock)
+                ->first();
+
             if ($existingAnyMonth) {
                 $studentData = Student::where('tenant_id', tenant('id'))
                     ->where('IsDisable', 0)
@@ -311,7 +310,7 @@ class GenerateFeeChallanService
                     ->first(['FirstName']);
 
                 return throw ValidationException::withMessages([
-                    'StudentId' => 'Challan already created for this student (' . $startMonth->format('M-Y') . ' to ' . $endMonth->format('M-Y') . '): ' . ($studentData->FirstName ?? ''),
+                    'StudentId' => 'Challan already created for this student ('.$startMonth->format('M-Y').' to '.$endMonth->format('M-Y').'): '.($studentData->FirstName ?? ''),
                 ]);
             }
 
@@ -324,7 +323,7 @@ class GenerateFeeChallanService
 
             foreach ($existingCombined as $existingRow) {
                 $range = $this->parseFeeCycleRange($existingRow->Note);
-                if (!$range) {
+                if (! $range) {
                     continue;
                 }
                 [$existingStart, $existingEnd] = $range;
@@ -336,7 +335,7 @@ class GenerateFeeChallanService
                         ->first(['FirstName']);
 
                     return throw ValidationException::withMessages([
-                        'StudentId' => 'Challan already created for this student (Fee Cycle overlap): ' . ($studentData->FirstName ?? ''),
+                        'StudentId' => 'Challan already created for this student (Fee Cycle overlap): '.($studentData->FirstName ?? ''),
                     ]);
                 }
             }
@@ -350,7 +349,7 @@ class GenerateFeeChallanService
                 ->orderBy('id', 'desc')
                 ->first();
 
-            $generateChallan = new GenerateFeeChallan();
+            $generateChallan = new GenerateFeeChallan;
             $generateChallan->tenant_id = tenant('id');
             $generateChallan->challan_no = $challanNo;
             $generateChallan->per_day_fine = $per_day_fine;
@@ -366,7 +365,7 @@ class GenerateFeeChallanService
             $generateChallan->IsPartialPayment = 0;
             $generateChallan->FineAmount = 0;
             $generateChallan->CreatedBy = auth()->user()->id;
-            $generateChallan->Note = trim(($generateChallan->Note ?? '') . ' Fee Cycle: ' . $startMonth->format('M-Y') . ' to ' . $endMonth->format('M-Y') . ' (' . $startMonth->format('Y-m') . ' to ' . $endMonth->format('Y-m') . ')');
+            $generateChallan->Note = trim(($generateChallan->Note ?? '').' Fee Cycle: '.$startMonth->format('M-Y').' to '.$endMonth->format('M-Y').' ('.$startMonth->format('Y-m').' to '.$endMonth->format('Y-m').')');
 
             if ($generateChallan->save()) {
                 userActivityLogs('Generate Fee Challan and By User ID: '.auth()->user()->id.'', FeeLog::class);
@@ -403,7 +402,7 @@ class GenerateFeeChallanService
 
     private function parseFeeCycleRange(?string $note): ?array
     {
-        if (!$note) {
+        if (! $note) {
             return null;
         }
 
@@ -412,6 +411,7 @@ class GenerateFeeChallanService
             try {
                 $start = Carbon::createFromFormat('Y-m', $m[1])->startOfMonth();
                 $end = Carbon::createFromFormat('Y-m', $m[2])->startOfMonth();
+
                 return [$start, $end];
             } catch (\Exception $e) {
                 return null;
@@ -423,6 +423,7 @@ class GenerateFeeChallanService
             try {
                 $start = Carbon::createFromFormat('M-Y', $m[1])->startOfMonth();
                 $end = Carbon::createFromFormat('M-Y', $m[2])->startOfMonth();
+
                 return [$start, $end];
             } catch (\Exception $e) {
                 return null;
@@ -449,14 +450,14 @@ class GenerateFeeChallanService
             $BalanceFeeAfterDiscount = ($studentFeeDiscountAvalible['BalanceFeeAfterDiscount'] ?? $master['Amount']) * $monthsCount;
         }
 
-        $challanTransactionsCreate = new ChallanTransactions();
+        $challanTransactionsCreate = new ChallanTransactions;
         $challanTransactionsCreate->tenant_id = tenant('id');
         $challanTransactionsCreate->generate_challan_id = $generateChallan->id;
         $challanTransactionsCreate->CreatedBy = auth()->user()->id;
         $challanTransactionsCreate->SessionId = $currentSession->id;
         $challanTransactionsCreate->FeeAmount = $master['Amount'] * $monthsCount;
         $challanTransactionsCreate->FKey = $master['fee_type_rel']['id'];
-        $challanTransactionsCreate->TransactionType =  $master['fee_type_rel']['FeeName'];
+        $challanTransactionsCreate->TransactionType = $master['fee_type_rel']['FeeName'];
         // $challanTransactionsCreate->TransactionType =  ($master['fee_type_rel']['FeeName'] ?? '') . ' (' . $startMonth->format('M-Y') . ' to ' . $endMonth->format('M-Y') . ')';
         $challanTransactionsCreate->challan_type = 'Monthly Challan';
         $challanTransactionsCreate->DiscountAmount = $DiscountAmount;
@@ -476,6 +477,7 @@ class GenerateFeeChallanService
         }
 
         $expiryDate = $month->copy()->endOfMonth();
+
         return [$dueDate->toDateString(), $expiryDate->toDateString()];
     }
 
@@ -485,7 +487,7 @@ class GenerateFeeChallanService
         $BalanceFeeAfterDiscount = $master['Amount'];
         $DiscountAmount = 0;
         if ($master['fee_type_rel']['IsOptional'] === true) {
-            $date = $request->ChallanMonth . "-01";
+            $date = $request->ChallanMonth.'-01';
             $optionalFeeMaster = OptionalFeeMaster::where('ClassId', $request->ClassId)
                 ->where('FeesTypeNId', $master['fee_type_rel']['id'])
                 ->where('StudentId', $value['id'])
@@ -502,7 +504,7 @@ class GenerateFeeChallanService
                     $DiscountAmount = $studentFeeDiscountAvalible['DiscountAmount'];
                     $BalanceFeeAfterDiscount = $studentFeeDiscountAvalible['BalanceFeeAfterDiscount'];
 
-                    $challanTransactionsCreate = new ChallanTransactions();
+                    $challanTransactionsCreate = new ChallanTransactions;
                     $challanTransactionsCreate->tenant_id = tenant('id');
                     $challanTransactionsCreate->generate_challan_id = $generateChallan->id;
                     $challanTransactionsCreate->CreatedBy = auth()->user()->id;
@@ -517,7 +519,7 @@ class GenerateFeeChallanService
                     $challanTransactionsCreate->save();
                 } else {
 
-                    $challanTransactionsCreate = new ChallanTransactions();
+                    $challanTransactionsCreate = new ChallanTransactions;
                     $challanTransactionsCreate->tenant_id = tenant('id');
                     $challanTransactionsCreate->generate_challan_id = $generateChallan->id;
                     $challanTransactionsCreate->CreatedBy = auth()->user()->id;
@@ -544,14 +546,14 @@ class GenerateFeeChallanService
                 })
                 ->first();
 
-            if (!$existingAnnuallyChallan) {
+            if (! $existingAnnuallyChallan) {
                 $studentFeeDiscountAvalible = StudentFeeDiscount::where('tenant_id', tenant('id'))->where('StudentId', $value['id'])->where('CampusFeesMasterId', $master['id'])->first();
                 if ($studentFeeDiscountAvalible) {
                     $TotalFee = $studentFeeDiscountAvalible['TotalFee'];
                     $DiscountAmount = $studentFeeDiscountAvalible['DiscountAmount'];
                     $BalanceFeeAfterDiscount = $studentFeeDiscountAvalible['BalanceFeeAfterDiscount'];
 
-                    $challanTransactionsCreate = new ChallanTransactions();
+                    $challanTransactionsCreate = new ChallanTransactions;
                     $challanTransactionsCreate->tenant_id = tenant('id');
                     $challanTransactionsCreate->generate_challan_id = $generateChallan->id;
                     $challanTransactionsCreate->CreatedBy = auth()->user()->id;
@@ -565,7 +567,7 @@ class GenerateFeeChallanService
                     $challanTransactionsCreate->TotalFee = $TotalFee;
                     $challanTransactionsCreate->save();
                 } else {
-                    $challanTransactionsCreate = new ChallanTransactions();
+                    $challanTransactionsCreate = new ChallanTransactions;
                     $challanTransactionsCreate->tenant_id = tenant('id');
                     $challanTransactionsCreate->generate_challan_id = $generateChallan->id;
                     $challanTransactionsCreate->CreatedBy = auth()->user()->id;
@@ -587,7 +589,8 @@ class GenerateFeeChallanService
     {
         if ($master['fee_type_rel']['IsOptional'] === true) {
             $mappedMonths = collect($months)->filter(function ($month) use ($request, $master, $value) {
-                $date = $month->format('Y-m') . '-01';
+                $date = $month->format('Y-m').'-01';
+
                 return OptionalFeeMaster::where('ClassId', $request->ClassId)
                     ->where('FeesTypeNId', $master['fee_type_rel']['id'])
                     ->where('StudentId', $value['id'])
@@ -596,7 +599,7 @@ class GenerateFeeChallanService
                     ->whereDate('ToMonth', '>=', $date)
                     ->exists();
             });
-            
+
             $mappedMonthsCount = $mappedMonths->count();
             if ($mappedMonthsCount === 0) {
                 return;
@@ -611,7 +614,7 @@ class GenerateFeeChallanService
             $DiscountAmount = ($studentFeeDiscountAvalible['DiscountAmount'] ?? 0) * $mappedMonthsCount;
             $BalanceFeeAfterDiscount = ($studentFeeDiscountAvalible['BalanceFeeAfterDiscount'] ?? $master['Amount']) * $mappedMonthsCount;
 
-            $challanTransactionsCreate = new ChallanTransactions();
+            $challanTransactionsCreate = new ChallanTransactions;
             $challanTransactionsCreate->tenant_id = tenant('id');
             $challanTransactionsCreate->generate_challan_id = $generateChallan->id;
             $challanTransactionsCreate->CreatedBy = auth()->user()->id;
@@ -626,6 +629,7 @@ class GenerateFeeChallanService
             $challanTransactionsCreate->BalanceFeeAfterDiscount = $BalanceFeeAfterDiscount;
             $challanTransactionsCreate->TotalFee = $TotalFee;
             $challanTransactionsCreate->save();
+
             return;
         }
 
@@ -635,7 +639,7 @@ class GenerateFeeChallanService
     private function isCampusMasterMonthly($generateChallan, $currentSession, $master, $value)
     {
         $TotalFee = $master['Amount'];
-        $BalanceFeeAfterDiscount = $master['Amount'];;
+        $BalanceFeeAfterDiscount = $master['Amount'];
         $DiscountAmount = 0;
 
         $studentFeeDiscountAvalible = StudentFeeDiscount::where('tenant_id', tenant('id'))->where('StudentId', $value['id'])->where('CampusFeesMasterId', $master['id'])->first();
@@ -646,7 +650,7 @@ class GenerateFeeChallanService
             $BalanceFeeAfterDiscount = $studentFeeDiscountAvalible['BalanceFeeAfterDiscount'];
         }
 
-        $challanTransactionsCreate = new ChallanTransactions();
+        $challanTransactionsCreate = new ChallanTransactions;
         $challanTransactionsCreate->tenant_id = tenant('id');
         $challanTransactionsCreate->generate_challan_id = $generateChallan->id;
         $challanTransactionsCreate->CreatedBy = auth()->user()->id;
@@ -671,10 +675,10 @@ class GenerateFeeChallanService
             })
             ->first();
 
-        if (!$existingOnceChallan) {
+        if (! $existingOnceChallan) {
 
             $TotalFee = $master['Amount'];
-            $BalanceFeeAfterDiscount = $master['Amount'];;
+            $BalanceFeeAfterDiscount = $master['Amount'];
             $DiscountAmount = 0;
 
             $studentFeeDiscountAvalible = StudentFeeDiscount::where('tenant_id', tenant('id'))->where('StudentId', $value['id'])->where('CampusFeesMasterId', $master['id'])->first();
@@ -685,7 +689,7 @@ class GenerateFeeChallanService
                 $BalanceFeeAfterDiscount = $studentFeeDiscountAvalible['BalanceFeeAfterDiscount'];
             }
 
-            $challanTransactionsCreate = new ChallanTransactions();
+            $challanTransactionsCreate = new ChallanTransactions;
             $challanTransactionsCreate->tenant_id = tenant('id');
             $challanTransactionsCreate->generate_challan_id = $generateChallan->id;
             $challanTransactionsCreate->CreatedBy = auth()->user()->id;
@@ -724,7 +728,7 @@ class GenerateFeeChallanService
                 ArrearChallanDetails::insert($insertArrearChallanDetails);
             }
 
-            $ArrearChallanDetals = new ArrearChallanDetails();
+            $ArrearChallanDetals = new ArrearChallanDetails;
             $ArrearChallanDetals->tenant_id = tenant('id');
             $ArrearChallanDetals->GenerateFeeChallanId = $generateChallan->id;
             $ArrearChallanDetals->FKeyId = $previousChallan->id;
@@ -752,7 +756,7 @@ class GenerateFeeChallanService
                 ArrearChallanDetails::insert($insertArrearChallanDetails);
             }
 
-            $ArrearChallanDetals = new ArrearChallanDetails();
+            $ArrearChallanDetals = new ArrearChallanDetails;
             $ArrearChallanDetals->tenant_id = tenant('id');
             $ArrearChallanDetals->GenerateFeeChallanId = $generateChallan->id;
             $ArrearChallanDetals->FKeyId = $previousChallan->id;
@@ -765,7 +769,7 @@ class GenerateFeeChallanService
 
         if ($previousStatus === 'paid') {
             if ($previousChallan->DueDate->toDateString() < $previousChallan->SubmitDate) {
-                $ArrearChallanDetals = new ArrearChallanDetails();
+                $ArrearChallanDetals = new ArrearChallanDetails;
                 $ArrearChallanDetals->tenant_id = tenant('id');
                 $ArrearChallanDetals->GenerateFeeChallanId = $generateChallan->id;
                 $ArrearChallanDetals->FKeyId = $previousChallan->id;
@@ -780,19 +784,19 @@ class GenerateFeeChallanService
     public function print($request): array
     {
         $tenant_id = tenant('id');
-        if(session('switched_tenant_id')){
+        if (session('switched_tenant_id')) {
             $tenant_id = session('switched_tenant_id');
         }
 
         $ids = explode(',', $request->id);
-        $challan = GenerateFeeChallan::with('ChallanTransactions', 'StudentRel', 'ClassRel','SectionRel', 'ChallanArrearsRel')
-        ->whereIn('id', $ids)
-        ->where('tenant_id', $tenant_id)
-        ->get();
+        $challan = GenerateFeeChallan::with('ChallanTransactions', 'StudentRel', 'ClassRel', 'SectionRel', 'ChallanArrearsRel')
+            ->whereIn('id', $ids)
+            ->where('tenant_id', $tenant_id)
+            ->get();
         $challans = $challan->toArray();
         $feeCycles = [];
         foreach ($challans as $c) {
-            if (!empty($c['Note']) && str_contains($c['Note'], 'Fee Cycle:')) {
+            if (! empty($c['Note']) && str_contains($c['Note'], 'Fee Cycle:')) {
                 $feeCycles[$c['id']] = trim(substr($c['Note'], strpos($c['Note'], 'Fee Cycle:')));
             }
         }
@@ -800,13 +804,13 @@ class GenerateFeeChallanService
         $waivedOffByChallan = [];
         foreach ($challans as $challnList) {
             $waivedOffByChallan[$challnList['id']] = 0;
-            if (isset($challnList['challan_arrears_rel']) || !empty($challnList['challan_arrears_rel'])) {
+            if (isset($challnList['challan_arrears_rel']) || ! empty($challnList['challan_arrears_rel'])) {
                 foreach ($challnList['challan_arrears_rel'] as $arrears) {
                     $generateChallanFineList = GenerateFeeChallan::where('id', $arrears['FKeyId'])->where('tenant_id', $tenant_id)->first();
                     if ($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList && $generateChallanFineList->IsPartialPayment == 0) {
                         $ChallanTransactionsSum = $this->ChallanTransactionsSum($arrears['FKeyId']);
                         $ChallanTransactionsDueMonth = $this->ChallanTransactionsDueMonth($arrears['FKeyId']);
-                        if (!$ChallanTransactionsDueMonth || !isset($ChallanTransactionsDueMonth['ChallanMonth'])) {
+                        if (! $ChallanTransactionsDueMonth || ! isset($ChallanTransactionsDueMonth['ChallanMonth'])) {
                             continue;
                         }
                         $formatedMonth = Carbon::parse($ChallanTransactionsDueMonth['ChallanMonth'])->format('M-Y');
@@ -817,10 +821,10 @@ class GenerateFeeChallanService
                         $dueDate = Carbon::parse($generateChallanFineList['DueDate']);
                         $expiryDate = Carbon::parse($generateChallanFineList['ExpiryDate']);
                         $days = $dueDate->diffInDays($expiryDate);
-                        $totalFine = $days * $generateChallanFineList['per_day_fine'];  
+                        $totalFine = $days * $generateChallanFineList['per_day_fine'];
                         $waivedOffByChallan[$challnList['id']] += $generateChallanFineList['WaivedFineAmount'] ? $generateChallanFineList['WaivedFineAmount'] : 0;
                         $previousChallanData[$challnList['id']][] = [
-                           'challan_id' => $arrears['FKeyId'] ? $arrears['FKeyId'] : 0,
+                            'challan_id' => $arrears['FKeyId'] ? $arrears['FKeyId'] : 0,
                             'total_amount' => $ChallanTransactionsSum,
                             'total_fine' => $generateChallanFineList['per_day_fine'] ? $totalFine : $generateChallanFineList['FineAmount'],
                             'ChallanMonth' => $formatedMonth,
@@ -830,7 +834,7 @@ class GenerateFeeChallanService
                     if ($arrears['TransactionType'] == 'Arrears' && $generateChallanFineList && $generateChallanFineList->IsPartialPayment == 1) {
                         $ChallanTransactionsSum = $this->ChallanTransactionsSum($arrears['FKeyId']);
                         $ChallanTransactionsDueMonth = $this->ChallanTransactionsDueMonth($arrears['FKeyId']);
-                        if (!$ChallanTransactionsDueMonth || !isset($ChallanTransactionsDueMonth['ChallanMonth'])) {
+                        if (! $ChallanTransactionsDueMonth || ! isset($ChallanTransactionsDueMonth['ChallanMonth'])) {
                             continue;
                         }
                         $formatedMonth = Carbon::parse($ChallanTransactionsDueMonth['ChallanMonth'])->format('M-Y');
@@ -870,20 +874,23 @@ class GenerateFeeChallanService
         $data['previousChallanData'] = $previousChallanData;
         $data['waivedOffByChallan'] = $waivedOffByChallan;
         $data['feeCycles'] = $feeCycles;
+
         // dd($data);
         return $data;
     }
 
-    private function ChallanTransactionsSum($FKeyId): float | ChallanTransactions
+    private function ChallanTransactionsSum($FKeyId): float|ChallanTransactions
     {
         return ChallanTransactions::where('generate_challan_id', $FKeyId)->sum('BalanceFeeAfterDiscount');
     }
-    private function ChallanTransactionsDueMonth($FKeyId): GenerateFeeChallan | NULL
+
+    private function ChallanTransactionsDueMonth($FKeyId): ?GenerateFeeChallan
     {
         $tenant_id = tenant('id');
-        if(session('switched_tenant_id')){
+        if (session('switched_tenant_id')) {
             $tenant_id = session('switched_tenant_id');
         }
+
         return GenerateFeeChallan::select('id', 'tenant_id', 'challan_no', 'ChallanMonth', 'WaivedFineAmount', 'FineAmount')
             // ->withTrashed()
             ->where('tenant_id', $tenant_id)
@@ -893,31 +900,30 @@ class GenerateFeeChallanService
     public function markAsUnpaid($request)
     {
         $tenant_id = tenant('id');
-        if(session('switched_tenant_id')){
+        if (session('switched_tenant_id')) {
             $tenant_id = session('switched_tenant_id');
         }
-        $challan = GenerateFeeChallan::where('tenant_id',$tenant_id)->findOrFail($request->id);
-        $nextChallan = GenerateFeeChallan::where('tenant_id',$tenant_id)
+        $challan = GenerateFeeChallan::where('tenant_id', $tenant_id)->findOrFail($request->id);
+        $nextChallan = GenerateFeeChallan::where('tenant_id', $tenant_id)
             ->where('StudentId', $challan->StudentId)
             ->whereDate('ChallanMonth', '>', $challan->ChallanMonth)
             ->orderBy('ChallanMonth', 'asc')
-                ->first();
-        
-        if($nextChallan){
+            ->first();
+
+        if ($nextChallan) {
             return false;
-        }else{
+        } else {
             $challan->update([
                 'Status' => 'Unpaid',
-                'SubmitDate' => NULL,
-                'PaymentMode' => NULL,
-                'CollectDate' => NULL,
-                'CollectBy' => NULL,
+                'SubmitDate' => null,
+                'PaymentMode' => null,
+                'CollectDate' => null,
+                'CollectBy' => null,
             ]);
-             userActivityLogs('Challan Mark as Unpaid and Challan Id is '.$challan->id.' And Challan Mark as Unpaid By User ID '.auth()->user()->id.' ', FeeLog::class);
+            userActivityLogs('Challan Mark as Unpaid and Challan Id is '.$challan->id.' And Challan Mark as Unpaid By User ID '.auth()->user()->id.' ', FeeLog::class);
+
             return true;
         }
-
-        
 
     }
 }

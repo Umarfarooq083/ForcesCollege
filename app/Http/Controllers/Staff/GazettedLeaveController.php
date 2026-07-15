@@ -22,8 +22,9 @@ class GazettedLeaveController extends Controller
     public function index(): Response
     {
         $gazettedLeaves = $this->gazettedLeaveService->index();
+
         return Inertia::render('Staff/GazettedLeave/List', [
-            'gazettedLeaves' => $gazettedLeaves
+            'gazettedLeaves' => $gazettedLeaves,
         ]);
     }
 
@@ -35,26 +36,30 @@ class GazettedLeaveController extends Controller
     public function submit(GazettedLeaveRequest $request): RedirectResponse
     {
         $this->gazettedLeaveService->submit($request);
+
         return $this->redirectSuccess('Gazetted leave created successfully!', 'gazettedleave.index');
     }
 
     public function edit(Request $request): Response
     {
         $gazettedLeave = \App\Models\GazettedLeave::findOrFail($request->id);
+
         return Inertia::render('Staff/GazettedLeave/Edit', [
-            'gazettedLeave' => $gazettedLeave
+            'gazettedLeave' => $gazettedLeave,
         ]);
     }
 
     public function update(GazettedLeaveRequest $request): RedirectResponse
     {
         $this->gazettedLeaveService->update($request);
+
         return $this->redirectSuccess('Gazetted leave updated successfully!', 'gazettedleave.index');
     }
 
     public function delete(Request $request): RedirectResponse
     {
         $this->gazettedLeaveService->destroy($request);
+
         return $this->redirectSuccess('Gazetted leave deleted successfully!', 'gazettedleave.index');
     }
 }

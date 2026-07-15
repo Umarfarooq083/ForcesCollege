@@ -34,22 +34,21 @@ class HomeWork extends Model
         'createdBy',
         'modifiedBy',
         'sessionId',
-        'imported_home_work_id'
+        'imported_home_work_id',
     ];
 
     public function ClassRel()
     {
         return $this->hasOne(Classes::class, 'id', 'classId');
     }
-    
+
     public function SectionRel()
     {
         return $this->hasOne(Section::class, 'id', 'sectionId');
     }
-    
+
     public function SubjectRel()
     {
         return $this->hasOne(Subject::class, 'id', 'subjectId');
     }
-
 }

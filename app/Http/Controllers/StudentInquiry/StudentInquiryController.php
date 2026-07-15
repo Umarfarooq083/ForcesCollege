@@ -11,15 +11,16 @@ use App\Models\GuardianRelation;
 use App\Models\Source;
 use App\Models\StudentInquiry;
 use App\Services\StudentInquiryService;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Inertia\Inertia;
 use Inertia\Response;
 
 class StudentInquiryController extends Controller
 {
     protected $StudentInquiryService;
+
     public function __construct(StudentInquiryService $StudentInquiryService)
     {
         $this->StudentInquiryService = $StudentInquiryService;
@@ -28,7 +29,8 @@ class StudentInquiryController extends Controller
     public function index(Request $request): Response
     {
         $studentInquiry = $this->StudentInquiryService->index($request);
-        return Inertia::render('StudentInquiry/List',[
+
+        return Inertia::render('StudentInquiry/List', [
             'studentInquiry' => $studentInquiry,
         ]);
     }
@@ -39,18 +41,20 @@ class StudentInquiryController extends Controller
         $campusZoneSession = $this->campusZoneSession();
         $source = Source::get();
         $guardianrelation = $this->guardianRelation();
-        return Inertia::render('StudentInquiry/Create',[
+
+        return Inertia::render('StudentInquiry/Create', [
             'source' => $source,
             'guardianrelation' => $guardianrelation,
             'campusZoneSession' => $campusZoneSession,
-            'classList' => $classList
+            'classList' => $classList,
         ]);
     }
 
-    public function submit(InquiryRequest $request) : RedirectResponse
+    public function submit(InquiryRequest $request): RedirectResponse
     {
         $this->StudentInquiryService->submit($request->validated(), $request);
-        return $this->redirectSuccess('Student Inquiry created successfully!','inquiry.index');
+
+        return $this->redirectSuccess('Student Inquiry created successfully!', 'inquiry.index');
     }
 
     public function statusUpdate(Request $request, int $id): RedirectResponse
@@ -59,7 +63,8 @@ class StudentInquiryController extends Controller
         $Inquiry->status = $request->status;
         $Inquiry->IsActive = $request->status;
         $Inquiry->save();
-        return $this->redirectSuccess('Inquiry status updated successfully!','inquiry.index');
+
+        return $this->redirectSuccess('Inquiry status updated successfully!', 'inquiry.index');
     }
 
     public function edit(Request $request): Response
@@ -68,33 +73,34 @@ class StudentInquiryController extends Controller
         $data = $this->StudentInquiryService->edit($request);
         $campusZoneSession = $this->campusZoneSession();
         $guardianrelation = $this->guardianRelation();
-        return Inertia::render('StudentInquiry/Edit',[
+
+        return Inertia::render('StudentInquiry/Edit', [
             'inquiryData' => $data['inquiryData'],
             'sessionList' => $data['sessionList'],
             'classesList' => $data['classesList'],
             'source' => $data['source'],
             'campusZoneSession' => $campusZoneSession,
             'guardianrelation' => $guardianrelation,
-            'classList' => $classList
+            'classList' => $classList,
         ]);
     }
 
-    public function checkGuardian(Request $request): Collection | array
+    public function checkGuardian(Request $request): Collection|array
     {
         $session_tenant = session('switched_tenant_id');
         $guardianInfo = GuardianInfo::query();
-        if($session_tenant){
-            $guardianInfo = $guardianInfo->where('tenant_id',$session_tenant)->where('cnic',$request->cnic)->first();
-        }else{
-            $guardianInfo = $guardianInfo->Tenant()->where('cnic',$request->cnic)->first();
+        if ($session_tenant) {
+            $guardianInfo = $guardianInfo->where('tenant_id', $session_tenant)->where('cnic', $request->cnic)->first();
+        } else {
+            $guardianInfo = $guardianInfo->Tenant()->where('cnic', $request->cnic)->first();
         }
-        $data['guardianInfo']= $guardianInfo;
+        $data['guardianInfo'] = $guardianInfo;
         $data['studentInquiry'] = [];
-        if($guardianInfo)
-        {
-           $studentInquiry = StudentInquiry::where('guardian_id',$guardianInfo->id)->get();
-           $data['studentInquiry'] = $studentInquiry; 
+        if ($guardianInfo) {
+            $studentInquiry = StudentInquiry::where('guardian_id', $guardianInfo->id)->get();
+            $data['studentInquiry'] = $studentInquiry;
         }
+
         return $data;
     }
 
@@ -105,18 +111,19 @@ class StudentInquiryController extends Controller
             ...$request->validated(),
             'status' => 0,
         ]);
-        return $this->redirectSuccess('Inquiry updated successfully!','inquiry.index');
+
+        return $this->redirectSuccess('Inquiry updated successfully!', 'inquiry.index');
     }
 
-    private function campusZoneSession(): Collection | Campus
+    private function campusZoneSession(): Collection|Campus
     {
-        return Campus::select('id','SchoolName','zoneid')->Tenant()->with(['sessionYear' => fn($q) => $q->active()])->first();
+        return Campus::select('id', 'SchoolName', 'zoneid')->Tenant()->with(['sessionYear' => fn ($q) => $q->active()])->first();
     }
 
-    private function campusClasses(): Collection | Classes
+    private function campusClasses(): Collection|Classes
     {
-        return Classes::select('id','tenant_id','ClassName')
-            ->where('IsActive',1)
+        return Classes::select('id', 'tenant_id', 'ClassName')
+            ->where('IsActive', 1)
             ->where('tenant_id', tenant('id'))
             ->get();
     }
@@ -127,19 +134,20 @@ class StudentInquiryController extends Controller
         $data = $this->StudentInquiryService->edit($request);
         $campusZoneSession = $this->campusZoneSession();
         $guardianrelation = $this->guardianRelation();
-        return Inertia::render('StudentInquiry/Detail',[
+
+        return Inertia::render('StudentInquiry/Detail', [
             'inquiryData' => $data['inquiryData'],
             'sessionList' => $data['sessionList'],
             'classesList' => $data['classesList'],
             'source' => $data['source'],
             'campusZoneSession' => $campusZoneSession,
             'guardianrelation' => $guardianrelation,
-            'classList' => $classList
+            'classList' => $classList,
         ]);
     }
 
-    private function guardianRelation(): Collection | GuardianRelation
+    private function guardianRelation(): Collection|GuardianRelation
     {
-       return  GuardianRelation::get();
+        return GuardianRelation::get();
     }
 }

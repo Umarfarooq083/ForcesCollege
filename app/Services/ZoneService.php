@@ -9,10 +9,10 @@ use Illuminate\Validation\ValidationException;
 
 class ZoneService
 {
-
     public function index()
     {
-        $zones = Zone::query(); 
+        $zones = Zone::query();
+
         return $zones = $zones->latest()->get();
     }
 
@@ -28,15 +28,15 @@ class ZoneService
             'description' => $request->description,
             'created_by' => Auth::id(),
         ]);
-        
+
     }
 
     public function toggleStatus($request, $id)
     {
         $LmsSession = LmsSession::where('status', '1')->where('zoneid', $id)->first();
         // dd($LmsSession,$request->status,$id);
-        if($request->status == false && $LmsSession){
-             throw ValidationException::withMessages([
+        if ($request->status == false && $LmsSession) {
+            throw ValidationException::withMessages([
                 'activeSessionFound' => 'Cannot deactivate zone with active sessions. ',
             ]);
         }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Roles;
 
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 
 class RolesRequest extends FormRequest
 {
@@ -42,7 +42,6 @@ class RolesRequest extends FormRequest
                 'is_super' => 'nullable|boolean',
             ];
         }
-
 
         return [
             'name' => ['required'],

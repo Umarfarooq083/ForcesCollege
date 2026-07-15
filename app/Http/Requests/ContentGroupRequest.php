@@ -23,7 +23,8 @@ class ContentGroupRequest extends FormRequest
      */
     public function rules(Request $request): array
     {
-        $id = $this->route('id'); 
+        $id = $this->route('id');
+
         return [
             'name' => [
                 'required',

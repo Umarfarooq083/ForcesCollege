@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ExamType extends Model
 {
     use SoftDeletes;
+
     protected $table = 'exam';
+
     protected $casts = [
-     'IsPublishResult' => 'boolean',
+        'IsPublishResult' => 'boolean',
     ];
 
-    protected $fillable  = [
+    protected $fillable = [
         'tenant_id',
         'SchoolId',
         'IsActive',
@@ -25,8 +27,9 @@ class ExamType extends Model
         'ResultDeclarationDate',
         'IsPublishResult',
         'Description',
-        'imported_exam_id'
+        'imported_exam_id',
     ];
+
     public function examTerm()
     {
         return $this->belongsTo(ExamTerm::class, 'ExamTermId');
@@ -36,7 +39,7 @@ class ExamType extends Model
     {
         return $this->belongsTo(ExamStudent::class, 'id', 'ExamId');
     }
-   
+
     public function SessionRel()
     {
         return $this->belongsTo(LmsSession::class, 'SessionId');
@@ -44,7 +47,6 @@ class ExamType extends Model
 
     public function ExamSubjectRel()
     {
-        return $this->belongsTo(ExamSubject::class, 'id', 'ExamId')->select('id','tenant_id','IsActive','SessionId','ExamId','SubjectId');
+        return $this->belongsTo(ExamSubject::class, 'id', 'ExamId')->select('id', 'tenant_id', 'IsActive', 'SessionId', 'ExamId', 'SubjectId');
     }
-
 }

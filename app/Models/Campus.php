@@ -13,7 +13,7 @@ class Campus extends Model
         'EmailAddress', 'TotalFaculty', 'Rental', 'ContractDuration',
         'Comments', 'Other', 'AgreementPath', 'SchoolType', 'URL',
         'Code', 'AccountNo', 'BranchCode', 'DomainName', 'Logo',
-        'IsAvailableForMobApp', 'SortOrder', 'CreatedBy', 'CreatedDate', 'ModifiedBy', 'ModifiedDate', 'tenant_id', 'bankName', 'AccountTitle', 'regionid',
+        'IsAvailableForMobApp', 'SortOrder', 'CreatedBy', 'CreatedDate', 'ModifiedBy', 'ModifiedDate', 'tenant_id', 'bankName', 'AccountTitle', 'regionid', 'campus_category_id',
     ];
 
     protected $casts = [
@@ -45,5 +45,10 @@ class Campus extends Model
     public function region()
     {
         return $this->belongsTo(\App\Models\Region::class, 'regionid');
+    }
+
+    public function campusCategory()
+    {
+        return $this->belongsTo(\App\Models\CampusCategory::class, 'campus_category_id');
     }
 }

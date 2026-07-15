@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Campus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Campus\CampusRequest;
 use App\Models\Campus;
+use App\Models\CampusCategory;
 use App\Models\Roles;
 use App\Services\CampusService;
 use App\Services\RegionService;
@@ -44,10 +45,12 @@ class CampusController extends Controller
         $roleExist = Roles::where('name', 'Campus Admin')->exists();
         $zones = $this->zoneService->getActiveZones();
         $regions = $this->regionService->getActiveRegions();
+        $campusCategories = CampusCategory::where('IsActive', true)->get();
 
         return Inertia::render('Campus/Create', [
             'zones' => $zones,
             'regions' => $regions,
+            'campus_categories' => $campusCategories,
             'role_exist' => $roleExist,
         ]);
     }
@@ -73,12 +76,14 @@ class CampusController extends Controller
     {
         $zones = $this->zoneService->getActiveZones();
         $regions = $this->regionService->getActiveRegions();
+        $campusCategories = CampusCategory::where('IsActive', true)->get();
         $campus = Campus::findOrFail($request->id);
 
         return Inertia::render('Campus/Edit', [
             'campus' => $campus,
             'zones' => $zones,
             'regions' => $regions,
+            'campus_categories' => $campusCategories,
         ]);
     }
 

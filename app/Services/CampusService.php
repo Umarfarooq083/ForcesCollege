@@ -17,7 +17,7 @@ class CampusService
     {
         $campusList = Campus::query();
 
-        return $campusList = $campusList->where('tenant_id', tenant('id'))->with('zone', 'region')->orderby('id', 'desc')->paginate(25)->withQueryString();
+        return $campusList = $campusList->where('tenant_id', tenant('id'))->with('zone', 'region', 'campusCategory')->orderby('id', 'desc')->paginate(25)->withQueryString();
     }
 
     public function submit($validated, $request): void
